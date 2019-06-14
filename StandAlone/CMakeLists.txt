@@ -45,9 +45,21 @@ if(ENABLE_GLSLANG_INSTALL)
 
     install(TARGETS spirv-remap
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-            
+
     if(BUILD_SHARED_LIBS)
         install(TARGETS glslang-default-resource-limits
                 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
     endif()
 endif(ENABLE_GLSLANG_INSTALL)
+
+if(EMSCRIPTEN)
+    set(HELLO_SOURCES hello.cpp DirStackFileIncluder.h)
+    add_executable(hello ${HELLO_SOURCES})
+    set_property(TARGET hello PROPERTY FOLDER tools)
+    glslang_set_link_args(hello)
+    target_link_libraries(hello glslang SPIRV glslang-default-resource-limits)
+
+    if(ENABLE_GLSLANG_INSTALL)
+        install(TARGETS hello RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
+endif()

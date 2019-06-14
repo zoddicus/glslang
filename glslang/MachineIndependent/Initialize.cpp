@@ -3873,7 +3873,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
 
 #ifdef NV_EXTENSIONS
-    if ((profile != EEsProfile && version >= 450) || 
+    if ((profile != EEsProfile && version >= 450) ||
         (profile == EEsProfile && version >= 320)) {
         commonBuiltins.append(
             "struct gl_TextureFootprint2DNV {"
@@ -5129,11 +5129,11 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 
     //E_SPV_NV_compute_shader_derivatives
-    
+
     stageBuiltins[EShLangCompute].append(derivatives);
     stageBuiltins[EShLangCompute].append(derivativeControls);
     stageBuiltins[EShLangCompute].append("\n");
-    
+
 
     if (profile != EEsProfile && version >= 450) {
 
@@ -5146,7 +5146,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     if ((profile != EEsProfile && version >= 450) || (profile == EEsProfile && version >= 320)) {
         stageBuiltins[EShLangMeshNV].append(
             "void writePackedPrimitiveIndices4x8NV(uint, uint);"
-            "\n");   
+            "\n");
     }
 #endif
 
@@ -6092,7 +6092,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
     // GL_ARB_shader_ballot
     if (profile != EEsProfile && version >= 450) {
-        const char* ballotDecls = 
+        const char* ballotDecls =
             "uniform uint gl_SubGroupSizeARB;"
             "in uint     gl_SubGroupInvocationARB;"
             "in uint64_t gl_SubGroupEqMaskARB;"
@@ -6101,7 +6101,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "in uint64_t gl_SubGroupLeMaskARB;"
             "in uint64_t gl_SubGroupLtMaskARB;"
             "\n";
-        const char* fragmentBallotDecls = 
+        const char* fragmentBallotDecls =
             "uniform uint gl_SubGroupSizeARB;"
             "flat in uint     gl_SubGroupInvocationARB;"
             "flat in uint64_t gl_SubGroupEqMaskARB;"

@@ -105,6 +105,10 @@ else()
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
+if(EMSCRIPTEN)
+    add_compile_options(-s "WASM=1")
+endif()
+
 function(glslang_set_link_args TARGET)
     # For MinGW compiles, statically link against the GCC and C++ runtimes.
     # This avoids the need to ship those runtimes as DLLs.
