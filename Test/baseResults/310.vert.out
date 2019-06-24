@@ -29,17 +29,15 @@ ERROR: 0:135: 'centroid' : cannot use centroid qualifier on an interface block
 ERROR: 0:139: 'invariant' : cannot use invariant qualifier on an interface block 
 ERROR: 0:155: 'precise' : Reserved word. 
 ERROR: 0:155: 'precise' : not supported for this version or the enabled extensions 
-ERROR: 0:156: 'fma' : required extension not requested: Possible extensions include:
-GL_EXT_gpu_shader5
-GL_OES_gpu_shader5
+ERROR: 0:156: 'fma' : no matching overloaded function found 
+ERROR: 0:156: 'assign' :  cannot convert from ' const float' to ' noContraction temp highp 2-component vector of float'
 ERROR: 0:157: 'variable indexing sampler array' : not supported for this version or the enabled extensions 
 ERROR: 0:161: 'variable indexing uniform block array' : not supported for this version or the enabled extensions 
 ERROR: 0:162: 'variable indexing buffer block array' : not supported with this profile: es
 ERROR: 0:164: 'variable indexing sampler array' : not supported for this version or the enabled extensions 
 ERROR: 0:165: 'non-constant offset argument' : not supported for this version or the enabled extensions 
-ERROR: 0:166: 'textureGatherOffsets' : required extension not requested: Possible extensions include:
-GL_EXT_gpu_shader5
-GL_OES_gpu_shader5
+ERROR: 0:174: 'fma' : no matching overloaded function found 
+ERROR: 0:174: 'assign' :  cannot convert from ' const float' to ' noContraction temp highp 2-component vector of float'
 ERROR: 0:177: 'variable indexing buffer block array' : not supported with this profile: es
 ERROR: 0:182: 'textureGatherOffsets(...)' : must be a compile-time constant: offsets argument
 ERROR: 0:185: 'samplerBuffer' : Reserved word. 
@@ -60,6 +58,24 @@ ERROR: 0:197: 'sampler/image' : type requires declaration of default precision q
 ERROR: 0:198: 'sampler/image' : type requires declaration of default precision qualifier 
 ERROR: 0:199: 'sampler/image' : type requires declaration of default precision qualifier 
 ERROR: 0:200: 'sampler/image' : type requires declaration of default precision qualifier 
+ERROR: 0:222: 'textureSize' : no matching overloaded function found 
+ERROR: 0:222: '=' :  cannot convert from ' const float' to ' temp highp int'
+ERROR: 0:223: 'textureSize' : no matching overloaded function found 
+ERROR: 0:223: '=' :  cannot convert from ' const float' to ' temp highp int'
+ERROR: 0:224: 'textureSize' : no matching overloaded function found 
+ERROR: 0:224: '=' :  cannot convert from ' const float' to ' temp highp int'
+ERROR: 0:226: 'imageSize' : no matching overloaded function found 
+ERROR: 0:226: '=' :  cannot convert from ' const float' to ' temp highp int'
+ERROR: 0:227: 'imageSize' : no matching overloaded function found 
+ERROR: 0:227: '=' :  cannot convert from ' const float' to ' temp highp int'
+ERROR: 0:228: 'imageSize' : no matching overloaded function found 
+ERROR: 0:228: '=' :  cannot convert from ' const float' to ' temp highp int'
+ERROR: 0:230: 'texelFetch' : no matching overloaded function found 
+ERROR: 0:230: '=' :  cannot convert from ' const float' to ' temp highp 4-component vector of float'
+ERROR: 0:231: 'texelFetch' : no matching overloaded function found 
+ERROR: 0:231: '=' :  cannot convert from ' const float' to ' temp highp 4-component vector of int'
+ERROR: 0:232: 'texelFetch' : no matching overloaded function found 
+ERROR: 0:232: '=' :  cannot convert from ' const float' to ' temp highp 4-component vector of uint'
 ERROR: 0:235: 'imageCubeArray' : Reserved word. 
 ERROR: 0:235: 'sampler/image' : type requires declaration of default precision qualifier 
 ERROR: 0:236: 'iimageCubeArray' : Reserved word. 
@@ -92,11 +108,28 @@ ERROR: 0:330: 'sampler/image' : type requires declaration of default precision q
 ERROR: 0:331: 'sampler/image' : type requires declaration of default precision qualifier 
 ERROR: 0:351: 'textureSize' : no matching overloaded function found 
 ERROR: 0:351: '=' :  cannot convert from ' const float' to ' temp highp 3-component vector of int'
+ERROR: 0:370: 'imageAtomicAdd' : no matching overloaded function found 
+ERROR: 0:371: 'imageAtomicAdd' : no matching overloaded function found 
+ERROR: 0:372: 'imageAtomicMin' : no matching overloaded function found 
+ERROR: 0:373: 'imageAtomicMin' : no matching overloaded function found 
+ERROR: 0:374: 'imageAtomicMax' : no matching overloaded function found 
+ERROR: 0:375: 'imageAtomicMax' : no matching overloaded function found 
+ERROR: 0:376: 'imageAtomicAnd' : no matching overloaded function found 
+ERROR: 0:377: 'imageAtomicAnd' : no matching overloaded function found 
+ERROR: 0:378: 'imageAtomicOr' : no matching overloaded function found 
+ERROR: 0:379: 'imageAtomicOr' : no matching overloaded function found 
+ERROR: 0:380: 'imageAtomicXor' : no matching overloaded function found 
+ERROR: 0:381: 'imageAtomicXor' : no matching overloaded function found 
+ERROR: 0:382: 'imageAtomicExchange' : no matching overloaded function found 
+ERROR: 0:383: 'imageAtomicExchange' : no matching overloaded function found 
+ERROR: 0:384: 'imageAtomicExchange' : no matching overloaded function found 
+ERROR: 0:385: 'imageAtomicCompSwap' : no matching overloaded function found 
+ERROR: 0:386: 'imageAtomicCompSwap' : no matching overloaded function found 
 ERROR: 0:389: 'sample' : Reserved word. 
 ERROR: 0:400: 'interpolateAtCentroid' : no matching overloaded function found 
 ERROR: 0:401: 'interpolateAtSample' : no matching overloaded function found 
 ERROR: 0:402: 'interpolateAtOffset' : no matching overloaded function found 
-ERROR: 93 compilation errors.  No code generated.
+ERROR: 130 compilation errors.  No code generated.
 
 
 Shader version: 310
@@ -284,12 +317,7 @@ ERROR: node is still EOpNull!
 0:153  Function Definition: pfooBad( ( global void)
 0:153    Function Parameters: 
 0:?     Sequence
-0:156      move second child to first child ( temp highp 2-component vector of float)
-0:156        'h' ( noContraction temp highp 2-component vector of float)
-0:156        fma ( global highp 2-component vector of float)
-0:156          'inf' ( in highp 2-component vector of float)
-0:156          'ing' ( in highp 2-component vector of float)
-0:156          'h' ( noContraction temp highp 2-component vector of float)
+0:156      'h' ( noContraction temp highp 2-component vector of float)
 0:157      indirect index ( temp lowp sampler2D)
 0:157        'sArray' ( uniform 4-element array of lowp sampler2D)
 0:157        add ( temp highp int)
@@ -339,7 +367,7 @@ ERROR: node is still EOpNull!
 0:165          0.100000
 0:165        Convert float to int ( temp lowp 2-component vector of int)
 0:165          'inf' ( in highp 2-component vector of float)
-0:166      textureGatherOffsets ( global lowp 4-component vector of float, operation at highp)
+0:166      Function Call: textureGatherOffsets(s21;vf2;vi2[4]; ( global lowp 4-component vector of float)
 0:166        direct index ( temp lowp sampler2D)
 0:166          'sArray' ( uniform 4-element array of lowp sampler2D)
 0:166          Constant:
@@ -359,12 +387,7 @@ ERROR: node is still EOpNull!
 0:171  Function Definition: pfoo( ( global void)
 0:171    Function Parameters: 
 0:?     Sequence
-0:174      move second child to first child ( temp highp 2-component vector of float)
-0:174        'h' ( noContraction temp highp 2-component vector of float)
-0:174        fma ( global highp 2-component vector of float)
-0:174          'inf' ( in highp 2-component vector of float)
-0:174          'ing' ( in highp 2-component vector of float)
-0:174          'h' ( noContraction temp highp 2-component vector of float)
+0:174      'h' ( noContraction temp highp 2-component vector of float)
 0:175      indirect index ( temp lowp sampler2D)
 0:175        'sArray' ( uniform 4-element array of lowp sampler2D)
 0:175        add ( temp highp int)
@@ -403,7 +426,7 @@ ERROR: node is still EOpNull!
 0:180          0.100000
 0:180        Convert float to int ( temp lowp 2-component vector of int)
 0:180          'inf' ( in highp 2-component vector of float)
-0:181      textureGatherOffsets ( global lowp 4-component vector of float, operation at highp)
+0:181      Function Call: textureGatherOffsets(s21;vf2;vi2[4]; ( global lowp 4-component vector of float)
 0:181        direct index ( temp lowp sampler2D)
 0:181          'sArray' ( uniform 4-element array of lowp sampler2D)
 0:181          Constant:
@@ -420,7 +443,7 @@ ERROR: node is still EOpNull!
 0:181          0 (const int)
 0:181          0 (const int)
 0:181          0 (const int)
-0:182      textureGatherOffsets ( global lowp 4-component vector of float, operation at highp)
+0:182      Function Call: textureGatherOffsets(s21;vf2;vi2[4]; ( global lowp 4-component vector of float)
 0:182        direct index ( temp lowp sampler2D)
 0:182          'sArray' ( uniform 4-element array of lowp sampler2D)
 0:182          Constant:
@@ -431,55 +454,6 @@ ERROR: node is still EOpNull!
 0:182        'offsets' ( uniform 4-element array of highp 2-component vector of int)
 0:220  Function Definition: bufferT( ( global void)
 0:220    Function Parameters: 
-0:222    Sequence
-0:222      Sequence
-0:222        move second child to first child ( temp highp int)
-0:222          's1' ( temp highp int)
-0:222          textureSize ( global highp int)
-0:222            'bufSamp1' ( uniform highp samplerBuffer)
-0:223      Sequence
-0:223        move second child to first child ( temp highp int)
-0:223          's2' ( temp highp int)
-0:223          textureSize ( global highp int)
-0:223            'bufSamp2' ( uniform highp isamplerBuffer)
-0:224      Sequence
-0:224        move second child to first child ( temp highp int)
-0:224          's3' ( temp highp int)
-0:224          textureSize ( global highp int)
-0:224            'bufSamp3' ( uniform highp usamplerBuffer)
-0:226      Sequence
-0:226        move second child to first child ( temp highp int)
-0:226          's4' ( temp highp int)
-0:226          imageQuerySize ( global highp int)
-0:226            'bufSamp4' ( writeonly uniform highp imageBuffer)
-0:227      Sequence
-0:227        move second child to first child ( temp highp int)
-0:227          's5' ( temp highp int)
-0:227          imageQuerySize ( global highp int)
-0:227            'bufSamp5' ( writeonly uniform highp iimageBuffer)
-0:228      Sequence
-0:228        move second child to first child ( temp highp int)
-0:228          's6' ( temp highp int)
-0:228          imageQuerySize ( global highp int)
-0:228            'bufSamp6' ( writeonly uniform highp uimageBuffer)
-0:230      Sequence
-0:230        move second child to first child ( temp highp 4-component vector of float)
-0:230          'f1' ( temp highp 4-component vector of float)
-0:230          textureFetch ( global highp 4-component vector of float)
-0:230            'bufSamp1' ( uniform highp samplerBuffer)
-0:230            's1' ( temp highp int)
-0:231      Sequence
-0:231        move second child to first child ( temp highp 4-component vector of int)
-0:231          'f2' ( temp highp 4-component vector of int)
-0:231          textureFetch ( global highp 4-component vector of int)
-0:231            'bufSamp2' ( uniform highp isamplerBuffer)
-0:231            's2' ( temp highp int)
-0:232      Sequence
-0:232        move second child to first child ( temp highp 4-component vector of uint)
-0:232          'f3' ( temp highp 4-component vector of uint)
-0:232          textureFetch ( global highp 4-component vector of uint)
-0:232            'bufSamp3' ( uniform highp usamplerBuffer)
-0:232            's3' ( temp highp int)
 0:279  Function Definition: CAT( ( global void)
 0:279    Function Parameters: 
 0:281    Sequence
@@ -832,78 +806,40 @@ ERROR: node is still EOpNull!
 0:364  Function Definition: goodImageAtom( ( global void)
 0:364    Function Parameters: 
 0:?     Sequence
-0:370      imageAtomicAdd ( global highp int)
-0:370        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:370        'P' ( uniform highp 2-component vector of int)
-0:370        'dati' ( temp highp int)
-0:371      imageAtomicAdd ( global highp uint)
-0:371        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:371        'P' ( uniform highp 2-component vector of int)
-0:371        'datu' ( temp highp uint)
-0:372      imageAtomicMin ( global highp int)
-0:372        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:372        'P' ( uniform highp 2-component vector of int)
-0:372        'dati' ( temp highp int)
-0:373      imageAtomicMin ( global highp uint)
-0:373        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:373        'P' ( uniform highp 2-component vector of int)
-0:373        'datu' ( temp highp uint)
-0:374      imageAtomicMax ( global highp int)
-0:374        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:374        'P' ( uniform highp 2-component vector of int)
-0:374        'dati' ( temp highp int)
-0:375      imageAtomicMax ( global highp uint)
-0:375        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:375        'P' ( uniform highp 2-component vector of int)
-0:375        'datu' ( temp highp uint)
-0:376      imageAtomicAnd ( global highp int)
-0:376        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:376        'P' ( uniform highp 2-component vector of int)
-0:376        'dati' ( temp highp int)
-0:377      imageAtomicAnd ( global highp uint)
-0:377        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:377        'P' ( uniform highp 2-component vector of int)
-0:377        'datu' ( temp highp uint)
-0:378      imageAtomicOr ( global highp int)
-0:378        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:378        'P' ( uniform highp 2-component vector of int)
-0:378        'dati' ( temp highp int)
-0:379      imageAtomicOr ( global highp uint)
-0:379        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:379        'P' ( uniform highp 2-component vector of int)
-0:379        'datu' ( temp highp uint)
-0:380      imageAtomicXor ( global highp int)
-0:380        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:380        'P' ( uniform highp 2-component vector of int)
-0:380        'dati' ( temp highp int)
-0:381      imageAtomicXor ( global highp uint)
-0:381        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:381        'P' ( uniform highp 2-component vector of int)
-0:381        'datu' ( temp highp uint)
-0:382      imageAtomicExchange ( global highp int)
-0:382        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:382        'P' ( uniform highp 2-component vector of int)
-0:382        'dati' ( temp highp int)
-0:383      imageAtomicExchange ( global highp uint)
-0:383        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:383        'P' ( uniform highp 2-component vector of int)
-0:383        'datu' ( temp highp uint)
-0:384      imageAtomicExchange ( global highp float)
-0:384        'im2Df' (layout( r32f) uniform highp image2D)
-0:384        'P' ( uniform highp 2-component vector of int)
-0:384        'datf' ( temp highp float)
-0:385      imageAtomicCompSwap ( global highp int)
-0:385        'im2Di' (layout( r32i) uniform highp iimage2D)
-0:385        'P' ( uniform highp 2-component vector of int)
-0:385        Constant:
-0:385          3 (const int)
-0:385        'dati' ( temp highp int)
-0:386      imageAtomicCompSwap ( global highp uint)
-0:386        'im2Du' (layout( r32ui) uniform highp uimage2D)
-0:386        'P' ( uniform highp 2-component vector of int)
-0:386        Constant:
-0:386          5 (const uint)
-0:386        'datu' ( temp highp uint)
+0:370      Constant:
+0:370        0.000000
+0:371      Constant:
+0:371        0.000000
+0:372      Constant:
+0:372        0.000000
+0:373      Constant:
+0:373        0.000000
+0:374      Constant:
+0:374        0.000000
+0:375      Constant:
+0:375        0.000000
+0:376      Constant:
+0:376        0.000000
+0:377      Constant:
+0:377        0.000000
+0:378      Constant:
+0:378        0.000000
+0:379      Constant:
+0:379        0.000000
+0:380      Constant:
+0:380        0.000000
+0:381      Constant:
+0:381        0.000000
+0:382      Constant:
+0:382        0.000000
+0:383      Constant:
+0:383        0.000000
+0:384      Constant:
+0:384        0.000000
+0:385      Constant:
+0:385        0.000000
+0:386      Constant:
+0:386        0.000000
 0:398  Function Definition: badInterp( ( global void)
 0:398    Function Parameters: 
 0:400    Sequence
