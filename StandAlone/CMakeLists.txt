@@ -53,13 +53,11 @@ if(ENABLE_GLSLANG_INSTALL)
 endif(ENABLE_GLSLANG_INSTALL)
 
 if(EMSCRIPTEN)
-    set(HELLO_SOURCES hello.cpp DirStackFileIncluder.h)
-    add_executable(hello ${HELLO_SOURCES})
-    set_property(TARGET hello PROPERTY FOLDER tools)
-    glslang_set_link_args(hello)
-    target_link_libraries(hello glslang SPIRV glslang-default-resource-limits)
-
-    if(ENABLE_GLSLANG_INSTALL)
-        install(TARGETS hello RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
+    add_executable(glslang.js glslang.js.cpp)
+    glslang_set_link_args(glslang.js)
+    target_link_libraries(glslang.js glslang SPIRV glslang-default-resource-limits)
+    set_target_properties(glslang.js PROPERTIES
+      OUTPUT_NAME "glslang"
+      SUFFIX ".js"
+      LINK_FLAGS "--bind")
 endif()

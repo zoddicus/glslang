@@ -86,21 +86,21 @@ SH_IMPORT_EXPORT int ShFinalize();
 // Types of languages the compiler can consume.
 //
 typedef enum {
-    EShLangVertex,
-    EShLangTessControl,
-    EShLangTessEvaluation,
-    EShLangGeometry,
-    EShLangFragment,
-    EShLangCompute,
-    EShLangRayGenNV,
-    EShLangIntersectNV,
-    EShLangAnyHitNV,
-    EShLangClosestHitNV,
-    EShLangMissNV,
-    EShLangCallableNV,
-    EShLangTaskNV,
-    EShLangMeshNV,
-    EShLangCount,
+    EShLangVertex = 0,
+    EShLangTessControl = 1,
+    EShLangTessEvaluation = 2,
+    EShLangGeometry = 3,
+    EShLangFragment = 4,
+    EShLangCompute = 5,
+    EShLangRayGenNV = 6,
+    EShLangIntersectNV = 7,
+    EShLangAnyHitNV = 8,
+    EShLangClosestHitNV = 9,
+    EShLangMissNV = 10,
+    EShLangCallableNV = 11,
+    EShLangTaskNV = 12,
+    EShLangMeshNV = 13,
+    EShLangCount = 14,
 } EShLanguage;         // would be better as stage, but this is ancient now
 
 typedef enum {
