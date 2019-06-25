@@ -63,7 +63,6 @@
 
 #define SH_EXPORTING
 #include "../Public/ShaderLang.h"
-#include "reflection.h"
 #include "iomapper.h"
 #include "Initialize.h"
 
@@ -1852,7 +1851,7 @@ const char* TShader::getInfoDebugLog()
     return infoSink->debug.c_str();
 }
 
-TProgram::TProgram() : reflection(0), ioMapper(nullptr), linked(false)
+TProgram::TProgram() : ioMapper(nullptr), linked(false)
 {
     pool = new TPoolAllocator;
     infoSink = new TInfoSink;
@@ -1866,7 +1865,6 @@ TProgram::~TProgram()
 {
     delete ioMapper;
     delete infoSink;
-    delete reflection;
 
     for (int s = 0; s < EShLangCount; ++s)
         if (newedIntermediate[s])
@@ -1977,62 +1975,6 @@ const char* TProgram::getInfoDebugLog()
 {
     return infoSink->debug.c_str();
 }
-
-//
-// Reflection implementation.
-//
-
-bool TProgram::buildReflection(int opts)
-{
-    if (! linked || reflection)
-        return false;
-
-    int firstStage = EShLangVertex, lastStage = EShLangFragment;
-
-    if (opts & EShReflectionIntermediateIO) {
-        // if we're reflecting intermediate I/O, determine the first and last stage linked and use those as the
-        // boundaries for which stages generate pipeline inputs/outputs
-        firstStage = EShLangCount;
-        lastStage = 0;
-        for (int s = 0; s < EShLangCount; ++s) {
-            if (intermediate[s]) {
-                firstStage = std::min(firstStage, s);
-                lastStage = std::max(lastStage, s);
-            }
-        }
-    }
-
-    reflection = new TReflection((EShReflectionOptions)opts, (EShLanguage)firstStage, (EShLanguage)lastStage);
-
-    for (int s = 0; s < EShLangCount; ++s) {
-        if (intermediate[s]) {
-            if (! reflection->addStage((EShLanguage)s, *intermediate[s]))
-                return false;
-        }
-    }
-
-    return true;
-}
-
-unsigned TProgram::getLocalSize(int dim) const                      { return reflection->getLocalSize(dim); }
-int TProgram::getReflectionIndex(const char* name) const            { return reflection->getIndex(name); }
-
-int TProgram::getNumUniformVariables() const                          { return reflection->getNumUniforms(); }
-const TObjectReflection& TProgram::getUniform(int index) const        { return reflection->getUniform(index); }
-int TProgram::getNumUniformBlocks() const                             { return reflection->getNumUniformBlocks(); }
-const TObjectReflection& TProgram::getUniformBlock(int index) const   { return reflection->getUniformBlock(index); }
-int TProgram::getNumPipeInputs() const                                { return reflection->getNumPipeInputs(); }
-const TObjectReflection& TProgram::getPipeInput(int index) const      { return reflection->getPipeInput(index); }
-int TProgram::getNumPipeOutputs() const                               { return reflection->getNumPipeOutputs(); }
-const TObjectReflection& TProgram::getPipeOutput(int index) const     { return reflection->getPipeOutput(index); }
-int TProgram::getNumBufferVariables() const                           { return reflection->getNumBufferVariables(); }
-const TObjectReflection& TProgram::getBufferVariable(int index) const { return reflection->getBufferVariable(index); }
-int TProgram::getNumBufferBlocks() const                              { return reflection->getNumStorageBuffers(); }
-const TObjectReflection& TProgram::getBufferBlock(int index) const    { return reflection->getStorageBufferBlock(index); }
-int TProgram::getNumAtomicCounters() const                            { return reflection->getNumAtomicCounters(); }
-const TObjectReflection& TProgram::getAtomicCounter(int index) const  { return reflection->getAtomicCounter(index); }
-
-void TProgram::dumpReflection()                      { reflection->dump(); }
 
 //
 // I/O mapping implementation.

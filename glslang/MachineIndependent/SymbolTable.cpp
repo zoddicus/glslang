@@ -87,8 +87,10 @@ void TType::buildMangledName(TString& mangledName) const
         }
         if (sampler.image)
             mangledName += "I";  // a normal image
+#ifndef GLSLANG_WEB
         else if (sampler.sampler)
             mangledName += "p";  // a "pure" sampler
+#endif
         else if (!sampler.combined)
             mangledName += "t";  // a "pure" texture
         else
@@ -97,21 +99,27 @@ void TType::buildMangledName(TString& mangledName) const
             mangledName += "A";
         if (sampler.shadow)
             mangledName += "S";
+#ifndef GLSLANG_WEB
         if (sampler.external)
             mangledName += "E";
         if (sampler.yuv)
             mangledName += "Y";
+#endif
         switch (sampler.dim) {
+#ifndef GLSLANG_WEB
         case Esd1D:       mangledName += "1";  break;
+#endif
         case Esd2D:       mangledName += "2";  break;
         case Esd3D:       mangledName += "3";  break;
         case EsdCube:     mangledName += "C";  break;
+#ifndef GLSLANG_WEB
         case EsdRect:     mangledName += "R2"; break;
         case EsdBuffer:   mangledName += "B";  break;
         case EsdSubpass:  mangledName += "P";  break;
+#endif
         default: break; // some compilers want this
         }
-
+#ifndef GLSLANG_WEB
         if (sampler.hasReturnStruct()) {
             // Name mangle for sampler return struct uses struct table index.
             mangledName += "-tx-struct";
@@ -127,7 +135,7 @@ void TType::buildMangledName(TString& mangledName) const
             case 4: break; // default to prior name mangle behavior
             }
         }
-
+#endif
         if (sampler.ms)
             mangledName += "M";
         break;

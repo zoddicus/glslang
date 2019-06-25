@@ -1291,9 +1291,9 @@ struct TCrackedTextureOp {
     bool offsets;
     bool gather;
     bool grad;
+#ifndef GLSLANG_WEB
     bool subpass;
     bool lodClamp;
-#ifdef AMD_EXTENSIONS
     bool fragMask;
 #endif
 };
@@ -1344,9 +1344,9 @@ public:
         cracked.offsets = false;
         cracked.gather = false;
         cracked.grad = false;
+#ifndef GLSLANG_WEB
         cracked.subpass = false;
         cracked.lodClamp = false;
-#ifdef AMD_EXTENSIONS
         cracked.fragMask = false;
 #endif
 
@@ -1363,10 +1363,12 @@ public:
         case EOpTexture:
         case EOpSparseTexture:
             break;
+#ifndef GLSLANG_WEB
         case EOpTextureClamp:
         case EOpSparseTextureClamp:
             cracked.lodClamp = true;
             break;
+#endif
         case EOpTextureProj:
             cracked.proj = true;
             break;
@@ -1381,7 +1383,9 @@ public:
         case EOpTextureOffsetClamp:
         case EOpSparseTextureOffsetClamp:
             cracked.offset = true;
+#ifndef GLSLANG_WEB
             cracked.lodClamp = true;
+#endif
             break;
         case EOpTextureFetch:
         case EOpSparseTextureFetch:
@@ -1421,7 +1425,9 @@ public:
         case EOpTextureGradClamp:
         case EOpSparseTextureGradClamp:
             cracked.grad = true;
+#ifndef GLSLANG_WEB
             cracked.lodClamp = true;
+#endif
             break;
         case EOpTextureGradOffset:
         case EOpSparseTextureGradOffset:
@@ -1437,12 +1443,14 @@ public:
             cracked.offset = true;
             cracked.proj = true;
             break;
+#ifndef GLSLANG_WEB
         case EOpTextureGradOffsetClamp:
         case EOpSparseTextureGradOffsetClamp:
             cracked.grad = true;
             cracked.offset = true;
             cracked.lodClamp = true;
             break;
+#endif
         case EOpTextureGather:
         case EOpSparseTextureGather:
             cracked.gather = true;
@@ -1457,7 +1465,7 @@ public:
             cracked.gather = true;
             cracked.offsets = true;
             break;
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         case EOpTextureGatherLod:
         case EOpSparseTextureGatherLod:
             cracked.gather = true;
@@ -1488,8 +1496,6 @@ public:
             cracked.subpass = sampler.dim == EsdSubpass;
             cracked.fragMask = true;
             break;
-#endif
-#ifdef NV_EXTENSIONS
         case EOpImageSampleFootprintNV:
             break;
         case EOpImageSampleFootprintClampNV:
@@ -1505,11 +1511,11 @@ public:
             cracked.lodClamp = true;
             cracked.grad = true;
             break;
-#endif
         case EOpSubpassLoad:
         case EOpSubpassLoadMS:
             cracked.subpass = true;
             break;
+#endif
         default:
             break;
         }

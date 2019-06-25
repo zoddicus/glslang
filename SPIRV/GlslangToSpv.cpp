@@ -557,14 +557,17 @@ spv::Builder::AccessChain::CoherentFlags TGlslangToSpvTraverser::TranslateCohere
 {
     spv::Builder::AccessChain::CoherentFlags flags;
     flags.coherent = type.getQualifier().coherent;
+#ifndef GLSLANG_WEB
     flags.devicecoherent = type.getQualifier().devicecoherent;
     flags.queuefamilycoherent = type.getQualifier().queuefamilycoherent;
     // shared variables are implicitly workgroupcoherent in GLSL.
     flags.workgroupcoherent = type.getQualifier().workgroupcoherent ||
                               type.getQualifier().storage == glslang::EvqShared;
     flags.subgroupcoherent = type.getQualifier().subgroupcoherent;
+#endif
     flags.volatil = type.getQualifier().volatil;
     // *coherent variables are implicitly nonprivate in GLSL
+#ifndef GLSLANG_WEB
     flags.nonprivate = type.getQualifier().nonprivate ||
                        flags.subgroupcoherent ||
                        flags.workgroupcoherent ||
@@ -572,6 +575,7 @@ spv::Builder::AccessChain::CoherentFlags TGlslangToSpvTraverser::TranslateCohere
                        flags.devicecoherent ||
                        flags.coherent ||
                        flags.volatil;
+#endif
     flags.isImage = type.getBasicType() == glslang::EbtSampler;
     return flags;
 }
@@ -1268,6 +1272,7 @@ void InheritQualifiers(glslang::TQualifier& child, const glslang::TQualifier& pa
         child.sample = true;
     if (parent.coherent)
         child.coherent = true;
+#ifndef GLSLANG_WEB
     if (parent.devicecoherent)
         child.devicecoherent = true;
     if (parent.queuefamilycoherent)
@@ -1278,6 +1283,7 @@ void InheritQualifiers(glslang::TQualifier& child, const glslang::TQualifier& pa
         child.subgroupcoherent = true;
     if (parent.nonprivate)
         child.nonprivate = true;
+#endif
     if (parent.volatil)
         child.volatil = true;
     if (parent.restrict)
@@ -3318,10 +3324,13 @@ spv::Id TGlslangToSpvTraverser::convertGlslangToSpvType(const glslang::TType& ty
     case glslang::EbtSampler:
         {
             const glslang::TSampler& sampler = type.getSampler();
+#ifndef GLSLANG_WEB
             if (sampler.sampler) {
                 // pure sampler
                 spvType = builder.makeSamplerType();
-            } else {
+            } else
+#endif
+            {
                 // an image is present, make its type
                 spvType = builder.makeImageType(getSampledType(sampler), TranslateDimensionality(sampler), sampler.shadow, sampler.arrayed, sampler.ms,
                                                 sampler.image ? 2 : 1, TranslateImageFormat(type));
@@ -4435,7 +4444,7 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
         auto opIt = arguments.begin();
         spv::IdImmediate image = { true, *(opIt++) };
         operands.push_back(image);
-
+#ifndef GLSLANG_WEB
         // Handle subpass operations
         // TODO: GLSL should change to have the "MS" only on the type rather than the
         // built-in function.
@@ -4464,7 +4473,7 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
             builder.setPrecision(result, precision);
             return result;
         }
-
+#endif
         spv::IdImmediate coord = { true, *(opIt++) };
         operands.push_back(coord);
 #ifdef AMD_EXTENSIONS
@@ -4727,11 +4736,11 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
 #endif
         if (cracked.grad)
             nonBiasArgCount += 2;
+#ifndef GLSLANG_WEB
         if (cracked.lodClamp)
             ++nonBiasArgCount;
         if (sparse)
             ++nonBiasArgCount;
-#ifdef NV_EXTENSIONS
         if (imageFootprint)
             //Following three extra arguments
             // int granularity, bool coarse, out gl_TextureFootprint2DNV footprint
@@ -4823,7 +4832,7 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
         params.offsets = arguments[2 + extraArgs];
         ++extraArgs;
     }
-
+#ifndef GLSLANG_WEB
     // lod clamp
     if (cracked.lodClamp) {
         params.lodClamp = arguments[2 + extraArgs];
@@ -4834,7 +4843,7 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
         params.texelOut = arguments[2 + extraArgs];
         ++extraArgs;
     }
-
+#endif
     // gather component
     if (cracked.gather && ! sampler.shadow) {
         // default component is 0, if missing, otherwise an argument
@@ -4943,12 +4952,12 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
                                                           builder.getTypeId(params.coords), projTargetComp);
         }
     }
-
+#ifndef GLSLANG_WEB
     // nonprivate
     if (imageType.getQualifier().nonprivate) {
         params.nonprivate = true;
     }
-
+#endif
     // volatile
     if (imageType.getQualifier().volatil) {
         params.volatil = true;

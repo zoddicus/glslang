@@ -28,7 +28,6 @@ set(SOURCES
     MachineIndependent/limits.cpp
     MachineIndependent/linkValidate.cpp
     MachineIndependent/parseConst.cpp
-    MachineIndependent/reflection.cpp
     MachineIndependent/preprocessor/Pp.cpp
     MachineIndependent/preprocessor/PpAtom.cpp
     MachineIndependent/preprocessor/PpContext.cpp
@@ -60,7 +59,6 @@ set(HEADERS
     MachineIndependent/LiveTraverser.h
     MachineIndependent/localintermediate.h
     MachineIndependent/ParseHelper.h
-    MachineIndependent/reflection.h
     MachineIndependent/RemoveTree.h
     MachineIndependent/Scan.h
     MachineIndependent/ScanContext.h

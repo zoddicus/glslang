@@ -1071,12 +1071,6 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
         PutsIfNonEmpty(program.getInfoDebugLog());
     }
 
-    // Reflect
-    if (Options & EOptionDumpReflection) {
-        program.buildReflection(ReflectOptions);
-        program.dumpReflection();
-    }
-
     // Dump SPIR-V
     if (Options & EOptionSpv) {
         if (CompileFailed || LinkFailed)
@@ -1105,8 +1099,6 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
                         } else {
                             glslang::OutputSpvBin(spirv, GetBinaryName((EShLanguage)stage));
                         }
-                        if (!SpvToolsDisassembler && (Options & EOptionHumanReadableSpv))
-                            spv::Disassemble(std::cout, spirv);
                     }
                 }
             }

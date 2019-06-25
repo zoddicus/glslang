@@ -544,12 +544,20 @@ protected:
     }
 
     static bool isSamplerType(const glslang::TType& type) {
-        return type.getBasicType() == glslang::EbtSampler && type.getSampler().isPureSampler();
+        return type.getBasicType() == glslang::EbtSampler
+#ifndef GLSLANG_WEB
+            && type.getSampler().isPureSampler()
+#endif
+            ;
     }
 
     static bool isTextureType(const glslang::TType& type) {
         return (type.getBasicType() == glslang::EbtSampler && 
-                (type.getSampler().isTexture() || type.getSampler().isSubpass()));
+                (type.getSampler().isTexture()
+#ifndef GLSLANG_WEB
+                || type.getSampler().isSubpass()
+#endif
+                ));
     }
 
     static bool isUboType(const glslang::TType& type) {

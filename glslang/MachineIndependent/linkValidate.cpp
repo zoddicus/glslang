@@ -554,11 +554,13 @@ void TIntermediate::mergeErrorCheck(TInfoSink& infoSink, const TIntermSymbol& sy
 
     // Memory...
     if (symbol.getQualifier().coherent          != unitSymbol.getQualifier().coherent ||
+#ifndef GLSLANG_WEB
         symbol.getQualifier().devicecoherent    != unitSymbol.getQualifier().devicecoherent ||
         symbol.getQualifier().queuefamilycoherent  != unitSymbol.getQualifier().queuefamilycoherent ||
         symbol.getQualifier().workgroupcoherent != unitSymbol.getQualifier().workgroupcoherent ||
         symbol.getQualifier().subgroupcoherent  != unitSymbol.getQualifier().subgroupcoherent ||
         symbol.getQualifier().nonprivate        != unitSymbol.getQualifier().nonprivate ||
+#endif
         symbol.getQualifier().volatil           != unitSymbol.getQualifier().volatil ||
         symbol.getQualifier().restrict          != unitSymbol.getQualifier().restrict ||
         symbol.getQualifier().readonly          != unitSymbol.getQualifier().readonly ||

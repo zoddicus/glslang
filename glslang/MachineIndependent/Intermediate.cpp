@@ -4041,11 +4041,12 @@ struct TextureUpgradeAndSamplerRemovalTransform : public TIntermTraverser {
         size_t write = 0;
         for (size_t i = 0; i < seq.size(); ++i) {
             TIntermSymbol* symbol = seq[i]->getAsSymbolNode();
+#ifndef GLSLANG_WEB
             if (symbol && symbol->getBasicType() == EbtSampler && symbol->getType().getSampler().isPureSampler()) {
                 // remove pure sampler variables
                 continue;
             }
-
+#endif
             TIntermNode* result = seq[i];
 
             // replace constructors with sampler/textures

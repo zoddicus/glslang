@@ -39,6 +39,8 @@
 #ifndef _TYPES_INCLUDED
 #define _TYPES_INCLUDED
 
+#define GLSLANG_WEB
+
 #include "../Include/Common.h"
 #include "../Include/BaseTypes.h"
 #include "../Public/ShaderLang.h"
@@ -79,11 +81,14 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
     bool         ms : 1;
     bool      image : 1;  // image, combined should be false
     bool   combined : 1;  // true means texture is combined with a sampler, false means texture with no sampler
+#ifndef GLSLANG_WEB
     bool    sampler : 1;  // true means a pure sampler, other fields should be clear()
     bool   external : 1;  // GL_OES_EGL_image_external
     bool        yuv : 1;  // GL_EXT_YUV_target
     unsigned int vectorSize : 3;  // vector return type size.
+#endif
 
+#ifndef GLSLANG_WEB
     // Some languages support structures as sample results.  Storing the whole structure in the
     // TSampler is too large, so there is an index to a separate table.
     static const unsigned structReturnIndexBits = 4;                        // number of index bits to use.
@@ -95,16 +100,22 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
 
     // Encapsulate getting members' vector sizes packed into the vectorSize bitfield.
     unsigned int getVectorSize() const { return vectorSize; }
+#endif
 
+#ifdef GLSLANG_WEB
+    bool isImage()       const { return image; }
+#else
     bool isImage()       const { return image && dim != EsdSubpass; }
     bool isSubpass()     const { return dim == EsdSubpass; }
     bool isCombined()    const { return combined; }
     bool isPureSampler() const { return sampler; }
     bool isTexture()     const { return !sampler && !image; }
+    bool hasReturnStruct() const { return structReturnIndex != noReturnStruct; }
+#endif
+    bool isTexture()     const { return !image; }
     bool isShadow()      const { return shadow; }
     bool isArrayed()     const { return arrayed; }
     bool isMultiSample() const { return ms; }
-    bool hasReturnStruct() const { return structReturnIndex != noReturnStruct; }
 
     void clear()
     {
@@ -115,6 +126,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
         ms = false;
         image = false;
         combined = false;
+#ifndef GLSLANG_WEB
         sampler = false;
         external = false;
         yuv = false;
@@ -122,6 +134,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
 
         // by default, returns a single vec4;
         vectorSize = 4;
+#endif
     }
 
     // make a combined sampler and texture
@@ -159,6 +172,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
         ms = m;
     }
 
+#ifndef GLSLANG_WEB
     // make a subpass input attachment
     void setSubpass(TBasicType t, bool m = false)
     {
@@ -176,6 +190,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
         sampler = true;
         shadow = s;
     }
+#endif
 
     bool operator==(const TSampler& right) const
     {
@@ -185,12 +200,16 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
                   shadow == right.shadow &&
                       ms == right.ms &&
                    image == right.image &&
-                combined == right.combined &&
+                combined == right.combined
+#ifndef GLSLANG_WEB
+                &&
                  sampler == right.sampler &&
                 external == right.external &&
                      yuv == right.yuv &&
               vectorSize == right.vectorSize &&
-       structReturnIndex == right.structReturnIndex;            
+       structReturnIndex == right.structReturnIndex
+#endif
+       ;
     }
 
     bool operator!=(const TSampler& right) const
@@ -202,14 +221,15 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
     {
         TString s;
 
+#ifndef GLSLANG_WEB
         if (sampler) {
             s.append("sampler");
             return s;
         }
-
+#endif
         switch (type) {
         case EbtFloat:                   break;
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         case EbtFloat16: s.append("f16"); break;
 #endif
         case EbtInt8:   s.append("i8");  break;
@@ -223,15 +243,18 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
         default:  break;  // some compilers want this
         }
         if (image) {
+#ifndef GLSLANG_WEB
             if (dim == EsdSubpass)
                 s.append("subpass");
             else
+#endif
                 s.append("image");
         } else if (combined) {
             s.append("sampler");
         } else {
             s.append("texture");
         }
+#ifndef GLSLANG_WEB
         if (external) {
             s.append("ExternalOES");
             return s;
@@ -239,14 +262,19 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
         if (yuv) {
             return "__" + s + "External2DY2YEXT";
         }
+#endif
         switch (dim) {
+#ifndef GLSLANG_WEB
         case Esd1D:      s.append("1D");      break;
+#endif
         case Esd2D:      s.append("2D");      break;
         case Esd3D:      s.append("3D");      break;
         case EsdCube:    s.append("Cube");    break;
+#ifndef GLSLANG_WEB
         case EsdRect:    s.append("2DRect");  break;
         case EsdBuffer:  s.append("Buffer");  break;
         case EsdSubpass: s.append("Input"); break;
+#endif
         default:  break;  // some compilers want this
         }
         if (ms)
@@ -473,10 +501,8 @@ public:
         smooth       = false;
         flat         = false;
         nopersp      = false;
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         explicitInterp = false;
-#endif
-#ifdef NV_EXTENSIONS
         pervertexNV = false;
         perPrimitiveNV = false;
         perViewNV = false;
@@ -487,11 +513,13 @@ public:
     void clearMemory()
     {
         coherent     = false;
+#ifndef GLSLANG_WEB
         devicecoherent = false;
         queuefamilycoherent = false;
         workgroupcoherent = false;
         subgroupcoherent  = false;
         nonprivate = false;
+#endif
         volatil      = false;
         restrict     = false;
         readonly     = false;
@@ -524,10 +552,8 @@ public:
     bool smooth       : 1;
     bool flat         : 1;
     bool nopersp      : 1;
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     bool explicitInterp : 1;
-#endif
-#ifdef NV_EXTENSIONS
     bool pervertexNV  : 1;
     bool perPrimitiveNV : 1;
     bool perViewNV : 1;
@@ -536,11 +562,13 @@ public:
     bool patch        : 1;
     bool sample       : 1;
     bool coherent     : 1;
+#ifndef GLSLANG_WEB
     bool devicecoherent : 1;
     bool queuefamilycoherent : 1;
     bool workgroupcoherent : 1;
     bool subgroupcoherent  : 1;
     bool nonprivate   : 1;
+#endif
     bool volatil      : 1;
     bool restrict     : 1;
     bool readonly     : 1;
@@ -548,6 +576,16 @@ public:
     bool specConstant : 1;  // having a constant_id is not sufficient: expressions have no id, but are still specConstant
     bool nonUniform   : 1;
 
+#ifdef GLSLANG_WEB
+    bool isMemory() const
+    {
+        return coherent || volatil || restrict || readonly || writeonly;
+    }
+    bool isMemoryQualifierImageAndSSBOOnly() const
+    {
+        return coherent || volatil || restrict || readonly || writeonly;
+    }
+#else
     bool isMemory() const
     {
         return subgroupcoherent || workgroupcoherent || queuefamilycoherent || devicecoherent || coherent || volatil || restrict || readonly || writeonly || nonprivate;
@@ -561,17 +599,17 @@ public:
         // include qualifiers that map to load/store availability/visibility/nonprivate memory access operands
         return subgroupcoherent || workgroupcoherent || queuefamilycoherent || devicecoherent || coherent || nonprivate;
     }
-
+#endif
     bool isInterpolation() const
     {
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         return flat || smooth || nopersp || explicitInterp;
 #else
         return flat || smooth || nopersp;
 #endif
     }
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     bool isExplicitInterpolation() const
     {
         return explicitInterp;
@@ -580,7 +618,7 @@ public:
 
     bool isAuxiliary() const
     {
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         return centroid || patch || sample || pervertexNV;
 #else
         return centroid || patch || sample;
@@ -653,7 +691,7 @@ public:
 
     bool isPerPrimitive() const
     {
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         return perPrimitiveNV;
 #else
         return false;
@@ -662,7 +700,7 @@ public:
 
     bool isPerView() const
     {
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         return perViewNV;
 #else
         return false;
@@ -671,7 +709,7 @@ public:
 
     bool isTaskMemory() const
     {
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         return perTaskNV;
 #else
         return false;
@@ -727,7 +765,7 @@ public:
             return ! patch && (isPipeInput() || isPipeOutput());
         case EShLangTessEvaluation:
             return ! patch && isPipeInput();
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         case EShLangFragment:
             return pervertexNV && isPipeInput();
         case EShLangMeshNV:
@@ -746,7 +784,7 @@ public:
 
         layoutPushConstant = false;
         layoutBufferReference = false;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         layoutPassthrough = false;
         layoutViewportRelative = false;
         // -2048 as the default value indicating layoutSecondaryViewportRelative is not set
@@ -787,7 +825,7 @@ public:
                hasAnyLocation() ||
                hasStream() ||
                hasFormat() ||
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
                layoutShaderRecordNV ||
 #endif
                layoutPushConstant ||
@@ -845,7 +883,7 @@ public:
     bool layoutPushConstant;
     bool layoutBufferReference;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     bool layoutPassthrough;
     bool layoutViewportRelative;
     int layoutSecondaryViewportRelativeOffset;
@@ -1157,7 +1195,7 @@ struct TShaderQualifiers {
     int numViews;             // multiview extenstions
     TInterlockOrdering interlockOrdering;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     bool layoutOverrideCoverage;        // true if layout override_coverage set
     bool layoutDerivativeGroupQuads;    // true if layout derivative_group_quadsNV set
     bool layoutDerivativeGroupLinear;   // true if layout derivative_group_linearNV set
@@ -1185,7 +1223,7 @@ struct TShaderQualifiers {
         layoutDepth = EldNone;
         blendEquation = false;
         numViews = TQualifier::layoutNotSet;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         layoutOverrideCoverage      = false;
         layoutDerivativeGroupQuads  = false;
         layoutDerivativeGroupLinear = false;
@@ -1232,7 +1270,7 @@ struct TShaderQualifiers {
             blendEquation = src.blendEquation;
         if (src.numViews != TQualifier::layoutNotSet)
             numViews = src.numViews;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         if (src.layoutOverrideCoverage)
             layoutOverrideCoverage = src.layoutOverrideCoverage;
         if (src.layoutDerivativeGroupQuads)
@@ -1320,7 +1358,9 @@ public:
 
     // "Image" is a superset of "Subpass"
     bool isImage()   const { return basicType == EbtSampler && sampler.isImage(); }
+#ifndef GLSLANG_WEB
     bool isSubpass() const { return basicType == EbtSampler && sampler.isSubpass(); }
+#endif
 };
 
 //
@@ -1581,7 +1621,7 @@ public:
         return false;
     }
     virtual bool isOpaque() const { return basicType == EbtSampler || basicType == EbtAtomicUint
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         || basicType == EbtAccStructNV
 #endif
         ; }
@@ -1589,7 +1629,9 @@ public:
 
     // "Image" is a superset of "Subpass"
     virtual bool isImage()   const { return basicType == EbtSampler && getSampler().isImage(); }
+#ifndef GLSLANG_WEB
     virtual bool isSubpass() const { return basicType == EbtSampler && getSampler().isSubpass(); }
+#endif
     virtual bool isTexture() const { return basicType == EbtSampler && getSampler().isTexture(); }
     virtual bool isParameterized()  const { return typeParameters != nullptr; }
     virtual bool isCoopMat() const { return coopmat; }
@@ -1746,7 +1788,7 @@ public:
     {
         if (isUnsizedArray() && !(skipNonvariablyIndexed || isArrayVariablyIndexed()))
             changeOuterArraySize(getImplicitArraySize());
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         // For multi-dim per-view arrays, set unsized inner dimension size to 1
         if (qualifier.isPerView() && arraySizes && arraySizes->isInnerUnsized())
             arraySizes->clearInnerUnsized();
@@ -1825,7 +1867,7 @@ public:
         case EbtSampler:           return "sampler/image";
         case EbtStruct:            return "structure";
         case EbtBlock:             return "block";
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         case EbtAccStructNV:       return "accelerationStructureNV";
 #endif
         case EbtReference:         return "reference";
@@ -1921,7 +1963,7 @@ public:
                     appendUint(1u << qualifier.layoutBufferReferenceAlign);
                 }
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
                 if (qualifier.layoutPassthrough)
                     appendStr(" passthrough");
                 if (qualifier.layoutViewportRelative)
@@ -1950,11 +1992,11 @@ public:
             appendStr(" flat");
         if (qualifier.nopersp)
             appendStr(" noperspective");
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         if (qualifier.explicitInterp)
             appendStr(" __explicitInterpAMD");
 #endif
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         if (qualifier.pervertexNV)
             appendStr(" pervertexNV");
         if (qualifier.perPrimitiveNV)
@@ -1970,6 +2012,7 @@ public:
             appendStr(" sample");
         if (qualifier.coherent)
             appendStr(" coherent");
+#ifndef GLSLANG_WEB
         if (qualifier.devicecoherent)
             appendStr(" devicecoherent");
         if (qualifier.queuefamilycoherent)
@@ -1980,6 +2023,7 @@ public:
             appendStr(" subgroupcoherent");
         if (qualifier.nonprivate)
             appendStr(" nonprivate");
+#endif
         if (qualifier.volatil)
             appendStr(" volatile");
         if (qualifier.restrict)

@@ -55,8 +55,6 @@
 
 namespace glslang {
 
-#define GLSLANG_WEB
-
 #ifndef GLSLANG_WEB
 
 // TODO: ARB_Compatability: do full extension support
@@ -6207,7 +6205,7 @@ void TBuiltIns::add2ndGenerationSamplingImaging(int version, EProfile profile, c
                             else {
                                 addSamplingFunctions(sampler, typeName, version, profile);
                                 addGatherFunctions(sampler, typeName, version, profile);
-
+#ifndef GLSLANG_WEB
                                 if (spvVersion.vulkan > 0 && sampler.isCombined() && !sampler.shadow) {
                                     // Base Vulkan allows texelFetch() for
                                     // textureBuffer (i.e. without sampler).
@@ -6222,6 +6220,7 @@ void TBuiltIns::add2ndGenerationSamplingImaging(int version, EProfile profile, c
                                     addSamplingFunctions(sampler, textureTypeName, version, profile);
                                     addQueryFunctions(sampler, textureTypeName, version, profile);
                                 }
+#endif
                             }
                         }
                     }
