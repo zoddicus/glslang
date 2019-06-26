@@ -209,6 +209,8 @@ const CommonBuiltInFunctions V130Functions[] = {
     { EOpNull, "", 0, TacV }
 };
 
+#ifdef ES31
+
 const CommonBuiltInFunctions V310Functions[] = {
     { EOpMix,              "mix",              3,   TacIULB   },
     { EOpMix,              "mix",              3,   TacBLB    },
@@ -222,6 +224,8 @@ const CommonBuiltInFunctions V310Functions[] = {
     { EOpAtomicCompSwap,   "atomicCompSwap",   3,   TacIUSFIO },
     { EOpNull, "", 0, TacV }
 };
+
+#endif
 
 const CommonBuiltInFunctions DerivativeFunctions[] = {
     { EOpDPdx,             "dFdx",             1,   TacV     },
@@ -322,9 +326,12 @@ void TBuiltIns::addTabledBuiltins(int version, EProfile profile, const SpvVersio
     AddTabledBuiltins(stageBuiltins[EShLangFragment], DerivativeFunctions);
     if (version >= 130)
         AddTabledBuiltins(commonBuiltins, V130Functions);
+
+#ifdef ES31
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 450))
         AddTabledBuiltins(commonBuiltins, V310Functions);
+#endif
 }
 
 void TBuiltIns::relateTabledBuiltins(int version, EProfile profile, const SpvVersion& spvVersion, EShLanguage stage,
@@ -335,9 +342,12 @@ void TBuiltIns::relateTabledBuiltins(int version, EProfile profile, const SpvVer
         RelateTabledBuiltins(DerivativeFunctions, symbolTable);
     if (version >= 130)
         RelateTabledBuiltins(V130Functions, symbolTable);
+
+#ifdef ES31
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 450))
         RelateTabledBuiltins(V310Functions, symbolTable);
+#endif
 }
 
 #ifndef GLSLANG_WEB
@@ -1150,6 +1160,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "\n");
     }
 
+#ifdef ES31
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
         commonBuiltins.append(
@@ -1165,6 +1176,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
             "\n");
     }
+#endif
 
 #ifndef GLSLANG_WEB
     if ((profile != EEsProfile && version >= 400) ||
@@ -1231,6 +1243,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "\n");
     }
 
+#ifdef ES31
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
         commonBuiltins.append(
@@ -1250,6 +1263,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
                     "vec4 unpackUnorm4x8(highp uint);"
             "\n");
     }
+#endif
 
     //
     // Geometric Functions.
@@ -1438,6 +1452,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 #endif
 
     if (spvVersion.vulkan == 0) {
+#ifdef ES31
         //
         // Atomic counter functions.
         //
@@ -1450,6 +1465,8 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
                 "\n");
         }
+#endif
+
 #ifndef GLSLANG_WEB
         if (profile != EEsProfile && version >= 460) {
             commonBuiltins.append(
@@ -1468,6 +1485,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 #endif
     }
 
+#ifdef ES31
     // Bitfield
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
@@ -1494,7 +1512,9 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
             "\n");
     }
+#endif
 
+#ifdef ES31
     if (profile != EEsProfile && version >= 400) {
 #ifndef GLSLANG_WEB
         commonBuiltins.append(
@@ -1524,6 +1544,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
             "\n");
     }
+#endif
 
 #ifndef GLSLANG_WEB
     if (profile != EEsProfile && version >= 400) {
@@ -1552,6 +1573,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 #endif
 
+#ifdef ES31
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
         commonBuiltins.append(
@@ -1612,6 +1634,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
             "\n");
     }
+#endif
 
 #ifndef GLSLANG_WEB
 
@@ -4658,6 +4681,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
 #endif
 
+#ifdef ES31
     //============================================================================
     //
     // Prototypes for all control functions.
@@ -4687,6 +4711,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "void groupMemoryBarrier();"
             );
     }
+#endif
 
 #ifndef GLSLANG_WEB
     if ((profile != EEsProfile && version >= 450) || (profile == EEsProfile && version >= 320)) {
@@ -5080,6 +5105,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
 #endif
 
+#ifdef ES31
     //============================================================================
     //
     // Define the interface to the compute shader.
@@ -5107,6 +5133,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "in highp int gl_DeviceIndex;"     // GL_EXT_device_group
             "\n");
     }
+#endif
 
 #ifndef GLSLANG_WEB
     //============================================================================
@@ -5377,6 +5404,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 #endif
 
+#ifdef ES31
     if ((profile != EEsProfile && version >= 140) ||
         (profile == EEsProfile && version >= 310)) {
         stageBuiltins[EShLangVertex].append(
@@ -5384,6 +5412,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "in highp int gl_ViewIndex;"       // GL_EXT_multiview
             "\n");
     }
+#endif
 
     if (version >= 300 /* both ES and non-ES */) {
         stageBuiltins[EShLangVertex].append(
@@ -5815,6 +5844,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
                 "highp   float gl_FragDepth;"    // needs qualifier fixed later
                 );
         }
+#ifdef ES31
         if (version >= 310) {
             stageBuiltins[EShLangFragment].append(
                 "bool gl_HelperInvocation;"          // needs qualifier fixed later
@@ -5833,6 +5863,9 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
                     "uniform lowp int gl_NumSamples;"
                     );
         }
+#endif
+
+#ifndef GLSLANG_WEB
         stageBuiltins[EShLangFragment].append(
             "highp float gl_FragDepthEXT;"       // GL_EXT_frag_depth
             );
@@ -5842,7 +5875,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
                 "flat in ivec2 gl_FragSizeEXT;"
                 "flat in int   gl_FragInvocationCountEXT;"
             );
-#ifndef GLSLANG_WEB
+
         if (version >= 320)
             stageBuiltins[EShLangFragment].append( // GL_NV_shading_rate_image
                 "flat in ivec2 gl_FragmentSizeNV;"
@@ -5894,6 +5927,8 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 #endif
 
+#ifdef ES31
+
     if ((profile != EEsProfile && version >= 140) ||
         (profile == EEsProfile && version >= 310)) {
         stageBuiltins[EShLangFragment].append(
@@ -5901,6 +5936,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "flat in highp int gl_ViewIndex;"       // GL_EXT_multiview
             "\n");
     }
+#endif
 
 #ifndef GLSLANG_WEB
     // GL_KHR_shader_subgroup
@@ -6110,14 +6146,25 @@ void TBuiltIns::add2ndGenerationSamplingImaging(int version, EProfile profile, c
 #else
     TBasicType bTypes[3] = { EbtFloat, EbtInt, EbtUint };
 #endif
+#ifdef ES310
     bool skipBuffer = (profile == EEsProfile && version < 310) || (profile != EEsProfile && version < 140);
     bool skipCubeArrayed = (profile == EEsProfile && version < 310) || (profile != EEsProfile && version < 130);
+#else
+    const bool skipBuffer = true;
+    const bool skipCubeArrayed = true;
+#endif
 
     // enumerate all the types
     for (int image = 0; image <= 1; ++image) { // loop over "bool" image vs sampler
 
         for (int shadow = 0; shadow <= 1; ++shadow) { // loop over "bool" shadow or not
-            for (int ms = 0; ms <=1; ++ms) {
+#ifdef ES310
+            for (int ms = 0; ms <= 1; ++ms)
+#else
+                const int ms = 0;
+#endif
+            {
+
                 if ((ms || image) && shadow)
                     continue;
                 if (ms && profile != EEsProfile && version < 150)
@@ -6200,11 +6247,17 @@ void TBuiltIns::add2ndGenerationSamplingImaging(int version, EProfile profile, c
 
                             addQueryFunctions(sampler, typeName, version, profile);
 
+#ifdef ES31
                             if (image)
                                 addImageFunctions(sampler, typeName, version, profile);
-                            else {
+                            else
+#endif
+                            {
                                 addSamplingFunctions(sampler, typeName, version, profile);
+#ifdef ES31
                                 addGatherFunctions(sampler, typeName, version, profile);
+#endif
+
 #ifndef GLSLANG_WEB
                                 if (spvVersion.vulkan > 0 && sampler.isCombined() && !sampler.shadow) {
                                     // Base Vulkan allows texelFetch() for
@@ -6361,6 +6414,7 @@ void TBuiltIns::addQueryFunctions(TSampler sampler, const TString& typeName, int
 //
 void TBuiltIns::addImageFunctions(TSampler sampler, const TString& typeName, int version, EProfile profile)
 {
+#ifdef ES31
     int dims = dimMap[sampler.dim];
     // most things with an array add a dimension, except for cubemaps
     if (sampler.arrayed && sampler.dim != EsdCube)
@@ -6388,6 +6442,7 @@ void TBuiltIns::addImageFunctions(TSampler sampler, const TString& typeName, int
     commonBuiltins.append(", ");
     commonBuiltins.append(prefixes[sampler.type]);
     commonBuiltins.append("vec4);\n");
+#endif
 
 #ifndef GLSLANG_WEB
     if (sampler.dim != Esd1D && sampler.dim != EsdBuffer && profile != EEsProfile && version >= 450) {
@@ -6851,6 +6906,7 @@ void TBuiltIns::addSamplingFunctions(TSampler sampler, const TString& typeName, 
 //
 void TBuiltIns::addGatherFunctions(TSampler sampler, const TString& typeName, int version, EProfile profile)
 {
+#ifdef ES31
     switch (sampler.dim) {
     case Esd2D:
     case EsdRect:
@@ -7088,6 +7144,7 @@ void TBuiltIns::addGatherFunctions(TSampler sampler, const TString& typeName, in
             }
         }
     }
+#endif
 #endif
 }
 
@@ -7446,6 +7503,7 @@ void TBuiltIns::initialize(const TBuiltInResource &resources, int version, EProf
 #endif
     }
 
+#ifdef ES31
     // images (some in compute below)
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 130)) {
@@ -7481,6 +7539,7 @@ void TBuiltIns::initialize(const TBuiltInResource &resources, int version, EProf
         snprintf(builtInConstant, maxSize, "const int gl_MaxAtomicCounterBufferSize = %d;", resources.            maxAtomicCounterBufferSize);
         s.append(builtInConstant);
     }
+#endif
 
 #ifndef GLSLANG_WEB
     if (profile != EEsProfile && version >= 420) {
@@ -7501,6 +7560,7 @@ void TBuiltIns::initialize(const TBuiltInResource &resources, int version, EProf
     }
 #endif
 
+#ifdef ES31
     // compute
     if ((profile == EEsProfile && version >= 310) || (profile != EEsProfile && version >= 420)) {
         snprintf(builtInConstant, maxSize, "const ivec3 gl_MaxComputeWorkGroupCount = ivec3(%d,%d,%d);", resources.maxComputeWorkGroupCountX,
@@ -7525,6 +7585,7 @@ void TBuiltIns::initialize(const TBuiltInResource &resources, int version, EProf
 
         s.append("\n");
     }
+#endif
 
 #ifndef GLSLANG_WEB
     // GL_ARB_cull_distance
@@ -7932,6 +7993,17 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
 
 #endif
 
+#ifdef ES31
+        if ((profile != EEsProfile && version >= 140) ||
+            (profile == EEsProfile && version >= 310)) {
+            symbolTable.setVariableExtensions("gl_DeviceIndex",  1, &E_GL_EXT_device_group);
+            BuiltInVariable("gl_DeviceIndex", EbvDeviceIndex, symbolTable);
+            symbolTable.setVariableExtensions("gl_ViewIndex", 1, &E_GL_EXT_multiview);
+            BuiltInVariable("gl_ViewIndex", EbvViewIndex, symbolTable);
+        }
+#endif
+
+#ifndef GLSLANG_WEB
         // gl_PointSize, when it needs to be tied to an extension, is always a member of a block.
         // (Sometimes with an instance name, sometimes anonymous).
         if (profile == EEsProfile) {
@@ -7945,15 +8017,6 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
             }
         }
 
-        if ((profile != EEsProfile && version >= 140) ||
-            (profile == EEsProfile && version >= 310)) {
-            symbolTable.setVariableExtensions("gl_DeviceIndex",  1, &E_GL_EXT_device_group);
-            BuiltInVariable("gl_DeviceIndex", EbvDeviceIndex, symbolTable);
-            symbolTable.setVariableExtensions("gl_ViewIndex", 1, &E_GL_EXT_multiview);
-            BuiltInVariable("gl_ViewIndex", EbvViewIndex, symbolTable);
-        }
-
-#ifndef GLSLANG_WEB
         if (profile != EEsProfile) {
             BuiltInVariable("gl_SubGroupInvocationARB", EbvSubGroupInvocation, symbolTable);
             BuiltInVariable("gl_SubGroupEqMaskARB",     EbvSubGroupEqMask,     symbolTable);
@@ -8016,8 +8079,10 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
             }
         }
         SpecialQualifier("gl_FragDepth",        EvqFragDepth,  EbvFragDepth,        symbolTable);
+#ifdef ES310
         SpecialQualifier("gl_FragDepthEXT",     EvqFragDepth,  EbvFragDepth,        symbolTable);
         SpecialQualifier("gl_HelperInvocation", EvqVaryingIn,  EbvHelperInvocation, symbolTable);
+#endif
 
 #ifndef GLSLANG_WEB
         BuiltInVariable("gl_ClipDistance",    EbvClipDistance,   symbolTable);
@@ -8434,12 +8499,14 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
         break;
 
     case EShLangCompute:
+#ifdef ES31
         BuiltInVariable("gl_NumWorkGroups",         EbvNumWorkGroups,        symbolTable);
         BuiltInVariable("gl_WorkGroupSize",         EbvWorkGroupSize,        symbolTable);
         BuiltInVariable("gl_WorkGroupID",           EbvWorkGroupId,          symbolTable);
         BuiltInVariable("gl_LocalInvocationID",     EbvLocalInvocationId,    symbolTable);
         BuiltInVariable("gl_GlobalInvocationID",    EbvGlobalInvocationId,   symbolTable);
         BuiltInVariable("gl_LocalInvocationIndex",  EbvLocalInvocationIndex, symbolTable);
+#endif
 
 #ifndef GLSLANG_WEB
         if (profile != EEsProfile && version < 430) {
@@ -8921,6 +8988,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("floatBitsToUint", EOpFloatBitsToUint);
     symbolTable.relateToOperator("intBitsToFloat",  EOpIntBitsToFloat);
     symbolTable.relateToOperator("uintBitsToFloat", EOpUintBitsToFloat);
+#ifdef ES31
     symbolTable.relateToOperator("doubleBitsToInt64",  EOpDoubleBitsToInt64);
     symbolTable.relateToOperator("doubleBitsToUint64", EOpDoubleBitsToUint64);
     symbolTable.relateToOperator("int64BitsToDouble",  EOpInt64BitsToDouble);
@@ -8931,15 +8999,16 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("float16BitsToUint16", EOpFloat16BitsToUint16);
     symbolTable.relateToOperator("int16BitsToFloat16",  EOpInt16BitsToFloat16);
     symbolTable.relateToOperator("uint16BitsToFloat16", EOpUint16BitsToFloat16);
-
     symbolTable.relateToOperator("int16BitsToHalf",  EOpInt16BitsToFloat16);
     symbolTable.relateToOperator("uint16BitsToHalf", EOpUint16BitsToFloat16);
+#endif
 
     symbolTable.relateToOperator("packSnorm2x16",   EOpPackSnorm2x16);
     symbolTable.relateToOperator("unpackSnorm2x16", EOpUnpackSnorm2x16);
     symbolTable.relateToOperator("packUnorm2x16",   EOpPackUnorm2x16);
     symbolTable.relateToOperator("unpackUnorm2x16", EOpUnpackUnorm2x16);
 
+#ifdef ES31
     symbolTable.relateToOperator("packSnorm4x8",    EOpPackSnorm4x8);
     symbolTable.relateToOperator("unpackSnorm4x8",  EOpUnpackSnorm4x8);
     symbolTable.relateToOperator("packUnorm4x8",    EOpPackUnorm4x8);
@@ -8947,6 +9016,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
 
     symbolTable.relateToOperator("packDouble2x32",    EOpPackDouble2x32);
     symbolTable.relateToOperator("unpackDouble2x32",  EOpUnpackDouble2x32);
+#endif
 
     symbolTable.relateToOperator("packHalf2x16",    EOpPackHalf2x16);
     symbolTable.relateToOperator("unpackHalf2x16",  EOpUnpackHalf2x16);
@@ -8956,6 +9026,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("packUint2x32",    EOpPackUint2x32);
     symbolTable.relateToOperator("unpackUint2x32",  EOpUnpackUint2x32);
 
+#ifdef ES31
     symbolTable.relateToOperator("packInt2x16",     EOpPackInt2x16);
     symbolTable.relateToOperator("unpackInt2x16",   EOpUnpackInt2x16);
     symbolTable.relateToOperator("packUint2x16",    EOpPackUint2x16);
@@ -8975,14 +9046,16 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("unpack32",        EOpUnpack32);
     symbolTable.relateToOperator("unpack16",        EOpUnpack16);
     symbolTable.relateToOperator("unpack8",         EOpUnpack8);
+#endif
 
     symbolTable.relateToOperator("cross",        EOpCross);
 
-
-    symbolTable.relateToOperator("barrier",                    EOpBarrier);
 #ifndef GLSLANG_WEB
     symbolTable.relateToOperator("controlBarrier",             EOpBarrier);
 #endif
+
+#ifdef ES31
+    symbolTable.relateToOperator("barrier",                    EOpBarrier);
     symbolTable.relateToOperator("memoryBarrier",              EOpMemoryBarrier);
     symbolTable.relateToOperator("memoryBarrierAtomicCounter", EOpMemoryBarrierAtomicCounter);
     symbolTable.relateToOperator("memoryBarrierBuffer",        EOpMemoryBarrierBuffer);
@@ -8991,6 +9064,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("atomicCounterIncrement", EOpAtomicCounterIncrement);
     symbolTable.relateToOperator("atomicCounterDecrement", EOpAtomicCounterDecrement);
     symbolTable.relateToOperator("atomicCounter",          EOpAtomicCounter);
+#endif
 
 #ifndef GLSLANG_WEB
     symbolTable.relateToOperator("atomicLoad",     EOpAtomicLoad);
@@ -9008,7 +9082,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
         symbolTable.relateToOperator("atomicCounterCompSwap", EOpAtomicCounterCompSwap);
     }
 #endif
-
+#ifdef ES31
     symbolTable.relateToOperator("fma",               EOpFma);
     symbolTable.relateToOperator("frexp",             EOpFrexp);
     symbolTable.relateToOperator("ldexp",             EOpLdexp);
@@ -9022,11 +9096,13 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("bitCount",          EOpBitCount);
     symbolTable.relateToOperator("findLSB",           EOpFindLSB);
     symbolTable.relateToOperator("findMSB",           EOpFindMSB);
-
+#endif
     if (PureOperatorBuiltins) {
+#ifdef ES31
         symbolTable.relateToOperator("imageSize",               EOpImageQuerySize);
         symbolTable.relateToOperator("imageLoad",               EOpImageLoad);
         symbolTable.relateToOperator("imageStore",              EOpImageStore);
+#endif
 #ifndef GLSLANG_WEB
         symbolTable.relateToOperator("imageSamples",            EOpImageQuerySamples);
         symbolTable.relateToOperator("imageAtomicAdd",          EOpImageAtomicAdd);
@@ -9343,8 +9419,10 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
 #endif
 
     case EShLangCompute:
+#ifdef ES31
         symbolTable.relateToOperator("memoryBarrierShared",         EOpMemoryBarrierShared);
         symbolTable.relateToOperator("groupMemoryBarrier",          EOpGroupMemoryBarrier);
+#endif
 #ifndef GLSLANG_WEB
         symbolTable.relateToOperator("subgroupMemoryBarrierShared", EOpSubgroupMemoryBarrierShared);
         if ((profile != EEsProfile && version >= 450) ||
