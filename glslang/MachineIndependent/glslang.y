@@ -60,7 +60,6 @@ Jutta Degener, 1995
 #include "SymbolTable.h"
 #include "ParseHelper.h"
 #include "../Public/ShaderLang.h"
-#include "attribute.h"
 
 using namespace glslang;
 
@@ -89,7 +88,6 @@ using namespace glslang;
             TIntermNode* intermNode;
             glslang::TIntermNodePair nodePair;
             glslang::TIntermTyped* intermTypedNode;
-            glslang::TAttributes* attributes;
         };
         union {
             glslang::TPublicType type;
@@ -271,7 +269,7 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %type <interm> parameter_declaration parameter_declarator parameter_type_specifier
 
 %type <interm> array_specifier
-%type <interm.type> precise_qualifier invariant_qualifier interpolation_qualifier storage_qualifier precision_qualifier
+%type <interm.type> invariant_qualifier interpolation_qualifier storage_qualifier precision_qualifier
 %type <interm.type> layout_qualifier layout_qualifier_id_list layout_qualifier_id
 %type <interm.type> non_uniform_qualifier
 
@@ -284,7 +282,7 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %type <interm.type> type_specifier_nonarray
 %type <interm.type> struct_specifier
 %type <interm.typeLine> struct_declarator
-%type <interm.typeList> struct_declarator_list struct_declaration struct_declaration_list type_name_list
+%type <interm.typeList> struct_declarator_list struct_declaration struct_declaration_list 
 %type <interm> block_structure
 %type <interm.function> function_header function_declarator
 %type <interm.function> function_header_with_parameters
@@ -292,8 +290,6 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %type <interm> function_call_or_method function_identifier function_call_header
 
 %type <interm.identifierList> identifier_list
-
-%type <interm.attributes> attribute attribute_list single_attribute
 
 %start translation_unit
 %%
@@ -581,7 +577,9 @@ equality_expression
         parseContext.arrayObjectCheck($2.loc, $1->getType(), "array comparison");
         parseContext.opaqueCheck($2.loc, $1->getType(), "==");
         parseContext.specializationCheck($2.loc, $1->getType(), "==");
+#ifndef GLSLANG_WEB
         parseContext.referenceCheck($2.loc, $1->getType(), "==");
+#endif
         $$ = parseContext.handleBinaryMath($2.loc, "==", EOpEqual, $1, $3);
         if ($$ == 0)
             $$ = parseContext.intermediate.addConstantUnion(false, $2.loc);
@@ -590,7 +588,9 @@ equality_expression
         parseContext.arrayObjectCheck($2.loc, $1->getType(), "array comparison");
         parseContext.opaqueCheck($2.loc, $1->getType(), "!=");
         parseContext.specializationCheck($2.loc, $1->getType(), "!=");
+#ifndef GLSLANG_WEB
         parseContext.referenceCheck($2.loc, $1->getType(), "!=");
+#endif
         $$ = parseContext.handleBinaryMath($2.loc, "!=", EOpNotEqual, $1, $3);
         if ($$ == 0)
             $$ = parseContext.intermediate.addConstantUnion(false, $2.loc);
@@ -1103,17 +1103,6 @@ interpolation_qualifier
         $$.init($1.loc);
         $$.qualifier.flat = true;
     }
-    | NOPERSPECTIVE {
-        parseContext.globalCheck($1.loc, "noperspective");
-#ifdef NV_EXTENSIONS
-        parseContext.profileRequires($1.loc, EEsProfile, 0, E_GL_NV_shader_noperspective_interpolation, "noperspective");
-#else
-        parseContext.requireProfile($1.loc, ~EEsProfile, "noperspective");
-#endif
-        parseContext.profileRequires($1.loc, ENoProfile, 130, 0, "noperspective");
-        $$.init($1.loc);
-        $$.qualifier.nopersp = true;
-    }
     ;
 
 layout_qualifier
@@ -1148,15 +1137,6 @@ layout_qualifier_id
     }
     ;
 
-precise_qualifier
-    : PRECISE {
-        parseContext.profileRequires($$.loc, ECoreProfile | ECompatibilityProfile, 400, E_GL_ARB_gpu_shader5, "precise");
-        parseContext.profileRequires($1.loc, EEsProfile, 320, Num_AEP_gpu_shader5, AEP_gpu_shader5, "precise");
-        $$.init($1.loc);
-        $$.qualifier.noContraction = true;
-    }
-    ;
-
 type_qualifier
     : single_type_qualifier {
         $$ = $1;
@@ -1187,10 +1167,6 @@ single_type_qualifier
         $$ = $1;
     }
     | invariant_qualifier {
-        // allow inheritance of storage qualifier from block declaration
-        $$ = $1;
-    }
-    | precise_qualifier {
         // allow inheritance of storage qualifier from block declaration
         $$ = $1;
     }
@@ -1254,17 +1230,6 @@ storage_qualifier
         $$.init($1.loc);
         $$.qualifier.centroid = true;
     }
-    | PATCH {
-        parseContext.globalCheck($1.loc, "patch");
-        parseContext.requireStage($1.loc, (EShLanguageMask)(EShLangTessControlMask | EShLangTessEvaluationMask), "patch");
-        $$.init($1.loc);
-        $$.qualifier.patch = true;
-    }
-    | SAMPLE {
-        parseContext.globalCheck($1.loc, "sample");
-        $$.init($1.loc);
-        $$.qualifier.sample = true;
-    }
     | UNIFORM {
         parseContext.globalCheck($1.loc, "uniform");
         $$.init($1.loc);
@@ -1287,55 +1252,12 @@ storage_qualifier
         $$.init($1.loc);
         $$.qualifier.storage = EvqShared;
     }
-    | COHERENT {
-        $$.init($1.loc);
-        $$.qualifier.coherent = true;
-    }
-    | VOLATILE {
-        $$.init($1.loc);
-        $$.qualifier.volatil = true;
-    }
-    | RESTRICT {
-        $$.init($1.loc);
-        $$.qualifier.restrict = true;
-    }
-    | READONLY {
-        $$.init($1.loc);
-        $$.qualifier.readonly = true;
-    }
-    | WRITEONLY {
-        $$.init($1.loc);
-        $$.qualifier.writeonly = true;
-    }
-    | SUBROUTINE {
-        parseContext.spvRemoved($1.loc, "subroutine");
-        parseContext.globalCheck($1.loc, "subroutine");
-        parseContext.unimplemented($1.loc, "subroutine");
-        $$.init($1.loc);
-    }
-    | SUBROUTINE LEFT_PAREN type_name_list RIGHT_PAREN {
-        parseContext.spvRemoved($1.loc, "subroutine");
-        parseContext.globalCheck($1.loc, "subroutine");
-        parseContext.unimplemented($1.loc, "subroutine");
-        $$.init($1.loc);
-    }
     ;
 
 non_uniform_qualifier
     : NONUNIFORM {
         $$.init($1.loc);
         $$.qualifier.nonUniform = true;
-    }
-    ;
-
-type_name_list
-    : IDENTIFIER {
-        // TODO
-    }
-    | type_name_list COMMA IDENTIFIER {
-        // TODO: 4.0 semantics: subroutines
-        // 1) make sure each identifier is a type declared earlier with SUBROUTINE
-        // 2) save all of the identifiers for future comparison with the declared function
     }
     ;
 
@@ -2357,10 +2279,6 @@ selection_statement
     : selection_statement_nonattributed {
         $$ = $1;
     }
-    | attribute selection_statement_nonattributed {
-        parseContext.handleSelectionAttributes(*$1, $2);
-        $$ = $2;
-    }
 
 selection_statement_nonattributed
     : IF LEFT_PAREN expression RIGHT_PAREN selection_rest_statement {
@@ -2401,10 +2319,6 @@ condition
 switch_statement
     : switch_statement_nonattributed {
         $$ = $1;
-    }
-    | attribute switch_statement_nonattributed {
-        parseContext.handleSwitchAttributes(*$1, $2);
-        $$ = $2;
     }
 
 switch_statement_nonattributed
@@ -2463,10 +2377,6 @@ case_label
 iteration_statement
     : iteration_statement_nonattributed {
         $$ = $1;
-    }
-    | attribute iteration_statement_nonattributed {
-        parseContext.handleLoopAttributes(*$1, $2);
-        $$ = $2;
     }
 
 iteration_statement_nonattributed
@@ -2627,27 +2537,5 @@ function_definition
         $$->getAsAggregate()->setPragmaTable(parseContext.contextPragma.pragmaTable);
     }
     ;
-
-attribute
-    : LEFT_BRACKET LEFT_BRACKET attribute_list RIGHT_BRACKET RIGHT_BRACKET {
-        $$ = $3;
-        parseContext.requireExtensions($1.loc, 1, &E_GL_EXT_control_flow_attributes, "attribute");
-    }
-
-attribute_list
-    : single_attribute {
-        $$ = $1;
-    }
-    | attribute_list COMMA single_attribute {
-        $$ = parseContext.mergeAttributes($1, $3);
-    }
-
-single_attribute
-    : IDENTIFIER {
-        $$ = parseContext.makeAttributes(*$1.string);
-    }
-    | IDENTIFIER LEFT_PAREN constant_expression RIGHT_PAREN {
-        $$ = parseContext.makeAttributes(*$1.string, $3);
-    }
 
 %%

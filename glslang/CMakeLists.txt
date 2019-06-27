@@ -24,7 +24,6 @@ set(SOURCES
     MachineIndependent/ShaderLang.cpp
     MachineIndependent/SymbolTable.cpp
     MachineIndependent/Versions.cpp
-    MachineIndependent/intermOut.cpp
     MachineIndependent/limits.cpp
     MachineIndependent/linkValidate.cpp
     MachineIndependent/parseConst.cpp

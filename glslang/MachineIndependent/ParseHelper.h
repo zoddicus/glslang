@@ -149,10 +149,10 @@ public:
         if (extensionCallback)
             extensionCallback(line, extension, behavior);
     }
-
+#ifndef GLSLANG_WEB
     // Manage the global uniform block (default uniforms in GLSL, $Global in HLSL)
     virtual void growGlobalUniformBlock(const TSourceLoc&, TType&, const TString& memberName, TTypeList* typeList = nullptr);
-
+#endif
     // Potentially rename shader entry point function
     void renameShaderFunction(TString*& name) const
     {
@@ -373,7 +373,9 @@ public:
     void nestedStructCheck(const TSourceLoc&);
     void arrayObjectCheck(const TSourceLoc&, const TType&, const char* op);
     void opaqueCheck(const TSourceLoc&, const TType&, const char* op);
+#ifndef GLSLANG_WEB
     void referenceCheck(const TSourceLoc&, const TType&, const char* op);
+#endif
     void storage16BitAssignmentCheck(const TSourceLoc&, const TType&, const char* op);
     void specializationCheck(const TSourceLoc&, const TType&, const char* op);
     void structTypeCheck(const TSourceLoc&, TPublicType&);
@@ -417,6 +419,7 @@ public:
     void wrapupSwitchSubsequence(TIntermAggregate* statements, TIntermNode* branchNode);
     TIntermNode* addSwitch(const TSourceLoc&, TIntermTyped* expression, TIntermAggregate* body);
 
+#ifndef GLSLANG_WEB
     TAttributeType attributeFromName(const TString& name) const;
     TAttributes* makeAttributes(const TString& identifier) const;
     TAttributes* makeAttributes(const TString& identifier, TIntermNode* node) const;
@@ -428,6 +431,7 @@ public:
 
     // Determine loop control from attributes
     void handleLoopAttributes(const TAttributes& attributes, TIntermNode*);
+#endif
 
     void resizeMeshViewDimension(const TSourceLoc&, TType&);
 

@@ -150,14 +150,12 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
     case EvqConstReadOnly:  message = "can't modify a const";        break;
     case EvqUniform:        message = "can't modify a uniform";      break;
     case EvqBuffer:
+#ifndef GLSLANG_WEB
         if (node->getQualifier().readonly)
             message = "can't modify a readonly buffer";
-#ifdef NV_EXTENSIONS
         if (node->getQualifier().layoutShaderRecordNV)
             message = "can't modify a shaderrecordnv qualified buffer";
-#endif
         break;
-#ifdef NV_EXTENSIONS
     case EvqHitAttrNV:
         if (language != EShLangIntersectNV)
             message = "cannot modify hitAttributeNV in this stage";
@@ -172,17 +170,17 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
         case EbtSampler:
             message = "can't modify a sampler";
             break;
+#ifndef GLSLANG_WEB
         case EbtAtomicUint:
             message = "can't modify an atomic_uint";
             break;
-        case EbtVoid:
-            message = "can't modify void";
-            break;
-#ifdef NV_EXTENSIONS
         case EbtAccStructNV:
             message = "can't modify accelerationStructureNV";
             break;
 #endif
+        case EbtVoid:
+            message = "can't modify void";
+            break;
         default:
             break;
         }
@@ -234,8 +232,10 @@ void TParseContextBase::rValueErrorCheck(const TSourceLoc& loc, const char* op, 
     }
 
     TIntermSymbol* symNode = node->getAsSymbolNode();
+#ifndef GLSLANG_WEB
     if (symNode && symNode->getQualifier().writeonly)
         error(loc, "can't read from writeonly object: ", op, symNode->getName().c_str());
+#endif
 }
 
 // Add 'symbol' to the list of deferred linkage symbols, which
@@ -567,7 +567,7 @@ void TParseContextBase::parseSwizzleSelector(const TSourceLoc& loc, const TStrin
     if (selector.size() == 0)
         selector.push_back(0);
 }
-
+#ifndef GLSLANG_WEB
 //
 // Make the passed-in variable information become a member of the
 // global uniform block.  If this doesn't exist yet, make it.
@@ -612,6 +612,7 @@ void TParseContextBase::growGlobalUniformBlock(const TSourceLoc& loc, TType& mem
 
     ++firstNewMember;
 }
+#endif
 
 void TParseContextBase::finish()
 {

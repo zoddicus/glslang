@@ -189,6 +189,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
                 else
                     newConstArray[i].setDConst((double)NAN);
                 break;
+#ifndef GLSLANG_WEB
             case EbtInt8:
                 if (rightUnionArray[i] == (signed char)0)
                     newConstArray[i].setI8Const((signed char)0x7F);
@@ -220,6 +221,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
                 else
                     newConstArray[i].setU16Const(leftUnionArray[i].getU16Const() / rightUnionArray[i].getU16Const());
                 break;
+#endif
 
             case EbtInt:
                 if (rightUnionArray[i] == 0)
@@ -236,7 +238,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
                 else
                     newConstArray[i].setUConst(leftUnionArray[i].getUConst() / rightUnionArray[i].getUConst());
                 break;
-
+#ifndef GLSLANG_WEB
             case EbtInt64:
                 if (rightUnionArray[i] == 0ll)
                     newConstArray[i].setI64Const(0x7FFFFFFFFFFFFFFFll);
@@ -252,6 +254,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
                 else
                     newConstArray[i].setU64Const(leftUnionArray[i].getU64Const() / rightUnionArray[i].getU64Const());
                 break;
+#endif
             default:
                 return 0;
             }
@@ -529,14 +532,16 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             case EbtDouble:
             case EbtFloat16:
             case EbtFloat: newConstArray[i].setDConst(-unionArray[i].getDConst()); break;
+            case EbtInt:   newConstArray[i].setIConst(-unionArray[i].getIConst()); break;
+            case EbtUint:  newConstArray[i].setUConst(static_cast<unsigned int>(-static_cast<int>(unionArray[i].getUConst())));  break;
+#ifndef GLSLANG_WEB
             case EbtInt8:  newConstArray[i].setI8Const(-unionArray[i].getI8Const()); break;
             case EbtUint8: newConstArray[i].setU8Const(static_cast<unsigned int>(-static_cast<signed int>(unionArray[i].getU8Const())));  break;
             case EbtInt16: newConstArray[i].setI16Const(-unionArray[i].getI16Const()); break;
             case EbtUint16:newConstArray[i].setU16Const(static_cast<unsigned int>(-static_cast<signed int>(unionArray[i].getU16Const())));  break;
-            case EbtInt:   newConstArray[i].setIConst(-unionArray[i].getIConst()); break;
-            case EbtUint:  newConstArray[i].setUConst(static_cast<unsigned int>(-static_cast<int>(unionArray[i].getUConst())));  break;
             case EbtInt64: newConstArray[i].setI64Const(-unionArray[i].getI64Const()); break;
             case EbtUint64: newConstArray[i].setU64Const(static_cast<unsigned long long>(-static_cast<long long>(unionArray[i].getU64Const())));  break;
+#endif
             default:
                 return 0;
             }
@@ -671,6 +676,32 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             break;
         }
 
+        case EOpConvIntToBool:
+            newConstArray[i].setBConst(unionArray[i].getIConst() != 0); break;
+        case EOpConvIntToFloat:
+            newConstArray[i].setDConst(unionArray[i].getIConst()); break;
+        case EOpConvIntToUint:
+            newConstArray[i].setUConst(unionArray[i].getIConst()); break;
+        case EOpConvUintToFloat:
+            newConstArray[i].setDConst(unionArray[i].getUConst()); break;
+        case EOpConvUintToBool:
+            newConstArray[i].setBConst(unionArray[i].getUConst() != 0); break;
+        case EOpConvUintToInt:
+            newConstArray[i].setIConst(unionArray[i].getUConst()); break;
+        case EOpConvFloatToBool:
+            newConstArray[i].setBConst(unionArray[i].getDConst() != 0); break;
+        case EOpConvFloatToInt:
+            newConstArray[i].setIConst(static_cast<int>(unionArray[i].getDConst())); break;
+        case EOpConvFloatToUint:
+            newConstArray[i].setUConst(static_cast<unsigned int>(unionArray[i].getDConst())); break;
+        case EOpConvBoolToInt:
+            newConstArray[i].setIConst(unionArray[i].getBConst()); break;
+        case EOpConvBoolToUint:
+            newConstArray[i].setUConst(unionArray[i].getBConst()); break;
+        case EOpConvBoolToFloat:
+            newConstArray[i].setDConst(unionArray[i].getBConst()); break;
+
+#ifndef GLSLANG_WEB
         case EOpConvInt8ToBool:
             newConstArray[i].setBConst(unionArray[i].getI8Const() != 0); break;
         case EOpConvUint8ToBool:
@@ -679,17 +710,11 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             newConstArray[i].setBConst(unionArray[i].getI16Const() != 0); break;
         case EOpConvUint16ToBool:
             newConstArray[i].setBConst(unionArray[i].getU16Const() != 0); break;
-        case EOpConvIntToBool:
-            newConstArray[i].setBConst(unionArray[i].getIConst() != 0); break;
-        case EOpConvUintToBool:
-            newConstArray[i].setBConst(unionArray[i].getUConst() != 0); break;
         case EOpConvInt64ToBool:
             newConstArray[i].setBConst(unionArray[i].getI64Const() != 0); break;
         case EOpConvUint64ToBool:
             newConstArray[i].setBConst(unionArray[i].getI64Const() != 0); break;
         case EOpConvFloat16ToBool:
-            newConstArray[i].setBConst(unionArray[i].getDConst() != 0); break;
-        case EOpConvFloatToBool:
             newConstArray[i].setBConst(unionArray[i].getDConst() != 0); break;
         case EOpConvDoubleToBool:
             newConstArray[i].setBConst(unionArray[i].getDConst() != 0); break;
@@ -702,17 +727,11 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             newConstArray[i].setI16Const(unionArray[i].getBConst()); break;
         case EOpConvBoolToUint16:
             newConstArray[i].setU16Const(unionArray[i].getBConst()); break;
-        case EOpConvBoolToInt:
-            newConstArray[i].setIConst(unionArray[i].getBConst()); break;
-        case EOpConvBoolToUint:
-            newConstArray[i].setUConst(unionArray[i].getBConst()); break;
         case EOpConvBoolToInt64:
             newConstArray[i].setI64Const(unionArray[i].getBConst()); break;
         case EOpConvBoolToUint64:
             newConstArray[i].setU64Const(unionArray[i].getBConst()); break;
         case EOpConvBoolToFloat16:
-            newConstArray[i].setDConst(unionArray[i].getBConst()); break;
-        case EOpConvBoolToFloat:
             newConstArray[i].setDConst(unionArray[i].getBConst()); break;
         case EOpConvBoolToDouble:
             newConstArray[i].setDConst(unionArray[i].getBConst()); break;
@@ -810,8 +829,6 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             newConstArray[i].setU8Const((unsigned char)unionArray[i].getIConst()); break;
         case EOpConvIntToUint16:
             newConstArray[i].setU16Const((unsigned char)unionArray[i].getIConst()); break;
-        case EOpConvIntToUint:
-            newConstArray[i].setUConst(unionArray[i].getIConst()); break;
         case EOpConvIntToUint64:
             newConstArray[i].setU64Const(unionArray[i].getIConst()); break;
 
@@ -819,8 +836,6 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             newConstArray[i].setI8Const((signed char)unionArray[i].getUConst()); break;
         case EOpConvUintToInt16:
             newConstArray[i].setI16Const((signed short)unionArray[i].getUConst()); break;
-        case EOpConvUintToInt:
-            newConstArray[i].setIConst(unionArray[i].getUConst()); break;
         case EOpConvUintToInt64:
             newConstArray[i].setI64Const(unionArray[i].getUConst()); break;
         case EOpConvUintToUint8:
@@ -831,13 +846,9 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             newConstArray[i].setU64Const(unionArray[i].getUConst()); break;
         case EOpConvIntToFloat16:
             newConstArray[i].setDConst(unionArray[i].getIConst()); break;
-        case EOpConvIntToFloat:
-            newConstArray[i].setDConst(unionArray[i].getIConst()); break;
         case EOpConvIntToDouble:
             newConstArray[i].setDConst(unionArray[i].getIConst()); break;
         case EOpConvUintToFloat16:
-            newConstArray[i].setDConst(unionArray[i].getUConst()); break;
-        case EOpConvUintToFloat:
             newConstArray[i].setDConst(unionArray[i].getUConst()); break;
         case EOpConvUintToDouble:
             newConstArray[i].setDConst(unionArray[i].getUConst()); break;
@@ -905,16 +916,12 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
             newConstArray[i].setI8Const(static_cast<signed char>(unionArray[i].getDConst())); break;
         case EOpConvFloatToInt16:
             newConstArray[i].setI16Const(static_cast<signed short>(unionArray[i].getDConst())); break;
-        case EOpConvFloatToInt:
-            newConstArray[i].setIConst(static_cast<int>(unionArray[i].getDConst())); break;
         case EOpConvFloatToInt64:
             newConstArray[i].setI64Const(static_cast<long long>(unionArray[i].getDConst())); break;
         case EOpConvFloatToUint8:
             newConstArray[i].setU8Const(static_cast<unsigned char>(unionArray[i].getDConst())); break;
         case EOpConvFloatToUint16:
             newConstArray[i].setU16Const(static_cast<unsigned short>(unionArray[i].getDConst())); break;
-        case EOpConvFloatToUint:
-            newConstArray[i].setUConst(static_cast<unsigned int>(unionArray[i].getDConst())); break;
         case EOpConvFloatToUint64:
             newConstArray[i].setU64Const(static_cast<unsigned long long>(unionArray[i].getDConst())); break;
         case EOpConvFloatToFloat16:
@@ -945,7 +952,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
         case EOpConvUint64ToPtr:
         case EOpConstructReference:
             newConstArray[i].setU64Const(unionArray[i].getU64Const()); break;
-
+#endif
 
 
         // TODO: 3.0 Functionality: unary constant folding: the rest of the ops have to be fleshed out
@@ -1078,6 +1085,13 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                 case EbtDouble:
                     newConstArray[comp].setDConst(std::min(childConstUnions[0][arg0comp].getDConst(), childConstUnions[1][arg1comp].getDConst()));
                     break;
+                case EbtInt:
+                    newConstArray[comp].setIConst(std::min(childConstUnions[0][arg0comp].getIConst(), childConstUnions[1][arg1comp].getIConst()));
+                    break;
+                case EbtUint:
+                    newConstArray[comp].setUConst(std::min(childConstUnions[0][arg0comp].getUConst(), childConstUnions[1][arg1comp].getUConst()));
+                    break;
+#ifndef GLSLANG_WEB
                 case EbtInt8:
                     newConstArray[comp].setI8Const(std::min(childConstUnions[0][arg0comp].getI8Const(), childConstUnions[1][arg1comp].getI8Const()));
                     break;
@@ -1090,18 +1104,13 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                 case EbtUint16:
                     newConstArray[comp].setU16Const(std::min(childConstUnions[0][arg0comp].getU16Const(), childConstUnions[1][arg1comp].getU16Const()));
                     break;
-                case EbtInt:
-                    newConstArray[comp].setIConst(std::min(childConstUnions[0][arg0comp].getIConst(), childConstUnions[1][arg1comp].getIConst()));
-                    break;
-                case EbtUint:
-                    newConstArray[comp].setUConst(std::min(childConstUnions[0][arg0comp].getUConst(), childConstUnions[1][arg1comp].getUConst()));
-                    break;
                 case EbtInt64:
                     newConstArray[comp].setI64Const(std::min(childConstUnions[0][arg0comp].getI64Const(), childConstUnions[1][arg1comp].getI64Const()));
                     break;
                 case EbtUint64:
                     newConstArray[comp].setU64Const(std::min(childConstUnions[0][arg0comp].getU64Const(), childConstUnions[1][arg1comp].getU64Const()));
                     break;
+#endif
                 default: assert(false && "Default missing");
                 }
                 break;
@@ -1112,6 +1121,13 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                 case EbtDouble:
                     newConstArray[comp].setDConst(std::max(childConstUnions[0][arg0comp].getDConst(), childConstUnions[1][arg1comp].getDConst()));
                     break;
+                case EbtInt:
+                    newConstArray[comp].setIConst(std::max(childConstUnions[0][arg0comp].getIConst(), childConstUnions[1][arg1comp].getIConst()));
+                    break;
+                case EbtUint:
+                    newConstArray[comp].setUConst(std::max(childConstUnions[0][arg0comp].getUConst(), childConstUnions[1][arg1comp].getUConst()));
+                    break;
+#ifndef GLSLANG_WEB
                 case EbtInt8:
                     newConstArray[comp].setI8Const(std::max(childConstUnions[0][arg0comp].getI8Const(), childConstUnions[1][arg1comp].getI8Const()));
                     break;
@@ -1124,18 +1140,13 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                 case EbtUint16:
                     newConstArray[comp].setU16Const(std::max(childConstUnions[0][arg0comp].getU16Const(), childConstUnions[1][arg1comp].getU16Const()));
                     break;
-                case EbtInt:
-                    newConstArray[comp].setIConst(std::max(childConstUnions[0][arg0comp].getIConst(), childConstUnions[1][arg1comp].getIConst()));
-                    break;
-                case EbtUint:
-                    newConstArray[comp].setUConst(std::max(childConstUnions[0][arg0comp].getUConst(), childConstUnions[1][arg1comp].getUConst()));
-                    break;
                 case EbtInt64:
                     newConstArray[comp].setI64Const(std::max(childConstUnions[0][arg0comp].getI64Const(), childConstUnions[1][arg1comp].getI64Const()));
                     break;
                 case EbtUint64:
                     newConstArray[comp].setU64Const(std::max(childConstUnions[0][arg0comp].getU64Const(), childConstUnions[1][arg1comp].getU64Const()));
                     break;
+#endif
                 default: assert(false && "Default missing");
                 }
                 break;
@@ -1147,6 +1158,7 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                     newConstArray[comp].setDConst(std::min(std::max(childConstUnions[0][arg0comp].getDConst(), childConstUnions[1][arg1comp].getDConst()),
                                                                                                                childConstUnions[2][arg2comp].getDConst()));
                     break;
+#ifndef GLSLANG_WEB
                 case EbtInt8:
                     newConstArray[comp].setI8Const(std::min(std::max(childConstUnions[0][arg0comp].getI8Const(), childConstUnions[1][arg1comp].getI8Const()),
                                                                                                                    childConstUnions[2][arg2comp].getI8Const()));
@@ -1163,6 +1175,7 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                     newConstArray[comp].setU16Const(std::min(std::max(childConstUnions[0][arg0comp].getU16Const(), childConstUnions[1][arg1comp].getU16Const()),
                                                                                                                    childConstUnions[2][arg2comp].getU16Const()));
                     break;
+#endif
                 case EbtInt:
                     newConstArray[comp].setIConst(std::min(std::max(childConstUnions[0][arg0comp].getIConst(), childConstUnions[1][arg1comp].getIConst()),
                                                                                                                    childConstUnions[2][arg2comp].getIConst()));
@@ -1171,6 +1184,7 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                     newConstArray[comp].setUConst(std::min(std::max(childConstUnions[0][arg0comp].getUConst(), childConstUnions[1][arg1comp].getUConst()),
                                                                                                                    childConstUnions[2][arg2comp].getUConst()));
                     break;
+#ifndef GLSLANG_WEB
                 case EbtInt64:
                     newConstArray[comp].setI64Const(std::min(std::max(childConstUnions[0][arg0comp].getI64Const(), childConstUnions[1][arg1comp].getI64Const()),
                                                                                                                        childConstUnions[2][arg2comp].getI64Const()));
@@ -1179,6 +1193,7 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                     newConstArray[comp].setU64Const(std::min(std::max(childConstUnions[0][arg0comp].getU64Const(), childConstUnions[1][arg1comp].getU64Const()),
                                                                                                                        childConstUnions[2][arg2comp].getU64Const()));
                     break;
+#endif
                 default: assert(false && "Default missing");
                 }
                 break;

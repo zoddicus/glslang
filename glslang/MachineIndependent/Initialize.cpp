@@ -9396,8 +9396,10 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
         symbolTable.relateToOperator("EmitVertex",         EOpEmitVertex);
         symbolTable.relateToOperator("EndPrimitive",       EOpEndPrimitive);
         break;
+#endif
 
     case EShLangFragment:
+#ifndef GLSLANG_WEB
         if (profile != EEsProfile && version >= 400) {
             symbolTable.relateToOperator("dFdxFine",     EOpDPdxFine);
             symbolTable.relateToOperator("dFdyFine",     EOpDPdyFine);
@@ -9415,8 +9417,9 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
 
         symbolTable.relateToOperator("beginInvocationInterlockARB", EOpBeginInvocationInterlock);
         symbolTable.relateToOperator("endInvocationInterlockARB",   EOpEndInvocationInterlock);
-        break;
 #endif
+        break;
+
 
     case EShLangCompute:
 #ifdef ES31

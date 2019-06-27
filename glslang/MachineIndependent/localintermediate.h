@@ -282,7 +282,6 @@ public:
     void setLimits(const TBuiltInResource& r) { resources = r; }
 
     bool postProcess(TIntermNode*, EShLanguage);
-    void output(TInfoSink&, bool tree);
     void removeTree();
 
     void setSource(EShSource s) { source = s; }

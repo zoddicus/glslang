@@ -62,14 +62,13 @@ enum TBasicType {
     EbtStruct,
     EbtBlock,
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     EbtAccStructNV,
-#endif
-
     EbtReference,
 
     // HLSL types that live only temporarily.
     EbtString,
+#endif
 
     EbtNumTypes
 };

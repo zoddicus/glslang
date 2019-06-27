@@ -325,6 +325,7 @@ bool InitializeSymbolTables(TInfoSink& infoSink, TSymbolTable** commonTable,  TS
     InitializeStageSymbolTable(*builtInParseables, version, profile, spvVersion, EShLangFragment, source,
                                infoSink, commonTable, symbolTables);
 
+#ifndef GLSLANG_WEB
     // check for tessellation
     if ((profile != EEsProfile && version >= 150) ||
         (profile == EEsProfile && version >= 310)) {
@@ -346,7 +347,6 @@ bool InitializeSymbolTables(TInfoSink& infoSink, TSymbolTable** commonTable,  TS
         InitializeStageSymbolTable(*builtInParseables, version, profile, spvVersion, EShLangCompute, source,
                                    infoSink, commonTable, symbolTables);
 
-#ifdef NV_EXTENSIONS
     // check for ray tracing stages
     if (profile != EEsProfile && version >= 450) {
         InitializeStageSymbolTable(*builtInParseables, version, profile, spvVersion, EShLangRayGenNV, source,
@@ -1191,9 +1191,6 @@ struct DoFullParse{
             parseContext.infoSink.info << parseContext.getNumErrors() << " compilation errors.  No code generated.\n\n";
         }
 
-        if (messages & EShMsgAST)
-            intermediate.output(parseContext.infoSink, true);
-
         return success;
     }
 };
@@ -1959,9 +1956,6 @@ bool TProgram::linkStage(EShLanguage stage, EShMessages messages)
     }
 
     intermediate[stage]->finalCheck(*infoSink, (messages & EShMsgKeepUncalled) != 0);
-
-    if (messages & EShMsgAST)
-        intermediate[stage]->output(*infoSink, true);
 
     return intermediate[stage]->getNumErrors() == 0;
 }

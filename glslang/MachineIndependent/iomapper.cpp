@@ -494,14 +494,16 @@ struct TDefaultIoResolverBase : public glslang::TIoMapResolver
         // work with mixed location/no-location declarations.
         int location = nextLocation;
         int typeLocationSize;
+#ifndef GLSLANG_WEB
         // Don’t take into account the outer-most array if the stage’s
         // interface is automatically an array.
         if (type.getQualifier().isArrayedIo(stage)) {
-                TType elementType(type, 0);
-                typeLocationSize = TIntermediate::computeTypeLocationSize(elementType, stage);
-        } else {
-                typeLocationSize = TIntermediate::computeTypeLocationSize(type, stage);
-        }
+            TType elementType(type, 0);
+            typeLocationSize = TIntermediate::computeTypeLocationSize(elementType, stage);
+        } else
+#endif
+            typeLocationSize = TIntermediate::computeTypeLocationSize(type, stage);
+
         nextLocation += typeLocationSize;
 
         return location;
@@ -734,8 +736,10 @@ protected:
 
     // Return true if this is a UAV (unordered access view) type:
     static bool isUavType(const glslang::TType& type) {
+#ifndef GLSLANG_WEB
         if (type.getQualifier().readonly)
             return false;
+#endif
 
         return (type.getBasicType() == glslang::EbtSampler && type.getSampler().isImage()) ||
             (type.getQualifier().storage == EvqBuffer);

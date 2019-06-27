@@ -34,6 +34,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#ifndef GLSLANG_WEB
+
 #include "attribute.h"
 #include "../Include/intermediate.h"
 #include "ParseHelper.h"
@@ -341,3 +343,5 @@ void TParseContext::handleLoopAttributes(const TAttributes& attributes, TIntermN
 
 
 } // end namespace glslang
+
+#endif

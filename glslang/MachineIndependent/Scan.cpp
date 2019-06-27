@@ -1636,9 +1636,13 @@ int TScanContext::identifierOrType()
     parserToken->sType.lex.symbol = parseContext.symbolTable.find(*parserToken->sType.lex.string);
     if ((afterType == false && afterStruct == false) && parserToken->sType.lex.symbol != nullptr) {
         if (const TVariable* variable = parserToken->sType.lex.symbol->getAsVariable()) {
-            if (variable->isUserType() &&
+            if (variable->isUserType() 
+#ifndef GLSLANG_WEB
+                &&
                 // treat redeclaration of forward-declared buffer/uniform reference as an identifier
-                !(variable->getType().getBasicType() == EbtReference && afterBuffer)) {
+                !(variable->getType().getBasicType() == EbtReference && afterBuffer)
+#endif
+                ) {
                 afterType = true;
 
                 return TYPE_NAME;

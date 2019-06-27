@@ -109,11 +109,13 @@ public:
         type = EbtBool;
     }
 
+#ifndef GLSLANG_WEB
     void setSConst(const TString* s)
     {
         sConst = s;
         type = EbtString;
     }
+#endif
 
     signed char        getI8Const() const  { return i8Const; }
     unsigned char      getU8Const() const  { return u8Const; }

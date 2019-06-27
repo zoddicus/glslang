@@ -502,6 +502,7 @@ void TIntermediate::mergeImplicitArraySizes(TType& type, const TType& unitType)
 //
 void TIntermediate::mergeErrorCheck(TInfoSink& infoSink, const TIntermSymbol& symbol, const TIntermSymbol& unitSymbol, bool crossStage)
 {
+#ifndef GLSLANG_WEB
     bool writeTypeComparison = false;
 
     // Types have to match
@@ -554,13 +555,11 @@ void TIntermediate::mergeErrorCheck(TInfoSink& infoSink, const TIntermSymbol& sy
 
     // Memory...
     if (symbol.getQualifier().coherent          != unitSymbol.getQualifier().coherent ||
-#ifndef GLSLANG_WEB
         symbol.getQualifier().devicecoherent    != unitSymbol.getQualifier().devicecoherent ||
         symbol.getQualifier().queuefamilycoherent  != unitSymbol.getQualifier().queuefamilycoherent ||
         symbol.getQualifier().workgroupcoherent != unitSymbol.getQualifier().workgroupcoherent ||
         symbol.getQualifier().subgroupcoherent  != unitSymbol.getQualifier().subgroupcoherent ||
         symbol.getQualifier().nonprivate        != unitSymbol.getQualifier().nonprivate ||
-#endif
         symbol.getQualifier().volatil           != unitSymbol.getQualifier().volatil ||
         symbol.getQualifier().restrict          != unitSymbol.getQualifier().restrict ||
         symbol.getQualifier().readonly          != unitSymbol.getQualifier().readonly ||
@@ -597,6 +596,7 @@ void TIntermediate::mergeErrorCheck(TInfoSink& infoSink, const TIntermSymbol& sy
     if (writeTypeComparison)
         infoSink.info << "    " << symbol.getName() << ": \"" << symbol.getType().getCompleteString() << "\" versus \"" <<
                                                              unitSymbol.getType().getCompleteString() << "\"\n";
+#endif
 }
 
 //
@@ -1044,11 +1044,13 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
         else
             size = 1;
     } else {
+#ifndef GLSLANG_WEB
         // Strip off the outer array dimension for those having an extra one.
         if (type.isArray() && qualifier.isArrayedIo(language)) {
             TType elementType(type, 0);
             size = computeTypeLocationSize(elementType, language);
         } else
+#endif
             size = computeTypeLocationSize(type, language);
     }
 
@@ -1427,7 +1429,9 @@ const int baseAlignmentVec4Std140 = 16;
 // Return value is the alignment..
 int TIntermediate::getBaseAlignmentScalar(const TType& type, int& size)
 {
+#ifndef GLSLANG_WEB
     switch (type.getBasicType()) {
+
     case EbtInt64:
     case EbtUint64:
     case EbtDouble:  size = 8; return 8;
@@ -1437,8 +1441,12 @@ int TIntermediate::getBaseAlignmentScalar(const TType& type, int& size)
     case EbtInt16:
     case EbtUint16:  size = 2; return 2;
     case EbtReference: size = 8; return 8;
-    default:         size = 4; return 4;
+    default:
+        break;
     }
+#endif
+
+    size = 4; return 4;
 }
 
 // Implement base-alignment and size rules from section 7.6.2.2 Standard Uniform Block Layout
@@ -1743,6 +1751,7 @@ int TIntermediate::getBlockSize(const TType& blockType)
 
 int TIntermediate::computeBufferReferenceTypeSize(const TType& type)
 {
+#ifndef GLSLANG_WEB
     assert(type.getBasicType() == EbtReference);
     int size = getBlockSize(*type.getReferentType());
 
@@ -1753,6 +1762,9 @@ int TIntermediate::computeBufferReferenceTypeSize(const TType& type)
     }
 
     return size;
+#endif
+
+    return 0;
 }
 
 } // end namespace glslang

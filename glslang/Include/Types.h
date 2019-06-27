@@ -470,7 +470,9 @@ public:
     {
         precision = EpqNone;
         invariant = false;
+#ifndef GLSLANG_WEB
         noContraction = false;
+#endif
         makeTemporary();
         declaredBuiltIn = EbvNone;
     }
@@ -491,8 +493,10 @@ public:
     void clearInterstage()
     {
         clearInterpolation();
+#ifndef GLSLANG_WEB
         patch = false;
         sample = false;
+#endif
     }
 
     void clearInterpolation()
@@ -500,8 +504,8 @@ public:
         centroid     = false;
         smooth       = false;
         flat         = false;
-        nopersp      = false;
 #ifndef GLSLANG_WEB
+        nopersp      = false;
         explicitInterp = false;
         pervertexNV = false;
         perPrimitiveNV = false;
@@ -512,18 +516,18 @@ public:
 
     void clearMemory()
     {
-        coherent     = false;
 #ifndef GLSLANG_WEB
+        coherent     = false;
         devicecoherent = false;
         queuefamilycoherent = false;
         workgroupcoherent = false;
         subgroupcoherent  = false;
         nonprivate = false;
-#endif
         volatil      = false;
         restrict     = false;
         readonly     = false;
         writeonly    = false;
+#endif
     }
 
     // Drop just the storage qualification, which perhaps should
@@ -547,43 +551,39 @@ public:
     static_assert(EbvLast < 256, "need to increase size of TBuiltInVariable bitfields!");
     TPrecisionQualifier precision : 3;
     bool invariant    : 1; // require canonical treatment for cross-shader invariance
+#ifndef GLSLANG_WEB
     bool noContraction: 1; // prevent contraction and reassociation, e.g., for 'precise' keyword, and expressions it affects
+#endif
     bool centroid     : 1;
     bool smooth       : 1;
     bool flat         : 1;
-    bool nopersp      : 1;
 #ifndef GLSLANG_WEB
+    bool nopersp      : 1;
     bool explicitInterp : 1;
     bool pervertexNV  : 1;
     bool perPrimitiveNV : 1;
     bool perViewNV : 1;
     bool perTaskNV : 1;
-#endif
     bool patch        : 1;
     bool sample       : 1;
     bool coherent     : 1;
-#ifndef GLSLANG_WEB
     bool devicecoherent : 1;
     bool queuefamilycoherent : 1;
     bool workgroupcoherent : 1;
     bool subgroupcoherent  : 1;
     bool nonprivate   : 1;
-#endif
     bool volatil      : 1;
     bool restrict     : 1;
     bool readonly     : 1;
     bool writeonly    : 1;
+#endif
     bool specConstant : 1;  // having a constant_id is not sufficient: expressions have no id, but are still specConstant
     bool nonUniform   : 1;
 
 #ifdef GLSLANG_WEB
     bool isMemory() const
     {
-        return coherent || volatil || restrict || readonly || writeonly;
-    }
-    bool isMemoryQualifierImageAndSSBOOnly() const
-    {
-        return coherent || volatil || restrict || readonly || writeonly;
+        return false;
     }
 #else
     bool isMemory() const
@@ -605,7 +605,7 @@ public:
 #ifndef GLSLANG_WEB
         return flat || smooth || nopersp || explicitInterp;
 #else
-        return flat || smooth || nopersp;
+        return flat || smooth;
 #endif
     }
 
@@ -621,7 +621,7 @@ public:
 #ifndef GLSLANG_WEB
         return centroid || patch || sample || pervertexNV;
 #else
-        return centroid || patch || sample;
+        return centroid;
 #endif
     }
 
@@ -758,6 +758,7 @@ public:
     // True if this type of IO is supposed to be arrayed with extra level for per-vertex data
     bool isArrayedIo(EShLanguage language) const
     {
+#ifndef GLSLANG_WEB
         switch (language) {
         case EShLangGeometry:
             return isPipeInput();
@@ -765,16 +766,16 @@ public:
             return ! patch && (isPipeInput() || isPipeOutput());
         case EShLangTessEvaluation:
             return ! patch && isPipeInput();
-#ifndef GLSLANG_WEB
         case EShLangFragment:
             return pervertexNV && isPipeInput();
         case EShLangMeshNV:
             return ! perTaskNV && isPipeOutput();
+        default:
+            break;
+        }
 #endif
 
-        default:
-            return false;
-        }
+        return false;
     }
 
     // Implementing an embedded layout-qualifier class here, since C++ can't have a real class bitfield
@@ -783,16 +784,16 @@ public:
         clearUniformLayout();
 
         layoutPushConstant = false;
-        layoutBufferReference = false;
 #ifndef GLSLANG_WEB
+        layoutBufferReference = false;
         layoutPassthrough = false;
         layoutViewportRelative = false;
         // -2048 as the default value indicating layoutSecondaryViewportRelative is not set
         layoutSecondaryViewportRelativeOffset = -2048;
         layoutShaderRecordNV = false;
-#endif
 
         layoutBufferReferenceAlign = layoutBufferReferenceAlignEnd;
+#endif
 
         clearInterstageLayout();
 
@@ -827,9 +828,9 @@ public:
                hasFormat() ||
 #ifndef GLSLANG_WEB
                layoutShaderRecordNV ||
+               layoutBufferReference ||
 #endif
-               layoutPushConstant ||
-               layoutBufferReference;
+               layoutPushConstant;
     }
     bool hasLayout() const
     {
@@ -874,16 +875,18 @@ public:
                  unsigned int layoutSpecConstantId       : 11;
     static const unsigned int layoutSpecConstantIdEnd = 0x7FF;
 
+#ifndef GLSLANG_WEB
     // stored as log2 of the actual alignment value
                  unsigned int layoutBufferReferenceAlign :  6;
     static const unsigned int layoutBufferReferenceAlignEnd = 0x3F;
+#endif
 
     TLayoutFormat layoutFormat                           :  8;
 
     bool layoutPushConstant;
-    bool layoutBufferReference;
 
 #ifndef GLSLANG_WEB
+    bool layoutBufferReference;
     bool layoutPassthrough;
     bool layoutViewportRelative;
     int layoutSecondaryViewportRelativeOffset;
@@ -989,10 +992,12 @@ public:
         // is just whether or not it was declared with an ID.
         return layoutSpecConstantId != layoutSpecConstantIdEnd;
     }
+#ifndef GLSLANG_WEB
     bool hasBufferReferenceAlign() const
     {
         return layoutBufferReferenceAlign != layoutBufferReferenceAlignEnd;
     }
+#endif
     bool isSpecConstant() const
     {
         // True if type is a specialization constant, whether or not it
@@ -1406,20 +1411,25 @@ public:
                                     sampler.clear();
                                 qualifier = p.qualifier;
                                 if (p.userDef) {
+#ifndef GLSLANG_WEB
                                     if (p.userDef->basicType == EbtReference) {
                                         basicType = EbtReference;
                                         referentType = p.userDef->referentType;
-                                    } else {
+                                    } else
+#endif
+                                    {
                                         structure = p.userDef->getWritableStruct();  // public type is short-lived; there are no sharing issues
                                     }
                                     typeName = NewPoolTString(p.userDef->getTypeName().c_str());
                                 }
+#ifndef GLSLANG_WEB
                                 if (p.coopmat && p.basicType == EbtFloat &&
                                     p.typeParameters && p.typeParameters->getNumDims() > 0 &&
                                     p.typeParameters->getDimSize(0) == 16) {
                                     basicType = EbtFloat16;
                                     qualifier.precision = EpqNone;
                                 }
+#endif
                             }
     // for construction of sampler types
     TType(const TSampler& sampler, TStorageQualifier q = EvqUniform, TArraySizes* as = nullptr) :
@@ -1494,7 +1504,9 @@ public:
                             basicType(t), vectorSize(1), matrixCols(0), matrixRows(0), vector1(false),
                             arraySizes(nullptr), structure(nullptr), fieldName(nullptr), typeName(nullptr)
                             {
+#ifndef GLSLANG_WEB
                                 assert(t == EbtReference);
+#endif
                                 typeName = NewPoolTString(n.c_str());
                                 qualifier.clear();
                                 qualifier.storage = p.qualifier.storage;
@@ -1689,18 +1701,20 @@ public:
             switch (t->basicType) {
             case EbtVoid:
             case EbtFloat:
+            case EbtInt:
+            case EbtUint:
+            case EbtBool:
+#ifndef GLSLANG_WEB
+            case EbtInt64:
+            case EbtUint64:
             case EbtDouble:
             case EbtFloat16:
             case EbtInt8:
             case EbtUint8:
             case EbtInt16:
             case EbtUint16:
-            case EbtInt:
-            case EbtUint:
-            case EbtInt64:
-            case EbtUint64:
-            case EbtBool:
             case EbtReference:
+#endif
                 return true;
             default:
                 return false;
@@ -1852,25 +1866,25 @@ public:
         switch (t) {
         case EbtVoid:              return "void";
         case EbtFloat:             return "float";
+        case EbtInt:               return "int";
+        case EbtUint:              return "uint";
+        case EbtBool:              return "bool";
+        case EbtSampler:           return "sampler/image";
+        case EbtStruct:            return "structure";
+        case EbtBlock:             return "block";
+#ifndef GLSLANG_WEB
+        case EbtAtomicUint:        return "atomic_uint";
         case EbtDouble:            return "double";
         case EbtFloat16:           return "float16_t";
         case EbtInt8:              return "int8_t";
         case EbtUint8:             return "uint8_t";
         case EbtInt16:             return "int16_t";
         case EbtUint16:            return "uint16_t";
-        case EbtInt:               return "int";
-        case EbtUint:              return "uint";
         case EbtInt64:             return "int64_t";
         case EbtUint64:            return "uint64_t";
-        case EbtBool:              return "bool";
-        case EbtAtomicUint:        return "atomic_uint";
-        case EbtSampler:           return "sampler/image";
-        case EbtStruct:            return "structure";
-        case EbtBlock:             return "block";
-#ifndef GLSLANG_WEB
         case EbtAccStructNV:       return "accelerationStructureNV";
-#endif
         case EbtReference:         return "reference";
+#endif
         default:                   return "unknown type";
         }
     }
@@ -1956,14 +1970,13 @@ public:
                 }
                 if (qualifier.layoutPushConstant)
                     appendStr(" push_constant");
+#ifndef GLSLANG_WEB
                 if (qualifier.layoutBufferReference)
                     appendStr(" buffer_reference");
                 if (qualifier.hasBufferReferenceAlign()) {
                     appendStr(" buffer_reference_align=");
                     appendUint(1u << qualifier.layoutBufferReferenceAlign);
                 }
-
-#ifndef GLSLANG_WEB
                 if (qualifier.layoutPassthrough)
                     appendStr(" passthrough");
                 if (qualifier.layoutViewportRelative)
@@ -1982,21 +1995,19 @@ public:
 
         if (qualifier.invariant)
             appendStr(" invariant");
-        if (qualifier.noContraction)
-            appendStr(" noContraction");
         if (qualifier.centroid)
             appendStr(" centroid");
         if (qualifier.smooth)
             appendStr(" smooth");
         if (qualifier.flat)
             appendStr(" flat");
+#ifndef GLSLANG_WEB
+        if (qualifier.noContraction)
+            appendStr(" noContraction");
         if (qualifier.nopersp)
             appendStr(" noperspective");
-#ifndef GLSLANG_WEB
         if (qualifier.explicitInterp)
             appendStr(" __explicitInterpAMD");
-#endif
-#ifndef GLSLANG_WEB
         if (qualifier.pervertexNV)
             appendStr(" pervertexNV");
         if (qualifier.perPrimitiveNV)
@@ -2005,14 +2016,12 @@ public:
             appendStr(" perviewNV");
         if (qualifier.perTaskNV)
             appendStr(" taskNV");
-#endif
         if (qualifier.patch)
             appendStr(" patch");
         if (qualifier.sample)
             appendStr(" sample");
         if (qualifier.coherent)
             appendStr(" coherent");
-#ifndef GLSLANG_WEB
         if (qualifier.devicecoherent)
             appendStr(" devicecoherent");
         if (qualifier.queuefamilycoherent)
@@ -2023,7 +2032,6 @@ public:
             appendStr(" subgroupcoherent");
         if (qualifier.nonprivate)
             appendStr(" nonprivate");
-#endif
         if (qualifier.volatil)
             appendStr(" volatile");
         if (qualifier.restrict)
@@ -2032,6 +2040,7 @@ public:
             appendStr(" readonly");
         if (qualifier.writeonly)
             appendStr(" writeonly");
+#endif
         if (qualifier.specConstant)
             appendStr(" specialization-constant");
         if (qualifier.nonUniform)
@@ -2188,6 +2197,7 @@ public:
 
     bool sameReferenceType(const TType& right) const
     {
+#ifndef GLSLANG_WEB
         if ((basicType == EbtReference) != (right.basicType == EbtReference))
             return false;
 
@@ -2201,6 +2211,8 @@ public:
             return true;
 
         return *referentType == *right.referentType;
+#endif
+        return false;
     }
 
     // See if two types match, in all aspects except arrayness
@@ -2239,8 +2251,11 @@ public:
                matrixRows == right.matrixRows &&
                   vector1 == right.vector1    &&
                   coopmat == right.coopmat    &&
-               sameStructType(right)          &&
-               sameReferenceType(right);
+               sameStructType(right)
+#ifndef GLSLANG_WEB
+               && sameReferenceType(right)
+#endif
+               ;
     }
 
     // See if a cooperative matrix type parameter with unspecified parameters is
@@ -2264,12 +2279,14 @@ public:
 
     unsigned int getBufferReferenceAlignment() const
     {
+#ifndef GLSLANG_WEB
         if (getBasicType() == glslang::EbtReference) {
             return getReferentType()->getQualifier().hasBufferReferenceAlign() ?
                         (1u << getReferentType()->getQualifier().layoutBufferReferenceAlign) : 16u;
-        } else {
-            return 0;
         }
+#endif
+
+        return 0;
     }
 
 protected:

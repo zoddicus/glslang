@@ -458,7 +458,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 71 "MachineIndependent/glslang.y" /* yacc.c:1909  */
+#line 70 "MachineIndependent/glslang.y" /* yacc.c:1909  */
 
     struct {
         glslang::TSourceLoc loc;
@@ -480,7 +480,6 @@ union YYSTYPE
             TIntermNode* intermNode;
             glslang::TIntermNodePair nodePair;
             glslang::TIntermTyped* intermTypedNode;
-            glslang::TAttributes* attributes;
         };
         union {
             glslang::TPublicType type;
@@ -494,7 +493,7 @@ union YYSTYPE
         glslang::TArraySizes* typeParameters;
     } interm;
 
-#line 498 "MachineIndependent/glslang_tab.cpp.h" /* yacc.c:1909  */
+#line 497 "MachineIndependent/glslang_tab.cpp.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

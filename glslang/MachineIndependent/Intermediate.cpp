@@ -43,7 +43,9 @@
 #include "localintermediate.h"
 #include "RemoveTree.h"
 #include "SymbolTable.h"
+#ifndef GLSLANG_WEB
 #include "propagateNoContraction.h"
+#endif
 
 #include <cfloat>
 #include <utility>
@@ -119,6 +121,7 @@ TIntermTyped* TIntermediate::addBinaryMath(TOperator op, TIntermTyped* left, TIn
     if (left->getType().getBasicType() == EbtBlock || right->getType().getBasicType() == EbtBlock)
         return nullptr;
 
+#ifndef GLSLANG_WEB
     // Convert "reference +/- int" and "reference - reference" to integer math
     if ((op == EOpAdd || op == EOpSub) && extensionRequested(E_GL_EXT_buffer_reference2)) {
 
@@ -174,6 +177,7 @@ TIntermTyped* TIntermediate::addBinaryMath(TOperator op, TIntermTyped* left, TIn
             return nullptr;
         }
     }
+#endif
 
     // Try converting the children's base types to compatible types.
     auto children = addConversion(op, left, right);
@@ -287,6 +291,7 @@ TIntermTyped* TIntermediate::addAssign(TOperator op, TIntermTyped* left, TInterm
     if (left->getType().getBasicType() == EbtBlock || right->getType().getBasicType() == EbtBlock)
         return nullptr;
 
+#ifndef GLSLANG_WEB
     // Convert "reference += int" to "reference = reference + int". We need this because the
     // "reference + int" calculation involves a cast back to the original type, which makes it
     // not an lvalue.
@@ -306,6 +311,7 @@ TIntermTyped* TIntermediate::addAssign(TOperator op, TIntermTyped* left, TInterm
         node = addAssign(EOpAssign, left, node, loc);
         return node;
     }
+#endif
 
     //
     // Like adding binary math, except the conversion can only go
@@ -383,18 +389,20 @@ TIntermTyped* TIntermediate::addUnaryMath(TOperator op, TIntermTyped* child, TSo
     //
     TBasicType newType = EbtVoid;
     switch (op) {
+    case EOpConstructBool:   newType = EbtBool;   break;
+    case EOpConstructFloat:  newType = EbtFloat;  break;
+    case EOpConstructInt:    newType = EbtInt;    break;
+    case EOpConstructUint:   newType = EbtUint;   break;
+#ifndef GLSLANG_WEB
     case EOpConstructInt8:   newType = EbtInt8;   break;
     case EOpConstructUint8:  newType = EbtUint8;  break;
     case EOpConstructInt16:  newType = EbtInt16;    break;
     case EOpConstructUint16: newType = EbtUint16;   break;
-    case EOpConstructInt:    newType = EbtInt;    break;
-    case EOpConstructUint:   newType = EbtUint;   break;
     case EOpConstructInt64:  newType = EbtInt64;  break;
     case EOpConstructUint64: newType = EbtUint64; break;
-    case EOpConstructBool:   newType = EbtBool;   break;
-    case EOpConstructFloat:  newType = EbtFloat;  break;
     case EOpConstructDouble: newType = EbtDouble; break;
     case EOpConstructFloat16: newType = EbtFloat16; break;
+#endif
     default: break; // some compilers want this
     }
 
@@ -629,38 +637,43 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     switch (convertTo) {
     case EbtDouble:
         switch (node->getBasicType()) {
+        case EbtUint:    newOp = EOpConvUintToDouble;    break;
+        case EbtBool:    newOp = EOpConvBoolToDouble;    break;
+        case EbtFloat:   newOp = EOpConvFloatToDouble;   break;
+#ifndef GLSLANG_WEB
+        case EbtInt:     newOp = EOpConvIntToDouble;     break;
         case EbtInt8:    newOp = EOpConvInt8ToDouble;    break;
         case EbtUint8:   newOp = EOpConvUint8ToDouble;   break;
         case EbtInt16:   newOp = EOpConvInt16ToDouble;   break;
         case EbtUint16:  newOp = EOpConvUint16ToDouble;  break;
-        case EbtInt:     newOp = EOpConvIntToDouble;     break;
-        case EbtUint:    newOp = EOpConvUintToDouble;    break;
-        case EbtBool:    newOp = EOpConvBoolToDouble;    break;
-        case EbtFloat:   newOp = EOpConvFloatToDouble;   break;
         case EbtFloat16: newOp = EOpConvFloat16ToDouble; break;
         case EbtInt64:   newOp = EOpConvInt64ToDouble;   break;
         case EbtUint64:  newOp = EOpConvUint64ToDouble;  break;
+#endif
         default:
             return nullptr;
         }
         break;
     case EbtFloat:
         switch (node->getBasicType()) {
+        case EbtInt:     newOp = EOpConvIntToFloat;     break;
+        case EbtUint:    newOp = EOpConvUintToFloat;    break;
+        case EbtBool:    newOp = EOpConvBoolToFloat;    break;
+#ifndef GLSLANG_WEB
+        case EbtDouble:  newOp = EOpConvDoubleToFloat;  break;
         case EbtInt8:    newOp = EOpConvInt8ToFloat;    break;
         case EbtUint8:   newOp = EOpConvUint8ToFloat;   break;
         case EbtInt16:   newOp = EOpConvInt16ToFloat;   break;
         case EbtUint16:  newOp = EOpConvUint16ToFloat;  break;
-        case EbtInt:     newOp = EOpConvIntToFloat;     break;
-        case EbtUint:    newOp = EOpConvUintToFloat;    break;
-        case EbtBool:    newOp = EOpConvBoolToFloat;    break;
-        case EbtDouble:  newOp = EOpConvDoubleToFloat;  break;
         case EbtFloat16: newOp = EOpConvFloat16ToFloat; break;
         case EbtInt64:   newOp = EOpConvInt64ToFloat;   break;
         case EbtUint64:  newOp = EOpConvUint64ToFloat;  break;
+#endif
         default:
             return nullptr;
         }
         break;
+#ifndef GLSLANG_WEB
     case EbtFloat16:
         switch (node->getBasicType()) {
         case EbtInt8:   newOp = EOpConvInt8ToFloat16;   break;
@@ -678,23 +691,27 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
             return nullptr;
         }
         break;
+#endif
     case EbtBool:
         switch (node->getBasicType()) {
-        case EbtInt8:    newOp = EOpConvInt8ToBool;    break;
-        case EbtUint8:   newOp = EOpConvUint8ToBool;   break;
-        case EbtInt16:   newOp = EOpConvInt16ToBool;   break;
-        case EbtUint16:  newOp = EOpConvUint16ToBool;  break;
         case EbtInt:     newOp = EOpConvIntToBool;     break;
         case EbtUint:    newOp = EOpConvUintToBool;    break;
         case EbtFloat:   newOp = EOpConvFloatToBool;   break;
         case EbtDouble:  newOp = EOpConvDoubleToBool;  break;
+#ifndef GLSLANG_WEB
+        case EbtInt8:    newOp = EOpConvInt8ToBool;    break;
+        case EbtUint8:   newOp = EOpConvUint8ToBool;   break;
+        case EbtInt16:   newOp = EOpConvInt16ToBool;   break;
+        case EbtUint16:  newOp = EOpConvUint16ToBool;  break;
         case EbtFloat16: newOp = EOpConvFloat16ToBool; break;
         case EbtInt64:   newOp = EOpConvInt64ToBool;   break;
         case EbtUint64:  newOp = EOpConvUint64ToBool;  break;
+#endif
         default:
             return nullptr;
         }
         break;
+#ifndef GLSLANG_WEB
     case EbtInt8:
         switch (node->getBasicType()) {
         case EbtUint8:   newOp = EOpConvUint8ToInt8;   break;
@@ -764,41 +781,47 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
             return nullptr;
         }
         break;
+#endif
 
     case EbtInt:
         switch (node->getBasicType()) {
+        case EbtUint:    newOp = EOpConvUintToInt;    break;
+        case EbtBool:    newOp = EOpConvBoolToInt;    break;
+        case EbtFloat:   newOp = EOpConvFloatToInt;   break;
+#ifndef GLSLANG_WEB
         case EbtInt8:    newOp = EOpConvInt8ToInt;    break;
         case EbtUint8:   newOp = EOpConvUint8ToInt;   break;
         case EbtInt16:   newOp = EOpConvInt16ToInt;   break;
         case EbtUint16:  newOp = EOpConvUint16ToInt;  break;
-        case EbtUint:    newOp = EOpConvUintToInt;    break;
-        case EbtBool:    newOp = EOpConvBoolToInt;    break;
-        case EbtFloat:   newOp = EOpConvFloatToInt;   break;
         case EbtDouble:  newOp = EOpConvDoubleToInt;  break;
         case EbtFloat16: newOp = EOpConvFloat16ToInt; break;
         case EbtInt64:   newOp = EOpConvInt64ToInt;   break;
         case EbtUint64:  newOp = EOpConvUint64ToInt;  break;
+#endif
         default:
             return nullptr;
         }
         break;
     case EbtUint:
         switch (node->getBasicType()) {
+        case EbtInt:     newOp = EOpConvIntToUint;     break;
+        case EbtBool:    newOp = EOpConvBoolToUint;    break;
+        case EbtFloat:   newOp = EOpConvFloatToUint;   break;
+#ifndef GLSLANG_WEB
         case EbtInt8:    newOp = EOpConvInt8ToUint;    break;
         case EbtUint8:   newOp = EOpConvUint8ToUint;   break;
         case EbtInt16:   newOp = EOpConvInt16ToUint;   break;
         case EbtUint16:  newOp = EOpConvUint16ToUint;  break;
-        case EbtInt:     newOp = EOpConvIntToUint;     break;
-        case EbtBool:    newOp = EOpConvBoolToUint;    break;
-        case EbtFloat:   newOp = EOpConvFloatToUint;   break;
         case EbtDouble:  newOp = EOpConvDoubleToUint;  break;
         case EbtFloat16: newOp = EOpConvFloat16ToUint; break;
         case EbtInt64:   newOp = EOpConvInt64ToUint;   break;
         case EbtUint64:  newOp = EOpConvUint64ToUint;  break;
+#endif
         default:
             return nullptr;
         }
         break;
+#ifndef GLSLANG_WEB
     case EbtInt64:
         switch (node->getBasicType()) {
         case EbtInt8:    newOp = EOpConvInt8ToInt64;    break;
@@ -833,6 +856,7 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
             return nullptr;
         }
         break;
+#endif
     default:
         return nullptr;
     }
@@ -1039,6 +1063,13 @@ TIntermTyped* TIntermediate::addConversion(TOperator op, const TType& type, TInt
     case EOpConstructFloat:
         promoteTo = EbtFloat;
         break;
+    case EOpConstructInt:
+        promoteTo = EbtInt;
+        break;
+    case EOpConstructUint:
+        promoteTo = EbtUint;
+        break;
+#ifndef GLSLANG_WEB        
     case EOpConstructDouble:
         promoteTo = EbtDouble;
         break;
@@ -1067,18 +1098,13 @@ TIntermTyped* TIntermediate::addConversion(TOperator op, const TType& type, TInt
         canPromoteConstant = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                              extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16);
         break;
-    case EOpConstructInt:
-        promoteTo = EbtInt;
-        break;
-    case EOpConstructUint:
-        promoteTo = EbtUint;
-        break;
     case EOpConstructInt64:
         promoteTo = EbtInt64;
         break;
     case EOpConstructUint64:
         promoteTo = EbtUint64;
         break;
+#endif
 
     case EOpLogicalNot:
 
@@ -1121,7 +1147,7 @@ TIntermTyped* TIntermediate::addConversion(TOperator op, const TType& type, TInt
     case EOpSequence:
     case EOpConstructStruct:
     case EOpConstructCooperativeMatrix:
-
+#ifndef GLSLANG_WEB
         if (type.getBasicType() == EbtReference || node->getType().getBasicType() == EbtReference) {
             // types must match to assign a reference
             if (type == node->getType())
@@ -1129,6 +1155,7 @@ TIntermTyped* TIntermediate::addConversion(TOperator op, const TType& type, TInt
             else
                 return nullptr;
         }
+#endif
 
         if (type.getBasicType() == node->getType().getBasicType())
             return node;
@@ -1673,6 +1700,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
         }
     } else {
         switch (to) {
+#ifndef GLSLANG_WEB
         case EbtDouble:
             switch (from) {
             case EbtInt:
@@ -1682,16 +1710,15 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtFloat:
             case EbtDouble:
                 return true;
-#ifdef AMD_EXTENSIONS
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
             case EbtFloat16:
                 return extensionRequested(E_GL_AMD_gpu_shader_half_float);
-#endif
             default:
                 return false;
            }
+#endif
         case EbtFloat:
             switch (from) {
             case EbtInt:
@@ -2035,6 +2062,121 @@ TOperator TIntermediate::mapTypeToConstructorOp(const TType& type) const
             }
         }
         break;
+    case EbtInt:
+        if (type.getMatrixCols()) {
+            switch (type.getMatrixCols()) {
+            case 2:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructIMat2x2; break;
+                case 3: op = EOpConstructIMat2x3; break;
+                case 4: op = EOpConstructIMat2x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            case 3:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructIMat3x2; break;
+                case 3: op = EOpConstructIMat3x3; break;
+                case 4: op = EOpConstructIMat3x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            case 4:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructIMat4x2; break;
+                case 3: op = EOpConstructIMat4x3; break;
+                case 4: op = EOpConstructIMat4x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            }
+        } else {
+            switch(type.getVectorSize()) {
+            case 1: op = EOpConstructInt;   break;
+            case 2: op = EOpConstructIVec2; break;
+            case 3: op = EOpConstructIVec3; break;
+            case 4: op = EOpConstructIVec4; break;
+            default: break; // some compilers want this
+            }
+        }
+        break;
+    case EbtUint:
+        if (type.getMatrixCols()) {
+            switch (type.getMatrixCols()) {
+            case 2:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructUMat2x2; break;
+                case 3: op = EOpConstructUMat2x3; break;
+                case 4: op = EOpConstructUMat2x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            case 3:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructUMat3x2; break;
+                case 3: op = EOpConstructUMat3x3; break;
+                case 4: op = EOpConstructUMat3x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            case 4:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructUMat4x2; break;
+                case 3: op = EOpConstructUMat4x3; break;
+                case 4: op = EOpConstructUMat4x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            }
+        } else {
+            switch(type.getVectorSize()) {
+            case 1: op = EOpConstructUint;  break;
+            case 2: op = EOpConstructUVec2; break;
+            case 3: op = EOpConstructUVec3; break;
+            case 4: op = EOpConstructUVec4; break;
+            default: break; // some compilers want this
+            }
+        }
+        break;
+    case EbtBool:
+        if (type.getMatrixCols()) {
+            switch (type.getMatrixCols()) {
+            case 2:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructBMat2x2; break;
+                case 3: op = EOpConstructBMat2x3; break;
+                case 4: op = EOpConstructBMat2x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            case 3:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructBMat3x2; break;
+                case 3: op = EOpConstructBMat3x3; break;
+                case 4: op = EOpConstructBMat3x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            case 4:
+                switch (type.getMatrixRows()) {
+                case 2: op = EOpConstructBMat4x2; break;
+                case 3: op = EOpConstructBMat4x3; break;
+                case 4: op = EOpConstructBMat4x4; break;
+                default: break; // some compilers want this
+                }
+                break;
+            }
+        } else {
+            switch(type.getVectorSize()) {
+            case 1:  op = EOpConstructBool;  break;
+            case 2:  op = EOpConstructBVec2; break;
+            case 3:  op = EOpConstructBVec3; break;
+            case 4:  op = EOpConstructBVec4; break;
+            default: break; // some compilers want this
+            }
+        }
+        break;
+#ifndef GLSLANG_WEB
     case EbtDouble:
         if (type.getMatrixCols()) {
             switch (type.getMatrixCols()) {
@@ -2148,82 +2290,6 @@ TOperator TIntermediate::mapTypeToConstructorOp(const TType& type) const
         default: break; // some compilers want this
         }
         break;
-    case EbtInt:
-        if (type.getMatrixCols()) {
-            switch (type.getMatrixCols()) {
-            case 2:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructIMat2x2; break;
-                case 3: op = EOpConstructIMat2x3; break;
-                case 4: op = EOpConstructIMat2x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            case 3:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructIMat3x2; break;
-                case 3: op = EOpConstructIMat3x3; break;
-                case 4: op = EOpConstructIMat3x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            case 4:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructIMat4x2; break;
-                case 3: op = EOpConstructIMat4x3; break;
-                case 4: op = EOpConstructIMat4x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            }
-        } else {
-            switch(type.getVectorSize()) {
-            case 1: op = EOpConstructInt;   break;
-            case 2: op = EOpConstructIVec2; break;
-            case 3: op = EOpConstructIVec3; break;
-            case 4: op = EOpConstructIVec4; break;
-            default: break; // some compilers want this
-            }
-        }
-        break;
-    case EbtUint:
-        if (type.getMatrixCols()) {
-            switch (type.getMatrixCols()) {
-            case 2:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructUMat2x2; break;
-                case 3: op = EOpConstructUMat2x3; break;
-                case 4: op = EOpConstructUMat2x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            case 3:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructUMat3x2; break;
-                case 3: op = EOpConstructUMat3x3; break;
-                case 4: op = EOpConstructUMat3x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            case 4:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructUMat4x2; break;
-                case 3: op = EOpConstructUMat4x3; break;
-                case 4: op = EOpConstructUMat4x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            }
-        } else {
-            switch(type.getVectorSize()) {
-            case 1: op = EOpConstructUint;  break;
-            case 2: op = EOpConstructUVec2; break;
-            case 3: op = EOpConstructUVec3; break;
-            case 4: op = EOpConstructUVec4; break;
-            default: break; // some compilers want this
-            }
-        }
-        break;
     case EbtInt64:
         switch(type.getVectorSize()) {
         case 1: op = EOpConstructInt64;   break;
@@ -2242,47 +2308,10 @@ TOperator TIntermediate::mapTypeToConstructorOp(const TType& type) const
         default: break; // some compilers want this
         }
         break;
-    case EbtBool:
-        if (type.getMatrixCols()) {
-            switch (type.getMatrixCols()) {
-            case 2:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructBMat2x2; break;
-                case 3: op = EOpConstructBMat2x3; break;
-                case 4: op = EOpConstructBMat2x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            case 3:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructBMat3x2; break;
-                case 3: op = EOpConstructBMat3x3; break;
-                case 4: op = EOpConstructBMat3x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            case 4:
-                switch (type.getMatrixRows()) {
-                case 2: op = EOpConstructBMat4x2; break;
-                case 3: op = EOpConstructBMat4x3; break;
-                case 4: op = EOpConstructBMat4x4; break;
-                default: break; // some compilers want this
-                }
-                break;
-            }
-        } else {
-            switch(type.getVectorSize()) {
-            case 1:  op = EOpConstructBool;  break;
-            case 2:  op = EOpConstructBVec2; break;
-            case 3:  op = EOpConstructBVec3; break;
-            case 4:  op = EOpConstructBVec4; break;
-            default: break; // some compilers want this
-            }
-        }
-        break;
     case EbtReference:
         op = EOpConstructReference;
         break;
+#endif
     default:
         break;
     }
@@ -2605,6 +2634,7 @@ TIntermConstantUnion* TIntermediate::addConstantUnion(double d, TBasicType baseT
     return addConstantUnion(unionArray, TType(baseType, EvqConst), loc, literal);
 }
 
+#ifndef GLSLANG_WEB
 TIntermConstantUnion* TIntermediate::addConstantUnion(const TString* s, const TSourceLoc& loc, bool literal) const
 {
     TConstUnionArray unionArray(1);
@@ -2612,6 +2642,7 @@ TIntermConstantUnion* TIntermediate::addConstantUnion(const TString* s, const TS
 
     return addConstantUnion(unionArray, TType(EbtString, EvqConst), loc, literal);
 }
+#endif
 
 // Put vector swizzle selectors onto the given sequence
 void TIntermediate::pushSelector(TIntermSequence& sequence, const TVectorSelector& selector, const TSourceLoc& loc)
@@ -2741,8 +2772,10 @@ bool TIntermediate::postProcess(TIntermNode* root, EShLanguage /*language*/)
     if (aggRoot && aggRoot->getOp() == EOpNull)
         aggRoot->setOperator(EOpSequence);
 
+#ifndef GLSLANG_WEB
     // Propagate 'noContraction' label in backward from 'precise' variables.
     glslang::PropagateNoContraction(*this);
+#endif
 
     switch (textureSamplerTransformMode) {
     case EShTexSampTransKeep:
@@ -3460,6 +3493,7 @@ bool TIntermediate::promoteBinary(TIntermBinary& node)
         break;
     }
 
+#ifndef GLSLANG_WEB
     if (left->getType().isCoopMat() || right->getType().isCoopMat()) {
         if (left->getType().isCoopMat() && right->getType().isCoopMat() &&
             *left->getType().getTypeParameters() != *right->getType().getTypeParameters()) {
@@ -3493,6 +3527,7 @@ bool TIntermediate::promoteBinary(TIntermBinary& node)
         }
         return false;
     }
+#endif
 
     // Finish handling the case, for all ops, where both operands are scalars.
     if (left->isScalar() && right->isScalar())
