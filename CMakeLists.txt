@@ -106,7 +106,7 @@ else()
 endif()
 
 if(EMSCRIPTEN)
-    add_compile_options(-Os -s "WASM=1")
+    add_compile_options(-Os -fno-rtti -fno-exceptions -s "WASM=1")
 endif()
 
 function(glslang_set_link_args TARGET)
