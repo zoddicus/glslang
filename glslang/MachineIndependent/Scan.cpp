@@ -1049,6 +1049,7 @@ int TScanContext::tokenizeIdentifier()
     case MAT4X4:
         return matNxM();
 
+#ifndef GLSLANG_WEB
     case DMAT2:
     case DMAT3:
     case DMAT4:
@@ -1285,6 +1286,7 @@ int TScanContext::tokenizeIdentifier()
             return keyword;
 
         return identifierOrType();
+#endif
 
     case SAMPLERCUBEARRAY:
     case SAMPLERCUBEARRAYSHADOW:

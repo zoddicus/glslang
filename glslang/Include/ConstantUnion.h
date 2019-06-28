@@ -520,6 +520,7 @@ public:
     {
         TConstUnion returnValue;
         switch (type) {
+#ifndef GLSLANG_WEB
         case EbtInt8:
             switch (constant.type) {
             case EbtInt8:   returnValue.setI8Const(i8Const >> constant.i8Const);  break;
@@ -572,6 +573,7 @@ public:
             default:       assert(false && "Default missing");
             }
             break;
+#endif
         case EbtInt:
             switch (constant.type) {
             case EbtInt8:   returnValue.setIConst(iConst >> constant.i8Const);  break;
@@ -598,6 +600,7 @@ public:
             default:       assert(false && "Default missing");
             }
             break;
+#ifndef GLSLANG_WEB
          case EbtInt64:
             switch (constant.type) {
             case EbtInt8:   returnValue.setI64Const(i64Const >> constant.i8Const);  break;
@@ -624,6 +627,7 @@ public:
             default:       assert(false && "Default missing");
             }
             break;
+#endif
         default:     assert(false && "Default missing");
         }
 
@@ -634,6 +638,7 @@ public:
     {
         TConstUnion returnValue;
         switch (type) {
+#ifndef GLSLANG_WEB
         case EbtInt8:
             switch (constant.type) {
             case EbtInt8:   returnValue.setI8Const(i8Const << constant.i8Const);  break;
@@ -686,6 +691,7 @@ public:
             default:       assert(false && "Default missing");
             }
             break;
+#endif
         case EbtInt:
             switch (constant.type) {
             case EbtInt8:   returnValue.setIConst(iConst << constant.i8Const);  break;
@@ -712,6 +718,7 @@ public:
             default:       assert(false && "Default missing");
             }
             break;
+#ifndef GLSLANG_WEB
          case EbtInt64:
             switch (constant.type) {
             case EbtInt8:   returnValue.setI64Const(i64Const << constant.i8Const);  break;
@@ -738,6 +745,7 @@ public:
             default:       assert(false && "Default missing");
             }
             break;
+#endif
         default:     assert(false && "Default missing");
         }
 

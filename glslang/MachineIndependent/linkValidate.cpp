@@ -187,6 +187,7 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
     else if (vertexOrder != unit.vertexOrder)
         error(infoSink, "Contradictory triangle ordering");
 
+#ifndef GLSLANG_WEB
     MERGE_TRUE(pointMode);
 
     for (int i = 0; i < 3; ++i) {
@@ -224,18 +225,14 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         xfbBuffers[b].implicitStride = std::max(xfbBuffers[b].implicitStride, unit.xfbBuffers[b].implicitStride);
         if (unit.xfbBuffers[b].contains64BitType)
             xfbBuffers[b].contains64BitType = true;
-#ifdef AMD_EXTENSIONS
         if (unit.xfbBuffers[b].contains32BitType)
             xfbBuffers[b].contains32BitType = true;
         if (unit.xfbBuffers[b].contains16BitType)
             xfbBuffers[b].contains16BitType = true;
-#endif
         // TODO: 4.4 link: enhanced layouts: compare ranges
     }
 
     MERGE_TRUE(multiStream);
-
-#ifdef NV_EXTENSIONS
     MERGE_TRUE(layoutOverrideCoverage);
     MERGE_TRUE(geoPassthroughEXT);
 #endif
@@ -641,6 +638,7 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     if (inIoAccessed("gl_FragColor") && inIoAccessed("gl_FragData"))
         error(infoSink, "Cannot use both gl_FragColor and gl_FragData");
 
+#ifndef GLSLANG_WEB
     for (size_t b = 0; b < xfbBuffers.size(); ++b) {
         if (xfbBuffers[b].contains64BitType)
             RoundToPow2(xfbBuffers[b].implicitStride, 8);
@@ -697,10 +695,12 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", components (1/4 stride) needed are " << xfbBuffers[b].stride/4 << ", gl_MaxTransformFeedbackInterleavedComponents is " << resources.maxTransformFeedbackInterleavedComponents << "\n";
         }
     }
+#endif
 
     switch (language) {
     case EShLangVertex:
         break;
+#ifndef GLSLANG_WEB
     case EShLangTessControl:
         if (vertices == TQualifier::layoutNotSet)
             error(infoSink, "At least one shader must specify an output layout(vertices=...)");
@@ -733,7 +733,6 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     case EShLangCompute:
         break;
 
-#ifdef NV_EXTENSIONS
     case EShLangRayGenNV:
     case EShLangIntersectNV:
     case EShLangAnyHitNV:
@@ -765,6 +764,9 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     case EShLangTaskNV:
         if (numTaskNVBlocks > 1)
             error(infoSink, "Only one taskNV interface block is allowed per shader");
+        break;
+#else
+    case EShLangFragment:
         break;
 #endif
 
@@ -1277,6 +1279,7 @@ int TIntermediate::computeTypeUniformLocationSize(const TType& type)
     return 1;
 }
 
+#ifndef GLSLANG_WEB
 // Accumulate xfb buffer ranges and check for collisions as the accumulation is done.
 //
 // Returns < 0 if no collision, >= 0 if collision and the value returned is a colliding value.
@@ -1289,11 +1292,7 @@ int TIntermediate::addXfbBufferOffset(const TType& type)
     TXfbBuffer& buffer = xfbBuffers[qualifier.layoutXfbBuffer];
 
     // compute the range
-#ifdef AMD_EXTENSIONS
     unsigned int size = computeTypeXfbSize(type, buffer.contains64BitType, buffer.contains32BitType, buffer.contains16BitType);
-#else
-    unsigned int size = computeTypeXfbSize(type, buffer.contains64BitType);
-#endif
     buffer.implicitStride = std::max(buffer.implicitStride, qualifier.layoutXfbOffset + size);
     TRange range(qualifier.layoutXfbOffset, qualifier.layoutXfbOffset + size - 1);
 
@@ -1313,15 +1312,10 @@ int TIntermediate::addXfbBufferOffset(const TType& type)
 // Recursively figure out how many bytes of xfb buffer are used by the given type.
 // Return the size of type, in bytes.
 // Sets contains64BitType to true if the type contains a 64-bit data type.
-#ifdef AMD_EXTENSIONS
 // Sets contains32BitType to true if the type contains a 32-bit data type.
 // Sets contains16BitType to true if the type contains a 16-bit data type.
 // N.B. Caller must set contains64BitType, contains32BitType, and contains16BitType to false before calling.
 unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains64BitType, bool& contains32BitType, bool& contains16BitType) const
-#else
-// N.B. Caller must set contains64BitType to false before calling.
-unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains64BitType) const
-#endif
 {
     // "...if applied to an aggregate containing a double or 64-bit integer, the offset must also be a multiple of 8,
     // and the space taken in the buffer will be a multiple of 8.
@@ -1406,7 +1400,6 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
     if (type.getBasicType() == EbtDouble || type.getBasicType() == EbtInt64 || type.getBasicType() == EbtUint64) {
         contains64BitType = true;
         return 8 * numComponents;
-#ifdef AMD_EXTENSIONS
     } else if (type.getBasicType() == EbtFloat16 || type.getBasicType() == EbtInt16 || type.getBasicType() == EbtUint16) {
         contains16BitType = true;
         return 2 * numComponents;
@@ -1416,11 +1409,8 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
         contains32BitType = true;
         return 4 * numComponents;
     }
-#else
-    } else
-        return 4 * numComponents;
-#endif
 }
+#endif
 
 const int baseAlignmentVec4Std140 = 16;
 

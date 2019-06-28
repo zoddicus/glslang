@@ -1488,6 +1488,7 @@ bool TIntermediate::isFPPromotion(TBasicType from, TBasicType to) const
 bool TIntermediate::isIntegralConversion(TBasicType from, TBasicType to) const
 {
     switch (from) {
+#ifndef GLSLANG_WEB
     case EbtInt8:
         switch (to) {
         case EbtUint8:
@@ -1534,6 +1535,12 @@ bool TIntermediate::isIntegralConversion(TBasicType from, TBasicType to) const
             break;
         }
         break;
+    case EbtInt64:
+        if (to == EbtUint64) {
+            return true;
+        }
+        break;
+#endif
     case EbtInt:
         switch(to) {
         case EbtUint:
@@ -1552,11 +1559,6 @@ bool TIntermediate::isIntegralConversion(TBasicType from, TBasicType to) const
             return true;
         default:
             break;
-        }
-        break;
-    case EbtInt64:
-        if (to == EbtUint64) {
-            return true;
         }
         break;
     default:
@@ -1658,6 +1660,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
         }
     }
 
+#ifndef GLSLANG_WEB
     bool explicitTypesEnabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                 extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int8) ||
                                 extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16) ||
@@ -1698,7 +1701,9 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             if (from == EbtBool && (to == EbtInt || to == EbtUint || to == EbtFloat))
                 return true;
         }
-    } else {
+    } else
+#endif
+    {
         switch (to) {
 #ifndef GLSLANG_WEB
         case EbtDouble:

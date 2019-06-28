@@ -183,7 +183,9 @@ protected:
                                        glslang::TBasicType typeProxy);
     spv::Id createConversion(glslang::TOperator op, OpDecorations&, spv::Id destTypeId, spv::Id operand,
                              glslang::TBasicType typeProxy);
+#ifndef GLSLANG_WEB
     spv::Id createIntWidthConversion(glslang::TOperator op, spv::Id operand, int vectorSize);
+#endif
     spv::Id makeSmearedConstant(spv::Id constant, int vectorSize);
     spv::Id createAtomicOperation(glslang::TOperator op, spv::Decoration precision, spv::Id typeId, std::vector<spv::Id>& operands, glslang::TBasicType typeProxy, const spv::Builder::AccessChain::CoherentFlags &lvalueCoherentFlags);
     spv::Id createInvocationsOperation(glslang::TOperator op, spv::Id typeId, std::vector<spv::Id>& operands, glslang::TBasicType typeProxy);
@@ -1393,18 +1395,19 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion, const gl
         builder.addSourceExtension(it->c_str());
 
     // Add the top-level modes for this shader.
-
+#ifndef GLSLANG_WEB
     if (glslangIntermediate->getXfbMode()) {
         builder.addCapability(spv::CapabilityTransformFeedback);
         builder.addExecutionMode(shaderEntry, spv::ExecutionModeXfb);
     }
-
     unsigned int mode;
+#endif
     switch (glslangIntermediate->getStage()) {
     case EShLangVertex:
         builder.addCapability(spv::CapabilityShader);
         break;
 
+#ifndef GLSLANG_WEB
     case EShLangTessEvaluation:
     case EShLangTessControl:
         builder.addCapability(spv::CapabilityTessellation);
@@ -1473,16 +1476,17 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion, const gl
             builder.addExecutionMode(shaderEntry, (spv::ExecutionMode)mode);
         builder.addExecutionMode(shaderEntry, spv::ExecutionModeOutputVertices, glslangIntermediate->getVertices());
         break;
+#endif
 
     case EShLangFragment:
-        builder.addCapability(spv::CapabilityShader);
-        if (glslangIntermediate->getPixelCenterInteger())
-            builder.addExecutionMode(shaderEntry, spv::ExecutionModePixelCenterInteger);
-
         if (glslangIntermediate->getOriginUpperLeft())
             builder.addExecutionMode(shaderEntry, spv::ExecutionModeOriginUpperLeft);
         else
             builder.addExecutionMode(shaderEntry, spv::ExecutionModeOriginLowerLeft);
+#ifndef GLSLANG_WEB
+        builder.addCapability(spv::CapabilityShader);
+        if (glslangIntermediate->getPixelCenterInteger())
+            builder.addExecutionMode(shaderEntry, spv::ExecutionModePixelCenterInteger);
 
         if (glslangIntermediate->getEarlyFragmentTests())
             builder.addExecutionMode(shaderEntry, spv::ExecutionModeEarlyFragmentTests);
@@ -1526,15 +1530,15 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion, const gl
             }
             builder.addExtension(spv::E_SPV_EXT_fragment_shader_interlock);
         }
-
+#endif
         break;
 
+#ifndef GLSLANG_WEB
     case EShLangCompute:
         builder.addCapability(spv::CapabilityShader);
         builder.addExecutionMode(shaderEntry, spv::ExecutionModeLocalSize, glslangIntermediate->getLocalSize(0),
                                                                            glslangIntermediate->getLocalSize(1),
                                                                            glslangIntermediate->getLocalSize(2));
-#ifdef NV_EXTENSIONS
         if (glslangIntermediate->getLayoutDerivativeModeNone() == glslang::LayoutDerivativeGroupQuads) {
             builder.addCapability(spv::CapabilityComputeDerivativeGroupQuadsNV);
             builder.addExecutionMode(shaderEntry, spv::ExecutionModeDerivativeGroupQuadsNV);
@@ -1544,10 +1548,7 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion, const gl
             builder.addExecutionMode(shaderEntry, spv::ExecutionModeDerivativeGroupLinearNV);
             builder.addExtension(spv::E_SPV_NV_compute_shader_derivatives);
         }
-#endif
-        break;
 
-#ifdef NV_EXTENSIONS
     case EShLangRayGenNV:
     case EShLangIntersectNV:
     case EShLangAnyHitNV:
@@ -1681,6 +1682,7 @@ void TGlslangToSpvTraverser::visitSymbol(glslang::TIntermSymbol* symbol)
             builder.setAccessChainLValue(id);
     }
 
+#ifndef GLSLANG_WEB
     // Process linkage-only nodes for any special additional interface work.
     if (linkageOnly) {
         if (glslangIntermediate->getHlslFunctionality1()) {
@@ -1712,6 +1714,7 @@ void TGlslangToSpvTraverser::visitSymbol(glslang::TIntermSymbol* symbol)
             }
         }
     }
+#endif
 }
 
 bool TGlslangToSpvTraverser::visitBinary(glslang::TVisit /* visit */, glslang::TIntermBinary* node)
@@ -3659,13 +3662,13 @@ void TGlslangToSpvTraverser::decorateStructType(const glslang::TType& type,
         // nonuniform
         builder.addMemberDecoration(spvType, member, TranslateNonUniformDecoration(glslangMember.getQualifier()));
 
+#ifndef GLSLANG_WEB
         if (glslangIntermediate->getHlslFunctionality1() && memberQualifier.semanticName != nullptr) {
             builder.addExtension("SPV_GOOGLE_hlsl_functionality1");
             builder.addMemberDecoration(spvType, member, (spv::Decoration)spv::DecorationHlslSemanticGOOGLE,
                                         memberQualifier.semanticName);
         }
 
-#ifdef NV_EXTENSIONS
         if (builtIn == spv::BuiltInLayer) {
             // SPV_NV_viewport_array2 extension
             if (glslangMember.getQualifier().layoutViewportRelative){
@@ -5875,6 +5878,7 @@ spv::Id TGlslangToSpvTraverser::createUnaryMatrixOperation(spv::Op op, OpDecorat
     return result;
 }
 
+#ifndef GLSLANG_WEB
 // For converting integers where both the bitwidth and the signedness could
 // change, but only do the width change here. The caller is still responsible
 // for the signedness conversion.
@@ -5952,6 +5956,7 @@ spv::Id TGlslangToSpvTraverser::createIntWidthConversion(glslang::TOperator op, 
 
     return builder.createUnaryOp(convOp, type, operand);
 }
+#endif
 
 spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecorations& decorations, spv::Id destType,
                                                  spv::Id operand, glslang::TBasicType typeProxy)
@@ -5963,24 +5968,9 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     int vectorSize = builder.isVectorType(destType) ? builder.getNumTypeComponents(destType) : 0;
 
     switch (op) {
-    case glslang::EOpConvInt8ToBool:
-    case glslang::EOpConvUint8ToBool:
-        zero = builder.makeUint8Constant(0);
-        zero = makeSmearedConstant(zero, vectorSize);
-        return builder.createBinOp(spv::OpINotEqual, destType, operand, zero);
-    case glslang::EOpConvInt16ToBool:
-    case glslang::EOpConvUint16ToBool:
-        zero = builder.makeUint16Constant(0);
-        zero = makeSmearedConstant(zero, vectorSize);
-        return builder.createBinOp(spv::OpINotEqual, destType, operand, zero);
     case glslang::EOpConvIntToBool:
     case glslang::EOpConvUintToBool:
         zero = builder.makeUintConstant(0);
-        zero = makeSmearedConstant(zero, vectorSize);
-        return builder.createBinOp(spv::OpINotEqual, destType, operand, zero);
-    case glslang::EOpConvInt64ToBool:
-    case glslang::EOpConvUint64ToBool:
-        zero = builder.makeUint64Constant(0);
         zero = makeSmearedConstant(zero, vectorSize);
         return builder.createBinOp(spv::OpINotEqual, destType, operand, zero);
 
@@ -5988,6 +5978,31 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         zero = builder.makeFloatConstant(0.0F);
         zero = makeSmearedConstant(zero, vectorSize);
         return builder.createBinOp(spv::OpFOrdNotEqual, destType, operand, zero);
+
+    case glslang::EOpConvBoolToFloat:
+        convOp = spv::OpSelect;
+        zero = builder.makeFloatConstant(0.0F);
+        one  = builder.makeFloatConstant(1.0F);
+        break;
+
+#ifndef GLSLANG_WEB
+    case glslang::EOpConvInt8ToBool:
+    case glslang::EOpConvUint8ToBool:
+        zero = builder.makeUint8Constant(0);
+        zero = makeSmearedConstant(zero, vectorSize);
+        return builder.createBinOp(spv::OpINotEqual, destType, operand, zero);
+
+    case glslang::EOpConvInt16ToBool:
+    case glslang::EOpConvUint16ToBool:
+        zero = builder.makeUint16Constant(0);
+        zero = makeSmearedConstant(zero, vectorSize);
+        return builder.createBinOp(spv::OpINotEqual, destType, operand, zero);
+
+    case glslang::EOpConvInt64ToBool:
+    case glslang::EOpConvUint64ToBool:
+        zero = builder.makeUint64Constant(0);
+        zero = makeSmearedConstant(zero, vectorSize);
+        return builder.createBinOp(spv::OpINotEqual, destType, operand, zero);
 
     case glslang::EOpConvDoubleToBool:
         zero = builder.makeDoubleConstant(0.0);
@@ -5998,12 +6013,6 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         zero = builder.makeFloat16Constant(0.0F);
         zero = makeSmearedConstant(zero, vectorSize);
         return builder.createBinOp(spv::OpFOrdNotEqual, destType, operand, zero);
-
-    case glslang::EOpConvBoolToFloat:
-        convOp = spv::OpSelect;
-        zero = builder.makeFloatConstant(0.0F);
-        one  = builder.makeFloatConstant(1.0F);
-        break;
 
     case glslang::EOpConvBoolToDouble:
         convOp = spv::OpSelect;
@@ -6040,33 +6049,36 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         one  = builder.makeUint16Constant(1);
         convOp = spv::OpSelect;
         break;
+#endif
 
     case glslang::EOpConvBoolToInt:
     case glslang::EOpConvBoolToInt64:
-        if (op == glslang::EOpConvBoolToInt64)
+#ifndef GLSLANG_WEB
+        if (op == glslang::EOpConvBoolToInt64) {
             zero = builder.makeInt64Constant(0);
-        else
-            zero = builder.makeIntConstant(0);
-
-        if (op == glslang::EOpConvBoolToInt64)
             one = builder.makeInt64Constant(1);
-        else
+        } else
+#endif
+        {
+            zero = builder.makeIntConstant(0);
             one = builder.makeIntConstant(1);
+        }
 
         convOp = spv::OpSelect;
         break;
 
     case glslang::EOpConvBoolToUint:
     case glslang::EOpConvBoolToUint64:
-        if (op == glslang::EOpConvBoolToUint64)
+#ifndef GLSLANG_WEB
+        if (op == glslang::EOpConvBoolToUint64) {
             zero = builder.makeUint64Constant(0);
-        else
-            zero = builder.makeUintConstant(0);
-
-        if (op == glslang::EOpConvBoolToUint64)
             one = builder.makeUint64Constant(1);
-        else
+        } else
+#endif
+        {
+            zero = builder.makeUintConstant(0);
             one = builder.makeUintConstant(1);
+        }
 
         convOp = spv::OpSelect;
         break;
@@ -6101,6 +6113,7 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         convOp = spv::OpConvertUToF;
         break;
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvDoubleToFloat:
     case glslang::EOpConvFloatToDouble:
     case glslang::EOpConvDoubleToFloat16:
@@ -6111,6 +6124,7 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         if (builder.isMatrixType(destType))
             return createUnaryMatrixOperation(convOp, decorations, destType, operand, typeProxy);
         break;
+#endif
 
     case glslang::EOpConvFloat16ToInt8:
     case glslang::EOpConvFloatToInt8:
@@ -6137,13 +6151,16 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvInt64ToUint64:
         if (builder.isInSpecConstCodeGenMode()) {
             // Build zero scalar or vector for OpIAdd.
+#ifndef GLSLANG_WEB
             if(op == glslang::EOpConvUint8ToInt8 || op == glslang::EOpConvInt8ToUint8) {
                 zero = builder.makeUint8Constant(0);
             } else if (op == glslang::EOpConvUint16ToInt16 || op == glslang::EOpConvInt16ToUint16) {
                 zero = builder.makeUint16Constant(0);
             } else if (op == glslang::EOpConvUint64ToInt64 || op == glslang::EOpConvInt64ToUint64) {
                 zero = builder.makeUint64Constant(0);
-            } else {
+            } else
+#endif
+            {
                 zero = builder.makeUintConstant(0);
             }
             zero = makeSmearedConstant(zero, vectorSize);
@@ -6200,6 +6217,7 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         convOp = spv::OpUConvert;
         break;
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvInt8ToUint16:
     case glslang::EOpConvInt8ToUint:
     case glslang::EOpConvInt8ToUint64:
@@ -6274,12 +6292,15 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         // For normal run-time conversion instruction, use OpBitcast.
         convOp = spv::OpBitcast;
         break;
+
     case glslang::EOpConvUint64ToPtr:
         convOp = spv::OpConvertUToPtr;
         break;
     case glslang::EOpConvPtrToUint64:
         convOp = spv::OpConvertPtrToU;
         break;
+#endif
+
     default:
         break;
     }
@@ -7679,10 +7700,12 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
     if (symbol->getQualifier().hasLocation())
         builder.addDecoration(id, spv::DecorationLocation, symbol->getQualifier().layoutLocation);
     builder.addDecoration(id, TranslateInvariantDecoration(symbol->getType().getQualifier()));
+#ifndef GLSLANG_WEB
     if (symbol->getQualifier().hasStream() && glslangIntermediate->isMultiStream()) {
         builder.addCapability(spv::CapabilityGeometryStreams);
         builder.addDecoration(id, spv::DecorationStream, symbol->getQualifier().layoutStream);
     }
+#endif
     if (symbol->getQualifier().hasSet())
         builder.addDecoration(id, spv::DecorationDescriptorSet, symbol->getQualifier().layoutSet);
     else if (IsDescriptorResource(symbol->getType())) {
@@ -7697,6 +7720,7 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
     }
     if (symbol->getQualifier().hasAttachment())
         builder.addDecoration(id, spv::DecorationInputAttachmentIndex, symbol->getQualifier().layoutAttachment);
+#ifndef GLSLANG_WEB
     if (glslangIntermediate->getXfbMode()) {
         builder.addCapability(spv::CapabilityTransformFeedback);
         if (symbol->getQualifier().hasXfbBuffer()) {
@@ -7708,7 +7732,7 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
         if (symbol->getQualifier().hasXfbOffset())
             builder.addDecoration(id, spv::DecorationOffset, symbol->getQualifier().layoutXfbOffset);
     }
-
+#endif
     if (symbol->getType().isImage()) {
         std::vector<spv::Decoration> memory;
         TranslateMemoryDecoration(symbol->getType().getQualifier(), memory, glslangIntermediate->usingVulkanMemoryModel());
@@ -7836,7 +7860,7 @@ spv::Id TGlslangToSpvTraverser::createSpvConstant(const glslang::TIntermTyped& n
     }
 
     // We now know we have a specialization constant to build
-
+#ifndef GLSLANG_WEB
     // gl_WorkGroupSize is a special case until the front-end handles hierarchical specialization constants,
     // even then, it's specialization ids are handled by special case syntax in GLSL: layout(local_size_x = ...
     if (node.getType().getQualifier().builtIn == glslang::EbvWorkGroupSize) {
@@ -7851,6 +7875,7 @@ spv::Id TGlslangToSpvTraverser::createSpvConstant(const glslang::TIntermTyped& n
         }
         return builder.makeCompositeConstant(builder.makeVectorType(builder.makeUintType(32), 3), dimConstId, true);
     }
+#endif
 
     // An AST node labelled as specialization constant should be a symbol node.
     // Its initializer should either be a sub tree with constant nodes, or a constant union array.

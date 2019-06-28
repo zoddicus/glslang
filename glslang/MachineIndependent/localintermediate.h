@@ -147,23 +147,20 @@ struct TOffsetRange {
     TRange offset;
 };
 
+#ifndef GLSLANG_WEB
 // Things that need to be tracked per xfb buffer.
 struct TXfbBuffer {
-#ifdef AMD_EXTENSIONS
     TXfbBuffer() : stride(TQualifier::layoutXfbStrideEnd), implicitStride(0), contains64BitType(false),
                    contains32BitType(false), contains16BitType(false) { }
-#else
-    TXfbBuffer() : stride(TQualifier::layoutXfbStrideEnd), implicitStride(0), contains64BitType(false) { }
-#endif
     std::vector<TRange> ranges;  // byte offsets that have already been assigned
     unsigned int stride;
     unsigned int implicitStride;
+
     bool contains64BitType;
-#ifdef AMD_EXTENSIONS
     bool contains32BitType;
     bool contains16BitType;
-#endif
 };
+#endif
 
 // Track a set of strings describing how the module was processed.
 // Using the form:
@@ -240,11 +237,14 @@ public:
         invocations(TQualifier::layoutNotSet), vertices(TQualifier::layoutNotSet),
         inputPrimitive(ElgNone), outputPrimitive(ElgNone),
         pixelCenterInteger(false), originUpperLeft(false),
-        vertexSpacing(EvsNone), vertexOrder(EvoNone), interlockOrdering(EioNone), pointMode(false), earlyFragmentTests(false),
-        postDepthCoverage(false), depthLayout(EldNone), depthReplacing(false),
+        vertexSpacing(EvsNone), vertexOrder(EvoNone), interlockOrdering(EioNone),
+        depthReplacing(false),
+#ifndef GLSLANG_WEB
+        pointMode(false),
+        earlyFragmentTests(false),
+        postDepthCoverage(false), depthLayout(EldNone)
         hlslFunctionality1(false),
         blendEquations(0), xfbMode(false), multiStream(false),
-#ifdef NV_EXTENSIONS
         layoutOverrideCoverage(false),
         geoPassthroughEXT(false),
         numShaderRecordNVBlocks(0),
@@ -269,6 +269,7 @@ public:
         uniformLocationBase(0),
         nanMinMaxClamp(false)
     {
+#ifndef GLSLANG_WEB
         localSize[0] = 1;
         localSize[1] = 1;
         localSize[2] = 1;
@@ -276,6 +277,7 @@ public:
         localSizeSpecId[1] = TQualifier::layoutNotSet;
         localSizeSpecId[2] = TQualifier::layoutNotSet;
         xfbBuffers.resize(TQualifier::layoutXfbBufferEnd);
+#endif
 
         shiftBinding.fill(0);
     }
@@ -605,8 +607,11 @@ public:
         return true;
     }
     TVertexOrder getVertexOrder() const { return vertexOrder; }
+
+#ifndef GLSLANG_WEB
     void setPointMode() { pointMode = true; }
     bool getPointMode() const { return pointMode; }
+#endif
 
     bool setInterlockOrdering(TInterlockOrdering o)
     {
@@ -616,7 +621,12 @@ public:
         return true;
     }
     TInterlockOrdering getInterlockOrdering() const { return interlockOrdering; }
+    void setDepthReplacing() { depthReplacing = true; }
+    bool isDepthReplacing() const { return depthReplacing; }
+    void setOriginUpperLeft() { originUpperLeft = true; }
+    bool getOriginUpperLeft() const { return originUpperLeft; }
 
+#ifndef GLSLANG_WEB
     bool setLocalSize(int dim, int size)
     {
         if (localSize[dim] > 1)
@@ -647,8 +657,6 @@ public:
         return true;
     }
     TLayoutGeometry getOutputPrimitive() const { return outputPrimitive; }
-    void setOriginUpperLeft() { originUpperLeft = true; }
-    bool getOriginUpperLeft() const { return originUpperLeft; }
     void setPixelCenterInteger() { pixelCenterInteger = true; }
     bool getPixelCenterInteger() const { return pixelCenterInteger; }
     void setEarlyFragmentTests() { earlyFragmentTests = true; }
@@ -663,14 +671,13 @@ public:
         return true;
     }
     TLayoutDepth getDepth() const { return depthLayout; }
-    void setDepthReplacing() { depthReplacing = true; }
-    bool isDepthReplacing() const { return depthReplacing; }
 
     void setHlslFunctionality1() { hlslFunctionality1 = true; }
     bool getHlslFunctionality1() const { return hlslFunctionality1; }
 
     void addBlendEquation(TBlendEquationShift b) { blendEquations |= (1 << b); }
     unsigned int getBlendEquations() const { return blendEquations; }
+#endif
 
     void addToCallGraph(TInfoSink&, const TString& caller, const TString& callee);
     void merge(TInfoSink&, TIntermediate&);
@@ -685,7 +692,7 @@ public:
     bool addUsedConstantId(int id);
     static int computeTypeLocationSize(const TType&, EShLanguage);
     static int computeTypeUniformLocationSize(const TType&);
-
+#ifndef GLSLANG_WEB
     bool setXfbBufferStride(int buffer, unsigned stride)
     {
         if (xfbBuffers[buffer].stride != TQualifier::layoutXfbStrideEnd)
@@ -695,10 +702,7 @@ public:
     }
     unsigned getXfbStride(int buffer) const { return xfbBuffers[buffer].stride; }
     int addXfbBufferOffset(const TType&);
-#ifdef AMD_EXTENSIONS
     unsigned int computeTypeXfbSize(const TType&, bool& contains64BitType, bool& contains32BitType, bool& contains16BitType) const;
-#else
-    unsigned int computeTypeXfbSize(const TType&, bool& contains64BitType) const;
 #endif
     static int getBaseAlignmentScalar(const TType&, int& size);
     static int getBaseAlignment(const TType&, int& size, int& stride, TLayoutPacking layoutPacking, bool rowMajor);
@@ -839,20 +843,20 @@ protected:
     TVertexSpacing vertexSpacing;
     TVertexOrder vertexOrder;
     TInterlockOrdering interlockOrdering;
+    bool depthReplacing;
+
+#ifndef GLSLANG_WEB
     bool pointMode;
     int localSize[3];
     int localSizeSpecId[3];
     bool earlyFragmentTests;
     bool postDepthCoverage;
     TLayoutDepth depthLayout;
-    bool depthReplacing;
     bool hlslFunctionality1;
     int blendEquations;        // an 'or'ing of masks of shifts of TBlendEquationShift
     bool xfbMode;
     std::vector<TXfbBuffer> xfbBuffers;     // all the data we need to track per xfb buffer
     bool multiStream;
-
-#ifdef NV_EXTENSIONS
     bool layoutOverrideCoverage;
     bool geoPassthroughEXT;
     int numShaderRecordNVBlocks;

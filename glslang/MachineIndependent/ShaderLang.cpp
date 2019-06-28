@@ -836,8 +836,10 @@ bool ProcessDeferred(
     SpvVersion spvVersion;
     EShLanguage stage = compiler->getLanguage();
     TranslateEnvironment(environment, messages, source, stage, spvVersion);
+#ifndef GLSLANG_WEB
     if (environment != nullptr && environment->target.hlslFunctionality1)
         intermediate.setHlslFunctionality1();
+#endif
 
     // First, without using the preprocessor or parser, find the #version, so we know what
     // symbol tables, processing rules, etc. to set up.  This does not need the extra strings
@@ -1935,12 +1937,14 @@ bool TProgram::linkStage(EShLanguage stage, EShMessages messages)
                                                 firstIntermediate->getVersion(),
                                                 firstIntermediate->getProfile());
 
-
+#ifndef GLSLANG_WEB
         // The new TIntermediate must use the same origin as the original TIntermediates.
         // Otherwise linking will fail due to different coordinate systems.
         if (firstIntermediate->getOriginUpperLeft()) {
             intermediate[stage]->setOriginUpperLeft();
         }
+#endif
+
         intermediate[stage]->setSpv(firstIntermediate->getSpv());
 
         newedIntermediate[stage] = true;

@@ -887,6 +887,7 @@ Id Builder::makeIntConstant(Id typeId, unsigned value, bool specConstant)
     return c->getResultId();
 }
 
+#ifndef GLSLANG_WEB
 Id Builder::makeInt64Constant(Id typeId, unsigned long long value, bool specConstant)
 {
     Op opcode = specConstant ? OpSpecConstant : OpConstant;
@@ -911,6 +912,7 @@ Id Builder::makeInt64Constant(Id typeId, unsigned long long value, bool specCons
 
     return c->getResultId();
 }
+#endif
 
 Id Builder::makeFloatConstant(float f, bool specConstant)
 {
