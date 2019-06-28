@@ -3637,10 +3637,10 @@ void TGlslangToSpvTraverser::decorateStructType(const glslang::TType& type,
                                             glslangMember, glslangIntermediate->getStage());
 
         // component, XFB, others
+#ifndef GLSLANG_WEB
         if (glslangMember.getQualifier().hasComponent())
             builder.addMemberDecoration(spvType, member, spv::DecorationComponent,
                                         glslangMember.getQualifier().layoutComponent);
-#ifndef GLSLANG_WEB
         if (glslangMember.getQualifier().hasXfbOffset())
             builder.addMemberDecoration(spvType, member, spv::DecorationOffset,
                                         glslangMember.getQualifier().layoutXfbOffset);
@@ -7695,6 +7695,7 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
 #endif
         if (symbol->getType().getQualifier().hasSpecConstantId())
             builder.addDecoration(id, spv::DecorationSpecId, symbol->getType().getQualifier().layoutSpecConstantId);
+#ifndef GLSLANG_WEB
         if (symbol->getQualifier().hasIndex())
             builder.addDecoration(id, spv::DecorationIndex, symbol->getQualifier().layoutIndex);
         if (symbol->getQualifier().hasComponent())
@@ -7702,6 +7703,7 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
         // atomic counters use this:
         if (symbol->getQualifier().hasOffset())
             builder.addDecoration(id, spv::DecorationOffset, symbol->getQualifier().layoutOffset);
+#endif
     }
 
     if (symbol->getQualifier().hasLocation())

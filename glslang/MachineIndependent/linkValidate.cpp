@@ -1111,8 +1111,10 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
         TRange componentRange(0, 3);
         if (qualifier.hasComponent() || type.getVectorSize() > 0) {
             int consumedComponents = type.getVectorSize() * (type.getBasicType() == EbtDouble ? 2 : 1);
+#ifndef GLSLANG_WEB
             if (qualifier.hasComponent())
                 componentRange.start = qualifier.layoutComponent;
+#endif
             componentRange.last  = componentRange.start + consumedComponents - 1;
         }
 

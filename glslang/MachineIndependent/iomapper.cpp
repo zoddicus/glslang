@@ -189,10 +189,12 @@ public:
             base->getWritableType().getQualifier().layoutSet = at->newSet;
         if (at->newLocation != -1)
             base->getWritableType().getQualifier().layoutLocation = at->newLocation;
+#ifndef GLSLANG_WEB
         if (at->newComponent != -1)
             base->getWritableType().getQualifier().layoutComponent = at->newComponent;
         if (at->newIndex != -1)
             base->getWritableType().getQualifier().layoutIndex = at->newIndex;
+#endif
     }
 
   private:

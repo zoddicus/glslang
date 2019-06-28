@@ -935,9 +935,12 @@ public:
     }
     bool hasAnyLocation() const
     {
-        return hasLocation() ||
-               hasComponent() ||
-               hasIndex();
+        return hasLocation()
+#ifndef GLSLANG_WEB
+            || hasComponent()
+            || hasIndex()
+#endif
+            ;
     }
     bool hasLocation() const
     {
@@ -1912,6 +1915,7 @@ public:
                 if (qualifier.hasAnyLocation()) {
                     appendStr(" location=");
                     appendUint(qualifier.layoutLocation);
+#ifndef GLSLANG_WEB
                     if (qualifier.hasComponent()) {
                         appendStr(" component=");
                         appendUint(qualifier.layoutComponent);
@@ -1920,6 +1924,7 @@ public:
                         appendStr(" index=");
                         appendUint(qualifier.layoutIndex);
                     }
+#endif
                 }
                 if (qualifier.hasSet()) {
                     appendStr(" set=");

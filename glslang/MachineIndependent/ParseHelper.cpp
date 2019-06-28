@@ -5232,7 +5232,9 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         if (nonLiteral)
             error(loc, "needs a literal integer", "binding", "");
         return;
-    } else if (id == "component") {
+    }
+#ifndef GLSLANG_WEB
+    else if (id == "component") {
         requireProfile(loc, ECoreProfile | ECompatibilityProfile, "component");
         profileRequires(loc, ECoreProfile | ECompatibilityProfile, 440, E_GL_ARB_enhanced_layouts, "component");
         if ((unsigned)value >= TQualifier::layoutComponentEnd)
@@ -5242,9 +5244,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         if (nonLiteral)
             error(loc, "needs a literal integer", "component", "");
         return;
-    }
-#ifndef GLSLANG_WEB
-      else if (id.compare(0, 4, "xfb_") == 0) {
+    } else if (id.compare(0, 4, "xfb_") == 0) {
         // "Any shader making any static use (after preprocessing) of any of these
         // *xfb_* qualifiers will cause the shader to be in a transform feedback
         // capturing mode and hence responsible for describing the transform feedback
@@ -5530,10 +5530,6 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
     if (! inheritOnly) {
         if (src.hasLocation())
             dst.layoutLocation = src.layoutLocation;
-        if (src.hasComponent())
-            dst.layoutComponent = src.layoutComponent;
-        if (src.hasIndex())
-            dst.layoutIndex = src.layoutIndex;
 
         if (src.hasOffset())
             dst.layoutOffset = src.layoutOffset;
@@ -5544,6 +5540,10 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
             dst.layoutBinding = src.layoutBinding;
 
 #ifndef GLSLANG_WEB
+        if (src.hasComponent())
+            dst.layoutComponent = src.layoutComponent;
+        if (src.hasIndex())
+            dst.layoutIndex = src.layoutIndex;
         if (src.hasXfbStride())
             dst.layoutXfbStride = src.layoutXfbStride;
         if (src.hasXfbOffset())
@@ -5926,9 +5926,11 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
     if (qualifier.storage == EvqShared && qualifier.hasLayout())
         error(loc, "cannot apply layout qualifiers to a shared variable", "shared", "");
 
+#ifndef GLSLANG_WEB
     // "It is a compile-time error to use *component* without also specifying the location qualifier (order does not matter)."
     if (qualifier.hasComponent() && ! qualifier.hasLocation())
         error(loc, "must specify 'location' to use 'component'", "component", "");
+#endif
 
     if (qualifier.hasAnyLocation()) {
 
@@ -5983,12 +5985,14 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
         default:
             break;
         }
+#ifndef GLSLANG_WEB
         if (qualifier.hasIndex()) {
             if (qualifier.storage != EvqVaryingOut)
                 error(loc, "can only be used on an output", "index", "");
             if (! qualifier.hasLocation())
                 error(loc, "can only be used with an explicit location", "index", "");
         }
+#endif
     }
 
     if (qualifier.hasBinding()) {
@@ -6154,10 +6158,12 @@ const TFunction* TParseContext::findFunction(const TSourceLoc& loc, const TFunct
         function = findFunctionExact(loc, call, builtIn);
     else if (version < 400)
         function = findFunction120(loc, call, builtIn);
+#ifndef GLSLANG_WEB
     else if (explicitTypesEnabled)
         function = findFunctionExplicitTypes(loc, call, builtIn);
     else
         function = findFunction400(loc, call, builtIn);
+#endif
 
     return function;
 }
@@ -7637,6 +7643,7 @@ void TParseContext::fixBlockLocations(const TSourceLoc& loc, TQualifier& qualifi
             if (qualifier.hasAnyLocation()) {
                 nextLocation = qualifier.layoutLocation;
                 qualifier.layoutLocation = TQualifier::layoutLocationEnd;
+#ifndef GLSLANG_WEB
                 if (qualifier.hasComponent()) {
                     // "It is a compile-time error to apply the *component* qualifier to a ... block"
                     error(loc, "cannot apply to a block", "component", "");
@@ -7644,6 +7651,7 @@ void TParseContext::fixBlockLocations(const TSourceLoc& loc, TQualifier& qualifi
                 if (qualifier.hasIndex()) {
                     error(loc, "cannot apply to a block", "index", "");
                 }
+#endif
             }
             for (unsigned int member = 0; member < typeList.size(); ++member) {
                 TQualifier& memberQualifier = typeList[member].type->getQualifier();
