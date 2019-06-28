@@ -1862,7 +1862,9 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
 
     TString featureString;
     const char* feature = nullptr;
+
     switch (callNode.getOp()) {
+#ifndef GLSLANG_WEB
     case EOpTextureGather:
     case EOpTextureGatherOffset:
     case EOpTextureGatherOffsets:
@@ -1919,7 +1921,6 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
                 error(loc, "must be a compile-time constant:", feature, "component argument");
         }
 
-#ifdef AMD_EXTENSIONS
         bool bias = false;
         if (callNode.getOp() == EOpTextureGather)
             bias = fnCandidate.getParamCount() > 3;
@@ -1934,12 +1935,8 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
             profileRequires(loc, ~EEsProfile, 450, nullptr, feature);
             requireExtensions(loc, 1, &E_GL_AMD_texture_gather_bias_lod, feature);
         }
-#endif
-
         break;
     }
-
-#ifdef AMD_EXTENSIONS
     case EOpSparseTextureGather:
     case EOpSparseTextureGatherOffset:
     case EOpSparseTextureGatherOffsets:
@@ -2050,7 +2047,7 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
         break;
     }
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case EOpTraceNV:
         if (!(*argp)[10]->getAsConstantUnion())
             error(loc, "argument must be compile-time constant", "payload number", "");
@@ -2059,8 +2056,6 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
         if (!(*argp)[1]->getAsConstantUnion())
             error(loc, "argument must be compile-time constant", "callable data number", "");
         break;
-#endif
-
     case EOpTextureQuerySamples:
     case EOpImageQuerySamples:
         // GL_ARB_shader_texture_image_samples
@@ -2114,13 +2109,9 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
             requireExtensions(loc, 1, &E_GL_KHR_memory_scope_semantics, fnCandidate.getName().c_str());
             memorySemanticsCheck(loc, fnCandidate, callNode);
         } else if (arg0->getType().getBasicType() == EbtInt64 || arg0->getType().getBasicType() == EbtUint64) {
-#ifdef NV_EXTENSIONS
             const char* const extensions[2] = { E_GL_NV_shader_atomic_int64,
                                                 E_GL_EXT_shader_atomic_int64 };
             requireExtensions(loc, 2, extensions, fnCandidate.getName().c_str());
-#else
-            requireExtensions(loc, 1, &E_GL_EXT_shader_atomic_int64, fnCandidate.getName().c_str());
-#endif
         }
         break;
     }
@@ -2128,9 +2119,7 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
     case EOpInterpolateAtCentroid:
     case EOpInterpolateAtSample:
     case EOpInterpolateAtOffset:
-#ifdef AMD_EXTENSIONS
     case EOpInterpolateAtVertex:
-#endif
         // Make sure the first argument is an interpolant, or an array element of an interpolant
         if (arg0->getType().getQualifier().storage != EvqVaryingIn) {
             // It might still be an array element.
@@ -2146,7 +2135,6 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
                 error(loc, "first argument must be an interpolant, or interpolant-array element", fnCandidate.getName().c_str(), "");
         }
 
-#ifdef AMD_EXTENSIONS
         if (callNode.getOp() == EOpInterpolateAtVertex) {
             if (!arg0->getType().getQualifier().isExplicitInterpolation())
                 error(loc, "argument must be qualified as __explicitInterpAMD in", "interpolant", "");
@@ -2160,11 +2148,8 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
                 }
             }
         }
-#endif
-
         break;
 
-#ifndef GLSLANG_WEB
     case EOpEmitStreamVertex:
     case EOpEndStreamPrimitive:
         intermediate.setMultiStream();
@@ -2197,7 +2182,6 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
         if ((*argp)[1]->getAsConstantUnion() == nullptr)
             error(loc, "argument must be compile-time constant", "id", "");
         break;
-#endif
 
     case EOpBarrier:
     case EOpMemoryBarrier:
@@ -2206,6 +2190,7 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
             memorySemanticsCheck(loc, fnCandidate, callNode);
         }
         break;
+#endif
 
     default:
         break;
@@ -2272,6 +2257,7 @@ void TParseContext::nonOpBuiltInCheck(const TSourceLoc& loc, const TFunction& fn
         callNode.getQualifier().precision = callNode.getSequence()[0]->getAsTyped()->getQualifier().precision;
 
     if (fnCandidate.getName().compare(0, 7, "texture") == 0) {
+#ifndef GLSLANG_WEB
         if (fnCandidate.getName().compare(0, 13, "textureGather") == 0) {
             TString featureString = fnCandidate.getName() + "(...)";
             const char* feature = featureString.c_str();
@@ -2317,7 +2303,9 @@ void TParseContext::nonOpBuiltInCheck(const TSourceLoc& loc, const TFunction& fn
                 } else
                     error(loc, "must be a compile-time constant:", feature, "component argument");
             }
-        } else {
+        } else
+#endif
+        {
             // this is only for functions not starting "textureGather"...
             if (fnCandidate.getName().find("Offset") != TString::npos) {
 
@@ -4924,6 +4912,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         publicType.qualifier.layoutPacking = ElpStd140;
         return;
     }
+#ifndef GLSLANG_WEB
     if (id == TQualifier::getLayoutPackingString(ElpStd430)) {
         requireProfile(loc, EEsProfile | ECoreProfile | ECompatibilityProfile, "std430");
         profileRequires(loc, ECoreProfile | ECompatibilityProfile, 430, nullptr, "std430");
@@ -4931,6 +4920,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         publicType.qualifier.layoutPacking = ElpStd430;
         return;
     }
+#endif
     if (id == TQualifier::getLayoutPackingString(ElpScalar)) {
         requireVulkan(loc, "scalar");
         requireExtensions(loc, 1, &E_GL_EXT_scalar_block_layout, "scalar block layout");
