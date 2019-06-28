@@ -3640,10 +3640,13 @@ void TGlslangToSpvTraverser::decorateStructType(const glslang::TType& type,
         if (glslangMember.getQualifier().hasComponent())
             builder.addMemberDecoration(spvType, member, spv::DecorationComponent,
                                         glslangMember.getQualifier().layoutComponent);
+#ifndef GLSLANG_WEB
         if (glslangMember.getQualifier().hasXfbOffset())
             builder.addMemberDecoration(spvType, member, spv::DecorationOffset,
                                         glslangMember.getQualifier().layoutXfbOffset);
-        else if (explicitLayout != glslang::ElpNone) {
+        else
+#endif
+        if (explicitLayout != glslang::ElpNone) {
             // figure out what to do with offset, which is accumulating
             int nextOffset;
             updateMemberOffset(type, glslangMember, offset, nextOffset, explicitLayout, memberQualifier.layoutMatrix);

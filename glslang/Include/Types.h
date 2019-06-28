@@ -834,8 +834,11 @@ public:
     }
     bool hasLayout() const
     {
-        return hasNonXfbLayout() ||
-               hasXfb();
+        return hasNonXfbLayout()
+#ifndef GLSLANG_WEB
+               || hasXfb()
+#endif
+               ;
     }
     TLayoutMatrix  layoutMatrix  : 3;
     TLayoutPacking layoutPacking : 4;
@@ -964,6 +967,7 @@ public:
     {
         return layoutFormat != ElfNone;
     }
+#ifndef GLSLANG_WEB
     bool hasXfb() const
     {
         return hasXfbBuffer() ||
@@ -982,6 +986,7 @@ public:
     {
         return layoutXfbOffset != layoutXfbOffsetEnd;
     }
+#endif
     bool hasAttachment() const
     {
         return layoutAttachment != layoutAttachmentEnd;
@@ -1948,6 +1953,7 @@ public:
                     appendStr(" ");
                     appendStr(TQualifier::getLayoutFormatString(qualifier.layoutFormat));
                 }
+#ifndef GLSLANG_WEB
                 if (qualifier.hasXfbBuffer() && qualifier.hasXfbOffset()) {
                     appendStr(" xfb_buffer=");
                     appendUint(qualifier.layoutXfbBuffer);
@@ -1960,6 +1966,7 @@ public:
                     appendStr(" xfb_stride=");
                     appendUint(qualifier.layoutXfbStride);
                 }
+#endif
                 if (qualifier.hasAttachment()) {
                     appendStr(" input_attachment_index=");
                     appendUint(qualifier.layoutAttachment);

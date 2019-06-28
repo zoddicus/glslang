@@ -454,6 +454,7 @@ TIntermTyped* TParseContext::handleBracketDereference(const TSourceLoc& loc, TIn
             checkIndex(loc, base->getType(), indexValue);
         result = intermediate.addIndex(EOpIndexDirect, base, index, loc);
     } else {
+#ifndef GLSLANG_WEB
         if (base->getType().isUnsizedArray()) {
             // we have a variable index into an unsized array, which is okay,
             // depending on the situation
@@ -465,6 +466,7 @@ TIntermTyped* TParseContext::handleBracketDereference(const TSourceLoc& loc, TIn
             }
             base->getWritableType().setArrayVariablyIndexed();
         }
+#endif
         if (base->getBasicType() == EbtBlock) {
             if (base->getQualifier().storage == EvqBuffer)
                 requireProfile(base->getLoc(), ~EEsProfile, "variable indexing buffer block array");
@@ -2998,6 +3000,7 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
             return true;
         }
 
+#ifndef GLSLANG_WEB
         if (type.isArrayOfArrays()) {
             // Types have to match, but we're still making the type.
             // Finish making the type, and the comparison is done later
@@ -3021,6 +3024,7 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
                 }
             }
         }
+#endif
     }
 
     if (arrayArg && op != EOpConstructStruct && ! type.isArrayOfArrays()) {
@@ -3985,6 +3989,7 @@ void TParseContext::declareArray(const TSourceLoc& loc, const TString& identifie
         checkIoArraysConsistency(loc);
 }
 
+#ifndef GLSLANG_WEB
 // Policy and error check for needing a runtime sized array.
 void TParseContext::checkRuntimeSizable(const TSourceLoc& loc, const TIntermTyped& base)
 {
@@ -4020,6 +4025,7 @@ void TParseContext::checkRuntimeSizable(const TSourceLoc& loc, const TIntermType
     else
         error(loc, "", "[", "array must be redeclared with a size before being indexed with a variable");
 }
+#endif
 
 // Policy decision for whether a run-time .length() is allowed.
 bool TParseContext::isRuntimeLength(const TIntermTyped& base) const
@@ -4676,6 +4682,7 @@ void TParseContext::structTypeCheck(const TSourceLoc& /*loc*/, TPublicType& publ
 //
 void TParseContext::inductiveLoopCheck(const TSourceLoc& loc, TIntermNode* init, TIntermLoop* loop)
 {
+#ifndef GLSLANG_WEB
     // loop index init must exist and be a declaration, which shows up in the AST as an aggregate of size 1 of the declaration
     bool badInit = false;
     if (! init || ! init->getAsAggregate() || init->getAsAggregate()->getSequence().size() != 1)
@@ -4771,6 +4778,7 @@ void TParseContext::inductiveLoopCheck(const TSourceLoc& loc, TIntermNode* init,
 
     // the body
     inductiveLoopBodyCheck(loop->getBody(), loopIndex, symbolTable);
+#endif
 }
 
 // Do limit checks for built-in arrays.
@@ -4816,6 +4824,7 @@ void TParseContext::finish()
     for (size_t i = 0; i < needsIndexLimitationChecking.size(); ++i)
         constantIndexExpressionCheck(needsIndexLimitationChecking[i]);
 
+#ifndef GLSLANG_WEB
     // Check for stages that are enabled by extension.
     // Can't do this at the beginning, it is chicken and egg to add a stage by
     // extension.
@@ -4837,19 +4846,16 @@ void TParseContext::finish()
         if (profile != EEsProfile && version < 430)
             requireExtensions(getCurrentLoc(), 1, &E_GL_ARB_compute_shader, "compute shaders");
         break;
-#ifdef NV_EXTENSIONS
     case EShLangTaskNV:
         requireExtensions(getCurrentLoc(), 1, &E_GL_NV_mesh_shader, "task shaders");
         break;
     case EShLangMeshNV:
         requireExtensions(getCurrentLoc(), 1, &E_GL_NV_mesh_shader, "mesh shaders");
         break;
-#endif
     default:
         break;
     }
 
-#ifdef NV_EXTENSIONS
     // Set default outputs for GL_NV_geometry_shader_passthrough
     if (language == EShLangGeometry && extensionTurnedOn(E_SPV_NV_geometry_shader_passthrough)) {
         if (intermediate.getOutputPrimitive() == ElgNone) {
@@ -4946,21 +4952,12 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         intermediate.setUsePhysicalStorageBuffer();
         return;
     }
-#endif
-    if (language == EShLangGeometry || language == EShLangTessEvaluation
-#ifdef NV_EXTENSIONS
-        || language == EShLangMeshNV
-#endif
-       ) {
+    if (language == EShLangGeometry || language == EShLangTessEvaluation || language == EShLangMeshNV) {
         if (id == TQualifier::getGeometryString(ElgTriangles)) {
             publicType.shaderQualifiers.geometry = ElgTriangles;
             return;
         }
-        if (language == EShLangGeometry
-#ifdef NV_EXTENSIONS
-            || language == EShLangMeshNV
-#endif
-           ) {
+        if (language == EShLangGeometry || language == EShLangMeshNV) {
             if (id == TQualifier::getGeometryString(ElgPoints)) {
                 publicType.shaderQualifiers.geometry = ElgPoints;
                 return;
@@ -4969,9 +4966,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
                 publicType.shaderQualifiers.geometry = ElgLines;
                 return;
             }
-#ifdef NV_EXTENSIONS
             if (language == EShLangGeometry)
-#endif
             {
                 if (id == TQualifier::getGeometryString(ElgLineStrip)) {
                     publicType.shaderQualifiers.geometry = ElgLineStrip;
@@ -4989,14 +4984,12 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
                     publicType.shaderQualifiers.geometry = ElgTriangleStrip;
                     return;
                 }
-#ifdef NV_EXTENSIONS
                 if (id == "passthrough") {
                     requireExtensions(loc, 1, &E_SPV_NV_geometry_shader_passthrough, "geometry shader passthrough");
                     publicType.qualifier.layoutPassthrough = true;
                     intermediate.setGeoPassthroughEXT();
                     return;
                 }
-#endif
             }
         } else {
             assert(language == EShLangTessEvaluation);
@@ -5038,13 +5031,11 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
                 publicType.shaderQualifiers.order = EvoCcw;
                 return;
             }
-#ifndef GLSLANG_WEB
             // point mode
             if (id == "point_mode") {
                 publicType.shaderQualifiers.pointMode = true;
                 return;
             }
-#endif
         }
     }
     if (language == EShLangFragment) {
@@ -5085,15 +5076,12 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
                 requireProfile(loc, ECoreProfile | ECompatibilityProfile, "fragment shader interlock layout qualifier");
                 profileRequires(loc, ECoreProfile | ECompatibilityProfile, 450, nullptr, "fragment shader interlock layout qualifier");
                 requireExtensions(loc, 1, &E_GL_ARB_fragment_shader_interlock, TQualifier::getInterlockOrderingString(order));
-#ifdef NV_EXTENSIONS
                 if (order == EioShadingRateInterlockOrdered || order == EioShadingRateInterlockUnordered)
                     requireExtensions(loc, 1, &E_GL_NV_shading_rate_image, TQualifier::getInterlockOrderingString(order));
-#endif
                 publicType.shaderQualifiers.interlockOrdering = order;
                 return;
             }
         }
-#ifndef GLSLANG_WEB
         if (id.compare(0, 13, "blend_support") == 0) {
             bool found = false;
             for (TBlendEquationShift be = (TBlendEquationShift)0; be < EBlendCount; be = (TBlendEquationShift)(be + 1)) {
@@ -5146,8 +5134,6 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
                 return;
             }
         }
-    }
-#else
     }
 #endif
     error(loc, "unrecognized layout identifier, or qualifier requires assignment (e.g., binding = 4)", id.c_str(), "");
@@ -5359,13 +5345,11 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
             error(loc, "needs a literal integer", "buffer_reference_align", "");
         return;
     }
-#endif
 
     switch (language) {
     case EShLangVertex:
         break;
 
-#ifndef GLSLANG_WEB
     case EShLangTessControl:
         if (id == "vertices") {
             if (value == 0)
@@ -5410,7 +5394,6 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
             return;
         }
         break;
-#endif
 
     case EShLangFragment:
         if (id == "index") {
@@ -5431,7 +5414,6 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         }
         break;
 
-#ifndef GLSLANG_WEB
     case EShLangMeshNV:
         if (id == "max_vertices") {
             requireExtensions(loc, 1, &E_GL_NV_mesh_shader, "max_vertices");
@@ -5455,9 +5437,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
 
     case EShLangTaskNV:
         // Fall through
-#endif
     case EShLangCompute:
-#ifndef GLSLANG_WEB
         if (id.compare(0, 11, "local_size_") == 0) {
             if (language == EShLangMeshNV || language == EShLangTaskNV) {
                 requireExtensions(loc, 1, &E_GL_NV_mesh_shader, "gl_WorkGroupSize");
@@ -5498,12 +5478,11 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
                 }
             }
         }
-#endif
         break;
-
     default:
         break;
     }
+#endif
 
     error(loc, "there is no such layout identifier for this stage taking an assigned value", id.c_str(), "");
 }
@@ -5535,12 +5514,12 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
     if (src.hasFormat())
         dst.layoutFormat = src.layoutFormat;
 
-    if (src.hasXfbBuffer())
-        dst.layoutXfbBuffer = src.layoutXfbBuffer;
-
     if (src.hasAlign())
         dst.layoutAlign = src.layoutAlign;
+
 #ifndef GLSLANG_WEB
+    if (src.hasXfbBuffer())
+        dst.layoutXfbBuffer = src.layoutXfbBuffer;
     if (src.hasBufferReferenceAlign())
         dst.layoutBufferReferenceAlign = src.layoutBufferReferenceAlign;
 #endif
@@ -5561,10 +5540,12 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
         if (src.layoutBinding != TQualifier::layoutBindingEnd)
             dst.layoutBinding = src.layoutBinding;
 
+#ifndef GLSLANG_WEB
         if (src.hasXfbStride())
             dst.layoutXfbStride = src.layoutXfbStride;
         if (src.hasXfbOffset())
             dst.layoutXfbOffset = src.layoutXfbOffset;
+#endif
         if (src.hasAttachment())
             dst.layoutAttachment = src.layoutAttachment;
         if (src.hasSpecConstantId())
@@ -5839,6 +5820,7 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
         }
     }
 
+#ifndef GLSLANG_WEB
     // some things can't have arrays of arrays
     if (type.isArrayOfArrays()) {
         if (spvVersion.vulkan > 0) {
@@ -5846,6 +5828,7 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
                 warn(loc, "Generating SPIR-V array-of-arrays, but Vulkan only supports single array level for this resource", "[][]", "");
         }
     }
+#endif
 
     // "The offset qualifier can only be used on block members of blocks..."
     if (qualifier.hasOffset()) {
@@ -6008,6 +5991,7 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
         if (! qualifier.isUniformOrBuffer() && !qualifier.isTaskMemory())
             error(loc, "requires uniform or buffer storage qualifier", "binding", "");
     }
+#ifndef GLSLANG_WEB
     if (qualifier.hasStream()) {
         if (!qualifier.isPipeOutput())
             error(loc, "can only be used on an output", "stream", "");
@@ -6016,6 +6000,7 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
         if (!qualifier.isPipeOutput())
             error(loc, "can only be used on an output", "xfb layout qualifier", "");
     }
+#endif
     if (qualifier.hasUniformLayout()) {
         if (! qualifier.isUniformOrBuffer() && !qualifier.isTaskMemory()) {
             if (qualifier.hasMatrix() || qualifier.hasPacking())
@@ -6599,12 +6584,14 @@ TIntermNode* TParseContext::declareVariable(const TSourceLoc& loc, TString& iden
 // Pick up global defaults from the provide global defaults into dst.
 void TParseContext::inheritGlobalDefaults(TQualifier& dst) const
 {
+#ifndef GLSLANG_WEB
     if (dst.storage == EvqVaryingOut) {
         if (! dst.hasStream() && language == EShLangGeometry)
             dst.layoutStream = globalOutputDefaults.layoutStream;
         if (! dst.hasXfbBuffer())
             dst.layoutXfbBuffer = globalOutputDefaults.layoutXfbBuffer;
     }
+#endif
 }
 
 //
@@ -6690,6 +6677,7 @@ TIntermNode* TParseContext::executeInitializer(const TSourceLoc& loc, TIntermTyp
     if (initializer->getType().isSizedArray() && variable->getType().isUnsizedArray())
         variable->getWritableType().changeOuterArraySize(initializer->getType().getOuterArraySize());
 
+#ifndef GLSLANG_WEB
     // Inner arrayness can also get set by an initializer
     if (initializer->getType().isArrayOfArrays() && variable->getType().isArrayOfArrays() &&
         initializer->getType().getArraySizes()->getNumDims() ==
@@ -6702,6 +6690,7 @@ TIntermNode* TParseContext::executeInitializer(const TSourceLoc& loc, TIntermTyp
             }
         }
     }
+#endif
 
     // Uniforms require a compile-time constant initializer
     if (qualifier == EvqUniform && ! initializer->getType().getQualifier().isFrontEndConstant()) {
@@ -6815,6 +6804,7 @@ TIntermTyped* TParseContext::convertInitializerList(const TSourceLoc& loc, const
         // edit array sizes to fill in unsized dimensions
         arrayType.changeOuterArraySize((int)initList->getSequence().size());
         TIntermTyped* firstInit = initList->getSequence()[0]->getAsTyped();
+#ifndef GLSLANG_WEB
         if (arrayType.isArrayOfArrays() && firstInit->getType().isArray() &&
             arrayType.getArraySizes()->getNumDims() == firstInit->getType().getArraySizes()->getNumDims() + 1) {
             for (int d = 1; d < arrayType.getArraySizes()->getNumDims(); ++d) {
@@ -6822,6 +6812,7 @@ TIntermTyped* TParseContext::convertInitializerList(const TSourceLoc& loc, const
                     arrayType.getArraySizes()->setDimSize(d, firstInit->getType().getArraySizes()->getDimSize(d - 1));
             }
         }
+#endif
 
         TType elementType(arrayType, 0); // dereferenced type
         for (size_t i = 0; i < initList->getSequence().size(); ++i) {
@@ -7314,6 +7305,8 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
     for (unsigned int member = 0; member < typeList.size(); ++member) {
         TQualifier& memberQualifier = typeList[member].type->getQualifier();
         const TSourceLoc& memberLoc = typeList[member].loc;
+
+#ifndef GLSLANG_WEB
         if (memberQualifier.hasStream()) {
             if (defaultQualification.layoutStream != memberQualifier.layoutStream)
                 error(memberLoc, "member cannot contradict block", "stream", "");
@@ -7327,6 +7320,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
             if (defaultQualification.layoutXfbBuffer != memberQualifier.layoutXfbBuffer)
                 error(memberLoc, "member cannot contradict block (or what block inherited from global)", "xfb_buffer", "");
         }
+#endif
 
         if (memberQualifier.hasPacking())
             error(memberLoc, "member of block cannot have a packing layout qualifier", typeList[member].type->getFieldName().c_str(), "");
@@ -7369,6 +7363,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
 
     layoutMemberLocationArrayCheck(loc, memberWithLocation, arraySizes);
 
+#ifndef GLSLANG_WEB
     // Ensure that the block has an XfbBuffer assigned. This is needed
     // because if the block has a XfbOffset assigned, then it is
     // assumed that it has implicitly assigned the current global
@@ -7378,6 +7373,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
        if (!currentBlockQualifier.hasXfbBuffer() && currentBlockQualifier.hasXfbOffset())
           currentBlockQualifier.layoutXfbBuffer = globalOutputDefaults.layoutXfbBuffer;
     }
+#endif
 
     // Process the members
     fixBlockLocations(loc, currentBlockQualifier, typeList, memberWithLocation, memberWithoutLocation);
@@ -8131,13 +8127,13 @@ void TParseContext::updateStandaloneQualifierDefaults(const TSourceLoc& loc, con
         error(loc, "cannot declare a default, include a type or full declaration", "binding", "");
     if (qualifier.hasAnyLocation())
         error(loc, "cannot declare a default, use a full declaration", "location/component/index", "");
-    if (qualifier.hasXfbOffset())
-        error(loc, "cannot declare a default, use a full declaration", "xfb_offset", "");
     if (qualifier.layoutPushConstant)
         error(loc, "cannot declare a default, can only be used on a block", "push_constant", "");
     if (qualifier.hasSpecConstantId())
         error(loc, "cannot declare a default, can only be used on a scalar", "constant_id", "");
 #ifndef GLSLANG_WEB
+    if (qualifier.hasXfbOffset())
+        error(loc, "cannot declare a default, use a full declaration", "xfb_offset", "");
     if (qualifier.layoutBufferReference)
         error(loc, "cannot declare a default, can only be used on a block", "buffer_reference", "");
     if (qualifier.layoutShaderRecordNV)
