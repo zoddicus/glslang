@@ -36,6 +36,8 @@
 // Post-processing for SPIR-V IR, in internal form, not standard binary form.
 //
 
+#ifndef GLSLANG_WEB
+
 #include <cassert>
 #include <cstdlib>
 
@@ -424,3 +426,5 @@ void Builder::postProcess()
 }
 
 }; // end spv namespace
+
+#endif
