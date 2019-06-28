@@ -950,33 +950,33 @@ static const yytype_uint16 yyrline[] =
      731,   735,   742,   745,   756,   763,   768,   773,   781,   785,
      789,   793,   798,   803,   812,   812,   823,   827,   834,   841,
      844,   851,   859,   879,   902,   917,   942,   953,   963,   973,
-     983,   992,   995,   999,  1003,  1008,  1016,  1021,  1026,  1031,
-    1036,  1045,  1056,  1083,  1092,  1099,  1109,  1115,  1118,  1125,
-    1129,  1133,  1141,  1144,  1155,  1158,  1161,  1165,  1169,  1173,
-    1179,  1183,  1195,  1209,  1214,  1220,  1226,  1233,  1238,  1243,
-    1258,  1265,  1270,  1280,  1285,  1293,  1297,  1307,  1310,  1316,
-    1322,  1329,  1339,  1343,  1347,  1351,  1356,  1360,  1365,  1370,
-    1375,  1380,  1385,  1390,  1395,  1400,  1405,  1411,  1417,  1423,
-    1428,  1433,  1438,  1443,  1448,  1453,  1458,  1463,  1468,  1473,
-    1478,  1483,  1488,  1493,  1498,  1503,  1508,  1513,  1518,  1523,
-    1528,  1533,  1538,  1543,  1548,  1553,  1558,  1563,  1568,  1573,
-    1578,  1583,  1588,  1593,  1598,  1603,  1608,  1613,  1618,  1623,
-    1628,  1633,  1638,  1643,  1648,  1653,  1658,  1663,  1670,  1677,
-    1682,  1687,  1692,  1697,  1702,  1707,  1712,  1717,  1722,  1727,
-    1732,  1737,  1742,  1747,  1752,  1757,  1762,  1767,  1772,  1777,
-    1782,  1787,  1792,  1797,  1802,  1807,  1812,  1817,  1822,  1827,
-    1832,  1837,  1842,  1847,  1852,  1857,  1862,  1867,  1872,  1877,
-    1882,  1887,  1892,  1897,  1902,  1907,  1912,  1917,  1922,  1927,
-    1932,  1937,  1942,  1947,  1952,  1957,  1962,  1967,  1972,  1977,
-    1982,  1987,  1992,  1997,  2002,  2007,  2023,  2028,  2033,  2041,
-    2041,  2052,  2052,  2062,  2065,  2078,  2100,  2127,  2131,  2137,
-    2142,  2153,  2156,  2162,  2171,  2174,  2180,  2184,  2185,  2191,
-    2192,  2193,  2194,  2195,  2196,  2197,  2201,  2202,  2206,  2202,
-    2218,  2219,  2223,  2223,  2230,  2230,  2244,  2247,  2255,  2263,
-    2274,  2275,  2279,  2284,  2291,  2295,  2303,  2307,  2320,  2325,
-    2325,  2345,  2348,  2354,  2366,  2378,  2383,  2383,  2398,  2398,
-    2414,  2414,  2435,  2438,  2444,  2447,  2453,  2457,  2464,  2469,
-    2474,  2481,  2484,  2493,  2497,  2506,  2509,  2512,  2520,  2520
+     983,   992,   995,   999,  1003,  1008,  1016,  1023,  1028,  1033,
+    1038,  1047,  1058,  1085,  1094,  1101,  1111,  1117,  1120,  1127,
+    1131,  1135,  1143,  1146,  1157,  1160,  1163,  1167,  1171,  1175,
+    1181,  1185,  1197,  1211,  1216,  1222,  1228,  1235,  1240,  1245,
+    1260,  1267,  1272,  1282,  1287,  1295,  1299,  1309,  1312,  1318,
+    1324,  1331,  1341,  1345,  1349,  1353,  1358,  1362,  1367,  1372,
+    1377,  1382,  1387,  1392,  1397,  1402,  1407,  1413,  1419,  1425,
+    1430,  1435,  1440,  1445,  1450,  1455,  1460,  1465,  1470,  1475,
+    1480,  1485,  1490,  1495,  1500,  1505,  1510,  1515,  1520,  1525,
+    1530,  1535,  1540,  1545,  1550,  1555,  1560,  1565,  1570,  1575,
+    1580,  1585,  1590,  1595,  1600,  1605,  1610,  1615,  1620,  1625,
+    1630,  1635,  1640,  1645,  1650,  1655,  1660,  1665,  1672,  1679,
+    1684,  1689,  1694,  1699,  1704,  1709,  1714,  1719,  1724,  1729,
+    1734,  1739,  1744,  1749,  1754,  1759,  1764,  1769,  1774,  1779,
+    1784,  1789,  1794,  1799,  1804,  1809,  1814,  1819,  1824,  1829,
+    1834,  1839,  1844,  1849,  1854,  1859,  1864,  1869,  1874,  1879,
+    1884,  1889,  1894,  1899,  1904,  1909,  1914,  1919,  1924,  1929,
+    1934,  1939,  1944,  1949,  1954,  1959,  1964,  1969,  1974,  1979,
+    1984,  1989,  1994,  1999,  2004,  2009,  2025,  2030,  2035,  2043,
+    2043,  2054,  2054,  2064,  2067,  2080,  2102,  2129,  2133,  2139,
+    2144,  2155,  2158,  2164,  2173,  2176,  2182,  2186,  2187,  2193,
+    2194,  2195,  2196,  2197,  2198,  2199,  2203,  2204,  2208,  2204,
+    2220,  2221,  2225,  2225,  2232,  2232,  2246,  2249,  2257,  2265,
+    2276,  2277,  2281,  2286,  2293,  2297,  2305,  2309,  2322,  2327,
+    2327,  2347,  2350,  2356,  2368,  2380,  2385,  2385,  2400,  2400,
+    2416,  2416,  2437,  2440,  2446,  2449,  2455,  2459,  2466,  2471,
+    2476,  2483,  2486,  2495,  2499,  2508,  2511,  2514,  2522,  2522
 };
 #endif
 
@@ -4997,53 +4997,55 @@ yyreduce:
     {
         (yyval.interm).type = (yyvsp[0].interm.type);
         (yyval.interm).intermNode = 0;
+#ifndef GLSLANG_WEB
         parseContext.declareTypeDefaults((yyval.interm).loc, (yyval.interm).type);
+#endif
     }
-#line 5003 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5005 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 1021 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1023 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm).type = (yyvsp[-1].interm.type);
         (yyval.interm).intermNode = 0;
         parseContext.declareVariable((yyvsp[0].lex).loc, *(yyvsp[0].lex).string, (yyvsp[-1].interm.type));
     }
-#line 5013 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5015 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 118:
-#line 1026 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1028 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm).type = (yyvsp[-2].interm.type);
         (yyval.interm).intermNode = 0;
         parseContext.declareVariable((yyvsp[-1].lex).loc, *(yyvsp[-1].lex).string, (yyvsp[-2].interm.type), (yyvsp[0].interm).arraySizes);
     }
-#line 5023 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5025 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 119:
-#line 1031 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1033 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm).type = (yyvsp[-4].interm.type);
         TIntermNode* initNode = parseContext.declareVariable((yyvsp[-3].lex).loc, *(yyvsp[-3].lex).string, (yyvsp[-4].interm.type), (yyvsp[-2].interm).arraySizes, (yyvsp[0].interm.intermTypedNode));
         (yyval.interm).intermNode = parseContext.intermediate.growAggregate(0, initNode, (yyvsp[-1].lex).loc);
     }
-#line 5033 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5035 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 120:
-#line 1036 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1038 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm).type = (yyvsp[-3].interm.type);
         TIntermNode* initNode = parseContext.declareVariable((yyvsp[-2].lex).loc, *(yyvsp[-2].lex).string, (yyvsp[-3].interm.type), 0, (yyvsp[0].interm.intermTypedNode));
         (yyval.interm).intermNode = parseContext.intermediate.growAggregate(0, initNode, (yyvsp[-1].lex).loc);
     }
-#line 5043 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5045 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 121:
-#line 1045 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1047 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[0].interm.type);
 
@@ -5055,11 +5057,11 @@ yyreduce:
 
         parseContext.precisionQualifierCheck((yyval.interm.type).loc, (yyval.interm.type).basicType, (yyval.interm.type).qualifier);
     }
-#line 5059 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5061 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 122:
-#line 1056 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1058 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalQualifierFixCheck((yyvsp[-1].interm.type).loc, (yyvsp[-1].interm.type).qualifier);
         parseContext.globalQualifierTypeCheck((yyvsp[-1].interm.type).loc, (yyvsp[-1].interm.type).qualifier, (yyvsp[0].interm.type));
@@ -5084,22 +5086,22 @@ yyreduce:
              (parseContext.language == EShLangFragment && (yyval.interm.type).qualifier.storage == EvqVaryingIn)))
             (yyval.interm.type).qualifier.smooth = true;
     }
-#line 5088 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5090 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 123:
-#line 1083 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1085 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "invariant");
         parseContext.profileRequires((yyval.interm.type).loc, ENoProfile, 120, 0, "invariant");
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.invariant = true;
     }
-#line 5099 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5101 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 124:
-#line 1092 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1094 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "smooth");
         parseContext.profileRequires((yyvsp[0].lex).loc, ENoProfile, 130, 0, "smooth");
@@ -5107,11 +5109,11 @@ yyreduce:
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.smooth = true;
     }
-#line 5111 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5113 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 125:
-#line 1099 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1101 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "flat");
         parseContext.profileRequires((yyvsp[0].lex).loc, ENoProfile, 130, 0, "flat");
@@ -5119,73 +5121,73 @@ yyreduce:
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.flat = true;
     }
-#line 5123 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5125 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 126:
-#line 1109 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1111 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[-1].interm.type);
     }
-#line 5131 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5133 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 127:
-#line 1115 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1117 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5139 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5141 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 128:
-#line 1118 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1120 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[-2].interm.type);
         (yyval.interm.type).shaderQualifiers.merge((yyvsp[0].interm.type).shaderQualifiers);
         parseContext.mergeObjectLayoutQualifiers((yyval.interm.type).qualifier, (yyvsp[0].interm.type).qualifier, false);
     }
-#line 5149 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5151 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 129:
-#line 1125 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1127 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         parseContext.setLayoutQualifier((yyvsp[0].lex).loc, (yyval.interm.type), *(yyvsp[0].lex).string);
     }
-#line 5158 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5160 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 130:
-#line 1129 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1131 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[-2].lex).loc);
         parseContext.setLayoutQualifier((yyvsp[-2].lex).loc, (yyval.interm.type), *(yyvsp[-2].lex).string, (yyvsp[0].interm.intermTypedNode));
     }
-#line 5167 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5169 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 131:
-#line 1133 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1135 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { // because "shared" is both an identifier and a keyword
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         TString strShared("shared");
         parseContext.setLayoutQualifier((yyvsp[0].lex).loc, (yyval.interm.type), strShared);
     }
-#line 5177 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5179 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 132:
-#line 1141 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1143 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5185 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5187 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 133:
-#line 1144 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1146 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[-1].interm.type);
         if ((yyval.interm.type).basicType == EbtVoid)
@@ -5194,71 +5196,71 @@ yyreduce:
         (yyval.interm.type).shaderQualifiers.merge((yyvsp[0].interm.type).shaderQualifiers);
         parseContext.mergeQualifiers((yyval.interm.type).loc, (yyval.interm.type).qualifier, (yyvsp[0].interm.type).qualifier, false);
     }
-#line 5198 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5200 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 134:
-#line 1155 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1157 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5206 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5208 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 135:
-#line 1158 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1160 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5214 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5216 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 136:
-#line 1161 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1163 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.checkPrecisionQualifier((yyvsp[0].interm.type).loc, (yyvsp[0].interm.type).qualifier.precision);
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5223 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5225 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 137:
-#line 1165 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1167 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         // allow inheritance of storage qualifier from block declaration
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5232 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5234 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 138:
-#line 1169 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1171 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         // allow inheritance of storage qualifier from block declaration
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5241 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5243 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 139:
-#line 1173 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1175 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[0].interm.type);
     }
-#line 5249 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5251 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 140:
-#line 1179 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1181 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.storage = EvqConst;  // will later turn into EvqConstReadOnly, if the initializer is not constant
     }
-#line 5258 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5260 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 141:
-#line 1183 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1185 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.requireStage((yyvsp[0].lex).loc, EShLangVertex, "attribute");
         parseContext.checkDeprecated((yyvsp[0].lex).loc, ECoreProfile, 130, "attribute");
@@ -5271,11 +5273,11 @@ yyreduce:
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.storage = EvqVaryingIn;
     }
-#line 5275 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5277 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 142:
-#line 1195 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1197 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.checkDeprecated((yyvsp[0].lex).loc, ENoProfile, 130, "varying");
         parseContext.checkDeprecated((yyvsp[0].lex).loc, ECoreProfile, 130, "varying");
@@ -5290,43 +5292,43 @@ yyreduce:
         else
             (yyval.interm.type).qualifier.storage = EvqVaryingIn;
     }
-#line 5294 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5296 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 143:
-#line 1209 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1211 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "inout");
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.storage = EvqInOut;
     }
-#line 5304 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5306 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 144:
-#line 1214 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1216 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "in");
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         // whether this is a parameter "in" or a pipeline "in" will get sorted out a bit later
         (yyval.interm.type).qualifier.storage = EvqIn;
     }
-#line 5315 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5317 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 145:
-#line 1220 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1222 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "out");
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         // whether this is a parameter "out" or a pipeline "out" will get sorted out a bit later
         (yyval.interm.type).qualifier.storage = EvqOut;
     }
-#line 5326 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5328 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 146:
-#line 1226 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1228 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.profileRequires((yyvsp[0].lex).loc, ENoProfile, 120, 0, "centroid");
         parseContext.profileRequires((yyvsp[0].lex).loc, EEsProfile, 300, 0, "centroid");
@@ -5334,31 +5336,31 @@ yyreduce:
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.centroid = true;
     }
-#line 5338 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5340 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 147:
-#line 1233 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1235 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "uniform");
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.storage = EvqUniform;
     }
-#line 5348 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5350 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 148:
-#line 1238 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1240 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "buffer");
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.storage = EvqBuffer;
     }
-#line 5358 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5360 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 149:
-#line 1243 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1245 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.globalCheck((yyvsp[0].lex).loc, "shared");
         parseContext.profileRequires((yyvsp[0].lex).loc, ECoreProfile | ECompatibilityProfile, 430, E_GL_ARB_compute_shader, "shared");
@@ -5371,30 +5373,30 @@ yyreduce:
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.storage = EvqShared;
     }
-#line 5375 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5377 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 150:
-#line 1258 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1260 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc);
         (yyval.interm.type).qualifier.nonUniform = true;
     }
-#line 5384 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5386 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 151:
-#line 1265 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1267 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[-1].interm.type);
         (yyval.interm.type).qualifier.precision = parseContext.getDefaultPrecision((yyval.interm.type));
         (yyval.interm.type).typeParameters = (yyvsp[0].interm.typeParameters);
     }
-#line 5394 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5396 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 152:
-#line 1270 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1272 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.arrayOfArrayVersionCheck((yyvsp[0].interm).loc, (yyvsp[0].interm).arraySizes);
         (yyval.interm.type) = (yyvsp[-2].interm.type);
@@ -5402,21 +5404,21 @@ yyreduce:
         (yyval.interm.type).typeParameters = (yyvsp[-1].interm.typeParameters);
         (yyval.interm.type).arraySizes = (yyvsp[0].interm).arraySizes;
     }
-#line 5406 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5408 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 153:
-#line 1280 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1282 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm).loc = (yyvsp[-1].lex).loc;
         (yyval.interm).arraySizes = new TArraySizes;
         (yyval.interm).arraySizes->addInnerSize();
     }
-#line 5416 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5418 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 154:
-#line 1285 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1287 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm).loc = (yyvsp[-2].lex).loc;
         (yyval.interm).arraySizes = new TArraySizes;
@@ -5425,20 +5427,20 @@ yyreduce:
         parseContext.arraySizeCheck((yyvsp[-1].interm.intermTypedNode)->getLoc(), (yyvsp[-1].interm.intermTypedNode), size, "array size");
         (yyval.interm).arraySizes->addInnerSize(size);
     }
-#line 5429 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5431 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 155:
-#line 1293 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1295 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm) = (yyvsp[-2].interm);
         (yyval.interm).arraySizes->addInnerSize();
     }
-#line 5438 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5440 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 156:
-#line 1297 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1299 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm) = (yyvsp[-3].interm);
 
@@ -5446,35 +5448,35 @@ yyreduce:
         parseContext.arraySizeCheck((yyvsp[-1].interm.intermTypedNode)->getLoc(), (yyvsp[-1].interm.intermTypedNode), size, "array size");
         (yyval.interm).arraySizes->addInnerSize(size);
     }
-#line 5450 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5452 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 157:
-#line 1307 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1309 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeParameters) = (yyvsp[0].interm.typeParameters);
     }
-#line 5458 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5460 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 158:
-#line 1310 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1312 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeParameters) = 0;
     }
-#line 5466 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5468 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 159:
-#line 1316 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1318 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeParameters) = (yyvsp[-1].interm.typeParameters);
     }
-#line 5474 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5476 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 160:
-#line 1322 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1324 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeParameters) = new TArraySizes;
 
@@ -5482,11 +5484,11 @@ yyreduce:
         parseContext.arraySizeCheck((yyvsp[0].interm.intermTypedNode)->getLoc(), (yyvsp[0].interm.intermTypedNode), size, "type parameter");
         (yyval.interm.typeParameters)->addInnerSize(size);
     }
-#line 5486 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5488 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 161:
-#line 1329 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1331 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeParameters) = (yyvsp[-2].interm.typeParameters);
 
@@ -5494,660 +5496,660 @@ yyreduce:
         parseContext.arraySizeCheck((yyvsp[0].interm.intermTypedNode)->getLoc(), (yyvsp[0].interm.intermTypedNode), size, "type parameter");
         (yyval.interm.typeParameters)->addInnerSize(size);
     }
-#line 5498 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5500 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 162:
-#line 1339 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1341 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtVoid;
     }
-#line 5507 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5509 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 163:
-#line 1343 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1345 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
     }
-#line 5516 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5518 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 164:
-#line 1347 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1349 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtInt;
     }
-#line 5525 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5527 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 165:
-#line 1351 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1353 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.fullIntegerCheck((yyvsp[0].lex).loc, "unsigned integer");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtUint;
     }
-#line 5535 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5537 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 166:
-#line 1356 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1358 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtBool;
     }
-#line 5544 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5546 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 167:
-#line 1360 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1362 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setVector(2);
     }
-#line 5554 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5556 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 168:
-#line 1365 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1367 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setVector(3);
     }
-#line 5564 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5566 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 169:
-#line 1370 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1372 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setVector(4);
     }
-#line 5574 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5576 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 170:
-#line 1375 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1377 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtBool;
         (yyval.interm.type).setVector(2);
     }
-#line 5584 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5586 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 171:
-#line 1380 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1382 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtBool;
         (yyval.interm.type).setVector(3);
     }
-#line 5594 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5596 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 172:
-#line 1385 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1387 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtBool;
         (yyval.interm.type).setVector(4);
     }
-#line 5604 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5606 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 173:
-#line 1390 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1392 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtInt;
         (yyval.interm.type).setVector(2);
     }
-#line 5614 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5616 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 174:
-#line 1395 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1397 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtInt;
         (yyval.interm.type).setVector(3);
     }
-#line 5624 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5626 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 175:
-#line 1400 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1402 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtInt;
         (yyval.interm.type).setVector(4);
     }
-#line 5634 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5636 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 176:
-#line 1405 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1407 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.fullIntegerCheck((yyvsp[0].lex).loc, "unsigned integer vector");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtUint;
         (yyval.interm.type).setVector(2);
     }
-#line 5645 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5647 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 177:
-#line 1411 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1413 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.fullIntegerCheck((yyvsp[0].lex).loc, "unsigned integer vector");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtUint;
         (yyval.interm.type).setVector(3);
     }
-#line 5656 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5658 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 178:
-#line 1417 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1419 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.fullIntegerCheck((yyvsp[0].lex).loc, "unsigned integer vector");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtUint;
         (yyval.interm.type).setVector(4);
     }
-#line 5667 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5669 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 179:
-#line 1423 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1425 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(2, 2);
     }
-#line 5677 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5679 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 180:
-#line 1428 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1430 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(3, 3);
     }
-#line 5687 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5689 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 181:
-#line 1433 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1435 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(4, 4);
     }
-#line 5697 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5699 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 182:
-#line 1438 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1440 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(2, 2);
     }
-#line 5707 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5709 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 183:
-#line 1443 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1445 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(2, 3);
     }
-#line 5717 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5719 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 184:
-#line 1448 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1450 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(2, 4);
     }
-#line 5727 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5729 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 185:
-#line 1453 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1455 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(3, 2);
     }
-#line 5737 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5739 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 186:
-#line 1458 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1460 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(3, 3);
     }
-#line 5747 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5749 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 187:
-#line 1463 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1465 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(3, 4);
     }
-#line 5757 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5759 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 188:
-#line 1468 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1470 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(4, 2);
     }
-#line 5767 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5769 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 189:
-#line 1473 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1475 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(4, 3);
     }
-#line 5777 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5779 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 190:
-#line 1478 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1480 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtFloat;
         (yyval.interm.type).setMatrix(4, 4);
     }
-#line 5787 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5789 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 191:
-#line 1483 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1485 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.vulkanRemoved((yyvsp[0].lex).loc, "atomic counter types");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtAtomicUint;
     }
-#line 5797 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5799 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 192:
-#line 1488 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1490 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd1D);
     }
-#line 5807 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5809 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 193:
-#line 1493 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1495 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd2D);
     }
-#line 5817 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5819 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 194:
-#line 1498 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1500 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd3D);
     }
-#line 5827 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5829 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 195:
-#line 1503 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1505 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, EsdCube);
     }
-#line 5837 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5839 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 196:
-#line 1508 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1510 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd1D, false, true);
     }
-#line 5847 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5849 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 197:
-#line 1513 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1515 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd2D, false, true);
     }
-#line 5857 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5859 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 198:
-#line 1518 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1520 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, EsdCube, false, true);
     }
-#line 5867 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5869 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 199:
-#line 1523 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1525 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd1D, true);
     }
-#line 5877 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5879 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 200:
-#line 1528 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1530 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd2D, true);
     }
-#line 5887 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5889 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 201:
-#line 1533 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1535 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd1D, true, true);
     }
-#line 5897 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5899 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 202:
-#line 1538 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1540 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd2D, true, true);
     }
-#line 5907 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5909 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 203:
-#line 1543 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1545 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, EsdCube, true);
     }
-#line 5917 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5919 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 204:
-#line 1548 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1550 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, EsdCube, true, true);
     }
-#line 5927 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5929 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 205:
-#line 1553 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1555 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, Esd1D);
     }
-#line 5937 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5939 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 206:
-#line 1558 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1560 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, Esd2D);
     }
-#line 5947 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5949 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 207:
-#line 1563 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1565 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, Esd3D);
     }
-#line 5957 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5959 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 208:
-#line 1568 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1570 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, EsdCube);
     }
-#line 5967 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5969 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 209:
-#line 1573 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1575 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, Esd1D, true);
     }
-#line 5977 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5979 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 210:
-#line 1578 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1580 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, Esd2D, true);
     }
-#line 5987 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5989 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 211:
-#line 1583 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1585 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, EsdCube, true);
     }
-#line 5997 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 5999 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 212:
-#line 1588 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1590 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, Esd1D);
     }
-#line 6007 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6009 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 213:
-#line 1593 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1595 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, Esd2D);
     }
-#line 6017 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6019 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 214:
-#line 1598 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1600 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, Esd3D);
     }
-#line 6027 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6029 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 215:
-#line 1603 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1605 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, EsdCube);
     }
-#line 6037 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6039 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 216:
-#line 1608 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1610 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, Esd1D, true);
     }
-#line 6047 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6049 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 217:
-#line 1613 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1615 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, Esd2D, true);
     }
-#line 6057 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6059 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 218:
-#line 1618 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1620 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, EsdCube, true);
     }
-#line 6067 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6069 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 219:
-#line 1623 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1625 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, EsdRect);
     }
-#line 6077 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6079 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 220:
-#line 1628 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1630 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, EsdRect, false, true);
     }
-#line 6087 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6089 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 221:
-#line 1633 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1635 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd2D, false, false, true);
     }
-#line 6097 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6099 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 222:
-#line 1638 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1640 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, Esd2D, false, false, true);
     }
-#line 6107 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6109 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 223:
-#line 1643 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1645 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, Esd2D, false, false, true);
     }
-#line 6117 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6119 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 224:
-#line 1648 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1650 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtFloat, Esd2D, true, false, true);
     }
-#line 6127 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6129 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 225:
-#line 1653 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1655 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtInt, Esd2D, true, false, true);
     }
-#line 6137 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6139 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 226:
-#line 1658 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1660 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.set(EbtUint, Esd2D, true, false, true);
     }
-#line 6147 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6149 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 227:
-#line 1663 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1665 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
@@ -6155,11 +6157,11 @@ yyreduce:
         (yyval.interm.type).sampler.setPureSampler(false);
 #endif
     }
-#line 6159 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6161 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 228:
-#line 1670 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1672 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
@@ -6167,671 +6169,671 @@ yyreduce:
         (yyval.interm.type).sampler.setPureSampler(true);
 #endif
     }
-#line 6171 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6173 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 229:
-#line 1677 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1679 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, Esd2D);
     }
-#line 6181 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6183 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 230:
-#line 1682 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1684 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, Esd3D);
     }
-#line 6191 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6193 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 231:
-#line 1687 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1689 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, EsdCube);
     }
-#line 6201 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6203 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 232:
-#line 1692 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1694 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, Esd1D, true);
     }
-#line 6211 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6213 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 233:
-#line 1697 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1699 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, Esd2D, true);
     }
-#line 6221 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6223 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 234:
-#line 1702 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1704 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, EsdCube, true);
     }
-#line 6231 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6233 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 235:
-#line 1707 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1709 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, Esd1D);
     }
-#line 6241 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6243 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 236:
-#line 1712 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1714 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, Esd2D);
     }
-#line 6251 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6253 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 237:
-#line 1717 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1719 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, Esd3D);
     }
-#line 6261 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6263 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 238:
-#line 1722 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1724 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, EsdCube);
     }
-#line 6271 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6273 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 239:
-#line 1727 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1729 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, Esd1D, true);
     }
-#line 6281 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6283 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 240:
-#line 1732 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1734 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, Esd2D, true);
     }
-#line 6291 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6293 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 241:
-#line 1737 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1739 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, EsdCube, true);
     }
-#line 6301 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6303 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 242:
-#line 1742 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1744 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, Esd1D);
     }
-#line 6311 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6313 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 243:
-#line 1747 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1749 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, Esd2D);
     }
-#line 6321 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6323 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 244:
-#line 1752 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1754 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, Esd3D);
     }
-#line 6331 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6333 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 245:
-#line 1757 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1759 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, EsdCube);
     }
-#line 6341 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6343 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 246:
-#line 1762 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1764 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, Esd1D, true);
     }
-#line 6351 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6353 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 247:
-#line 1767 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1769 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, Esd2D, true);
     }
-#line 6361 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6363 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 248:
-#line 1772 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1774 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, EsdCube, true);
     }
-#line 6371 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6373 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 249:
-#line 1777 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1779 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, EsdRect);
     }
-#line 6381 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6383 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 250:
-#line 1782 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1784 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, EsdRect);
     }
-#line 6391 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6393 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 251:
-#line 1787 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1789 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, EsdRect);
     }
-#line 6401 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6403 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 252:
-#line 1792 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1794 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, EsdBuffer);
     }
-#line 6411 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6413 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 253:
-#line 1797 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1799 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, EsdBuffer);
     }
-#line 6421 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6423 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 254:
-#line 1802 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1804 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, EsdBuffer);
     }
-#line 6431 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6433 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 255:
-#line 1807 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1809 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, Esd2D, false, false, true);
     }
-#line 6441 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6443 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 256:
-#line 1812 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1814 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, Esd2D, false, false, true);
     }
-#line 6451 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6453 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 257:
-#line 1817 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1819 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, Esd2D, false, false, true);
     }
-#line 6461 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6463 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 258:
-#line 1822 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1824 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtFloat, Esd2D, true, false, true);
     }
-#line 6471 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6473 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 259:
-#line 1827 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1829 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtInt, Esd2D, true, false, true);
     }
-#line 6481 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6483 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 260:
-#line 1832 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1834 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setTexture(EbtUint, Esd2D, true, false, true);
     }
-#line 6491 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6493 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 261:
-#line 1837 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1839 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, Esd1D);
     }
-#line 6501 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6503 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 262:
-#line 1842 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1844 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, Esd1D);
     }
-#line 6511 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6513 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 263:
-#line 1847 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1849 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, Esd1D);
     }
-#line 6521 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6523 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 264:
-#line 1852 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1854 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, Esd2D);
     }
-#line 6531 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6533 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 265:
-#line 1857 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1859 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, Esd2D);
     }
-#line 6541 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6543 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 266:
-#line 1862 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1864 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, Esd2D);
     }
-#line 6551 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6553 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 267:
-#line 1867 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1869 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, Esd3D);
     }
-#line 6561 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6563 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 268:
-#line 1872 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1874 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, Esd3D);
     }
-#line 6571 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6573 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 269:
-#line 1877 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1879 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, Esd3D);
     }
-#line 6581 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6583 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 270:
-#line 1882 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1884 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, EsdRect);
     }
-#line 6591 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6593 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 271:
-#line 1887 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1889 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, EsdRect);
     }
-#line 6601 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6603 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 272:
-#line 1892 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1894 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, EsdRect);
     }
-#line 6611 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6613 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 273:
-#line 1897 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1899 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, EsdCube);
     }
-#line 6621 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6623 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 274:
-#line 1902 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1904 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, EsdCube);
     }
-#line 6631 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6633 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 275:
-#line 1907 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1909 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, EsdCube);
     }
-#line 6641 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6643 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 276:
-#line 1912 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1914 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, EsdBuffer);
     }
-#line 6651 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6653 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 277:
-#line 1917 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1919 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, EsdBuffer);
     }
-#line 6661 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6663 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 278:
-#line 1922 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1924 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, EsdBuffer);
     }
-#line 6671 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6673 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 279:
-#line 1927 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1929 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, Esd1D, true);
     }
-#line 6681 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6683 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 280:
-#line 1932 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1934 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, Esd1D, true);
     }
-#line 6691 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6693 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 281:
-#line 1937 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1939 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, Esd1D, true);
     }
-#line 6701 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6703 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 282:
-#line 1942 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1944 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, Esd2D, true);
     }
-#line 6711 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6713 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 283:
-#line 1947 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1949 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, Esd2D, true);
     }
-#line 6721 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6723 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 284:
-#line 1952 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1954 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, Esd2D, true);
     }
-#line 6731 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6733 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 285:
-#line 1957 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1959 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, EsdCube, true);
     }
-#line 6741 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6743 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 286:
-#line 1962 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1964 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, EsdCube, true);
     }
-#line 6751 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6753 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 287:
-#line 1967 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1969 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, EsdCube, true);
     }
-#line 6761 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6763 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 288:
-#line 1972 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1974 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, Esd2D, false, false, true);
     }
-#line 6771 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6773 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 289:
-#line 1977 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1979 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, Esd2D, false, false, true);
     }
-#line 6781 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6783 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 290:
-#line 1982 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1984 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, Esd2D, false, false, true);
     }
-#line 6791 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6793 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 291:
-#line 1987 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1989 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtFloat, Esd2D, true, false, true);
     }
-#line 6801 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6803 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 292:
-#line 1992 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1994 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtInt, Esd2D, true, false, true);
     }
-#line 6811 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6813 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 293:
-#line 1997 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 1999 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         (yyval.interm.type).basicType = EbtSampler;
         (yyval.interm.type).sampler.setImage(EbtUint, Esd2D, true, false, true);
     }
-#line 6821 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6823 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 294:
-#line 2002 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2004 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.type) = (yyvsp[0].interm.type);
         (yyval.interm.type).qualifier.storage = parseContext.symbolTable.atGlobalLevel() ? EvqGlobal : EvqTemporary;
         parseContext.structTypeCheck((yyval.interm.type).loc, (yyval.interm.type));
     }
-#line 6831 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6833 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 295:
-#line 2007 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2009 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         //
         // This is for user defined type names.  The lexical phase looked up the
@@ -6845,47 +6847,47 @@ yyreduce:
         } else
             parseContext.error((yyvsp[0].lex).loc, "expected type name", (yyvsp[0].lex).string->c_str(), "");
     }
-#line 6849 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6851 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 296:
-#line 2023 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2025 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.profileRequires((yyvsp[0].lex).loc, ENoProfile, 130, 0, "highp precision qualifier");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         parseContext.handlePrecisionQualifier((yyvsp[0].lex).loc, (yyval.interm.type).qualifier, EpqHigh);
     }
-#line 6859 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6861 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 297:
-#line 2028 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2030 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.profileRequires((yyvsp[0].lex).loc, ENoProfile, 130, 0, "mediump precision qualifier");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         parseContext.handlePrecisionQualifier((yyvsp[0].lex).loc, (yyval.interm.type).qualifier, EpqMedium);
     }
-#line 6869 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6871 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 298:
-#line 2033 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2035 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.profileRequires((yyvsp[0].lex).loc, ENoProfile, 130, 0, "lowp precision qualifier");
         (yyval.interm.type).init((yyvsp[0].lex).loc, parseContext.symbolTable.atGlobalLevel());
         parseContext.handlePrecisionQualifier((yyvsp[0].lex).loc, (yyval.interm.type).qualifier, EpqLow);
     }
-#line 6879 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6881 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 299:
-#line 2041 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2043 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { parseContext.nestedStructCheck((yyvsp[-2].lex).loc); }
-#line 6885 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6887 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 300:
-#line 2041 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2043 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         TType* structure = new TType((yyvsp[-1].interm.typeList), *(yyvsp[-4].lex).string);
         parseContext.structArrayCheck((yyvsp[-4].lex).loc, *structure);
@@ -6897,17 +6899,17 @@ yyreduce:
         (yyval.interm.type).userDef = structure;
         --parseContext.structNestingLevel;
     }
-#line 6901 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6903 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 301:
-#line 2052 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2054 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { parseContext.nestedStructCheck((yyvsp[-1].lex).loc); }
-#line 6907 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6909 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 302:
-#line 2052 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2054 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         TType* structure = new TType((yyvsp[-1].interm.typeList), TString(""));
         (yyval.interm.type).init((yyvsp[-4].lex).loc);
@@ -6915,19 +6917,19 @@ yyreduce:
         (yyval.interm.type).userDef = structure;
         --parseContext.structNestingLevel;
     }
-#line 6919 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6921 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 303:
-#line 2062 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2064 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeList) = (yyvsp[0].interm.typeList);
     }
-#line 6927 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6929 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 304:
-#line 2065 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2067 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeList) = (yyvsp[-1].interm.typeList);
         for (unsigned int i = 0; i < (yyvsp[0].interm.typeList)->size(); ++i) {
@@ -6938,11 +6940,11 @@ yyreduce:
             (yyval.interm.typeList)->push_back((*(yyvsp[0].interm.typeList))[i]);
         }
     }
-#line 6942 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6944 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 305:
-#line 2078 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2080 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].interm.type).arraySizes) {
             parseContext.profileRequires((yyvsp[-2].interm.type).loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
@@ -6965,11 +6967,11 @@ yyreduce:
             (*(yyval.interm.typeList))[i].type->shallowCopy(type);
         }
     }
-#line 6969 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 6971 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 306:
-#line 2100 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2102 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].interm.type).arraySizes) {
             parseContext.profileRequires((yyvsp[-2].interm.type).loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
@@ -6994,38 +6996,38 @@ yyreduce:
             (*(yyval.interm.typeList))[i].type->shallowCopy(type);
         }
     }
-#line 6998 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7000 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 307:
-#line 2127 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2129 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeList) = new TTypeList;
         (yyval.interm.typeList)->push_back((yyvsp[0].interm.typeLine));
     }
-#line 7007 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7009 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 308:
-#line 2131 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2133 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeList)->push_back((yyvsp[0].interm.typeLine));
     }
-#line 7015 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7017 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 309:
-#line 2137 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2139 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.typeLine).type = new TType(EbtVoid);
         (yyval.interm.typeLine).loc = (yyvsp[0].lex).loc;
         (yyval.interm.typeLine).type->setFieldName(*(yyvsp[0].lex).string);
     }
-#line 7025 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7027 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 310:
-#line 2142 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2144 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.arrayOfArrayVersionCheck((yyvsp[-1].lex).loc, (yyvsp[0].interm).arraySizes);
 
@@ -7034,219 +7036,219 @@ yyreduce:
         (yyval.interm.typeLine).type->setFieldName(*(yyvsp[-1].lex).string);
         (yyval.interm.typeLine).type->transferArraySizes((yyvsp[0].interm).arraySizes);
     }
-#line 7038 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7040 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 311:
-#line 2153 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2155 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermTypedNode) = (yyvsp[0].interm.intermTypedNode);
     }
-#line 7046 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7048 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 312:
-#line 2156 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2158 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         const char* initFeature = "{ } style initializers";
         parseContext.requireProfile((yyvsp[-2].lex).loc, ~EEsProfile, initFeature);
         parseContext.profileRequires((yyvsp[-2].lex).loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, initFeature);
         (yyval.interm.intermTypedNode) = (yyvsp[-1].interm.intermTypedNode);
     }
-#line 7057 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7059 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 313:
-#line 2162 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2164 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         const char* initFeature = "{ } style initializers";
         parseContext.requireProfile((yyvsp[-3].lex).loc, ~EEsProfile, initFeature);
         parseContext.profileRequires((yyvsp[-3].lex).loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, initFeature);
         (yyval.interm.intermTypedNode) = (yyvsp[-2].interm.intermTypedNode);
     }
-#line 7068 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7070 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 314:
-#line 2171 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2173 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermTypedNode) = parseContext.intermediate.growAggregate(0, (yyvsp[0].interm.intermTypedNode), (yyvsp[0].interm.intermTypedNode)->getLoc());
     }
-#line 7076 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7078 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 315:
-#line 2174 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2176 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermTypedNode) = parseContext.intermediate.growAggregate((yyvsp[-2].interm.intermTypedNode), (yyvsp[0].interm.intermTypedNode));
     }
-#line 7084 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7086 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 316:
-#line 2180 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2182 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7090 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7092 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 317:
-#line 2184 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2186 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7096 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7098 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 318:
-#line 2185 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2187 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7102 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7104 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 319:
-#line 2191 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2193 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7108 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7110 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 320:
-#line 2192 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2194 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7114 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7116 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 321:
-#line 2193 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2195 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7120 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7122 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 322:
-#line 2194 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2196 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7126 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7128 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 323:
-#line 2195 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2197 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7132 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7134 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 324:
-#line 2196 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2198 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7138 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7140 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 325:
-#line 2197 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2199 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7144 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7146 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 326:
-#line 2201 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2203 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = 0; }
-#line 7150 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7152 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 327:
-#line 2202 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2204 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.symbolTable.push();
         ++parseContext.statementNestingLevel;
     }
-#line 7159 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7161 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 328:
-#line 2206 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2208 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.symbolTable.pop(&parseContext.defaultPrecision[0]);
         --parseContext.statementNestingLevel;
     }
-#line 7168 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7170 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 329:
-#line 2210 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2212 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].interm.intermNode) && (yyvsp[-2].interm.intermNode)->getAsAggregate())
             (yyvsp[-2].interm.intermNode)->getAsAggregate()->setOperator(EOpSequence);
         (yyval.interm.intermNode) = (yyvsp[-2].interm.intermNode);
     }
-#line 7178 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7180 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 330:
-#line 2218 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2220 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7184 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7186 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 331:
-#line 2219 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2221 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode); }
-#line 7190 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7192 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 332:
-#line 2223 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2225 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         ++parseContext.controlFlowNestingLevel;
     }
-#line 7198 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7200 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 333:
-#line 2226 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2228 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         --parseContext.controlFlowNestingLevel;
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7207 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7209 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 334:
-#line 2230 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2232 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.symbolTable.push();
         ++parseContext.statementNestingLevel;
         ++parseContext.controlFlowNestingLevel;
     }
-#line 7217 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7219 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 335:
-#line 2235 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2237 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.symbolTable.pop(&parseContext.defaultPrecision[0]);
         --parseContext.statementNestingLevel;
         --parseContext.controlFlowNestingLevel;
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7228 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7230 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 336:
-#line 2244 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2246 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = 0;
     }
-#line 7236 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7238 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 337:
-#line 2247 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2249 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-1].interm.intermNode) && (yyvsp[-1].interm.intermNode)->getAsAggregate())
             (yyvsp[-1].interm.intermNode)->getAsAggregate()->setOperator(EOpSequence);
         (yyval.interm.intermNode) = (yyvsp[-1].interm.intermNode);
     }
-#line 7246 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7248 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 338:
-#line 2255 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2257 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = parseContext.intermediate.makeAggregate((yyvsp[0].interm.intermNode));
         if ((yyvsp[0].interm.intermNode) && (yyvsp[0].interm.intermNode)->getAsBranchNode() && ((yyvsp[0].interm.intermNode)->getAsBranchNode()->getFlowOp() == EOpCase ||
@@ -7255,11 +7257,11 @@ yyreduce:
             (yyval.interm.intermNode) = 0;  // start a fresh subsequence for what's after this case
         }
     }
-#line 7259 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7261 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 339:
-#line 2263 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2265 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0].interm.intermNode) && (yyvsp[0].interm.intermNode)->getAsBranchNode() && ((yyvsp[0].interm.intermNode)->getAsBranchNode()->getFlowOp() == EOpCase ||
                                             (yyvsp[0].interm.intermNode)->getAsBranchNode()->getFlowOp() == EOpDefault)) {
@@ -7268,67 +7270,67 @@ yyreduce:
         } else
             (yyval.interm.intermNode) = parseContext.intermediate.growAggregate((yyvsp[-1].interm.intermNode), (yyvsp[0].interm.intermNode));
     }
-#line 7272 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7274 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 340:
-#line 2274 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2276 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = 0; }
-#line 7278 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7280 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 341:
-#line 2275 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2277 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     { (yyval.interm.intermNode) = static_cast<TIntermNode*>((yyvsp[-1].interm.intermTypedNode)); }
-#line 7284 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7286 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 342:
-#line 2279 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2281 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7292 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7294 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 343:
-#line 2284 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2286 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.boolCheck((yyvsp[-4].lex).loc, (yyvsp[-2].interm.intermTypedNode));
         (yyval.interm.intermNode) = parseContext.intermediate.addSelection((yyvsp[-2].interm.intermTypedNode), (yyvsp[0].interm.nodePair), (yyvsp[-4].lex).loc);
     }
-#line 7301 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7303 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 344:
-#line 2291 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2293 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.nodePair).node1 = (yyvsp[-2].interm.intermNode);
         (yyval.interm.nodePair).node2 = (yyvsp[0].interm.intermNode);
     }
-#line 7310 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7312 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 345:
-#line 2295 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2297 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.nodePair).node1 = (yyvsp[0].interm.intermNode);
         (yyval.interm.nodePair).node2 = 0;
     }
-#line 7319 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7321 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 346:
-#line 2303 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2305 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermTypedNode) = (yyvsp[0].interm.intermTypedNode);
         parseContext.boolCheck((yyvsp[0].interm.intermTypedNode)->getLoc(), (yyvsp[0].interm.intermTypedNode));
     }
-#line 7328 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7330 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 347:
-#line 2307 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2309 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.boolCheck((yyvsp[-2].lex).loc, (yyvsp[-3].interm.type));
 
@@ -7339,19 +7341,19 @@ yyreduce:
         else
             (yyval.interm.intermTypedNode) = 0;
     }
-#line 7343 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7345 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 348:
-#line 2320 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2322 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7351 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7353 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 349:
-#line 2325 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2327 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         // start new switch sequence on the switch stack
         ++parseContext.controlFlowNestingLevel;
@@ -7360,11 +7362,11 @@ yyreduce:
         parseContext.switchLevel.push_back(parseContext.statementNestingLevel);
         parseContext.symbolTable.push();
     }
-#line 7364 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7366 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 350:
-#line 2333 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2335 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = parseContext.addSwitch((yyvsp[-7].lex).loc, (yyvsp[-5].interm.intermTypedNode), (yyvsp[-1].interm.intermNode) ? (yyvsp[-1].interm.intermNode)->getAsAggregate() : 0);
         delete parseContext.switchSequenceStack.back();
@@ -7374,27 +7376,27 @@ yyreduce:
         --parseContext.statementNestingLevel;
         --parseContext.controlFlowNestingLevel;
     }
-#line 7378 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7380 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 351:
-#line 2345 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2347 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = 0;
     }
-#line 7386 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7388 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 352:
-#line 2348 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2350 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7394 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7396 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 353:
-#line 2354 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2356 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = 0;
         if (parseContext.switchLevel.size() == 0)
@@ -7407,11 +7409,11 @@ yyreduce:
             (yyval.interm.intermNode) = parseContext.intermediate.addBranch(EOpCase, (yyvsp[-1].interm.intermTypedNode), (yyvsp[-2].lex).loc);
         }
     }
-#line 7411 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7413 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 354:
-#line 2366 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2368 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = 0;
         if (parseContext.switchLevel.size() == 0)
@@ -7421,19 +7423,19 @@ yyreduce:
         else
             (yyval.interm.intermNode) = parseContext.intermediate.addBranch(EOpDefault, (yyvsp[-1].lex).loc);
     }
-#line 7425 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7427 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 355:
-#line 2378 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2380 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7433 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7435 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 356:
-#line 2383 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2385 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if (! parseContext.limits.whileLoops)
             parseContext.error((yyvsp[-1].lex).loc, "while loops not available", "limitation", "");
@@ -7442,11 +7444,11 @@ yyreduce:
         ++parseContext.statementNestingLevel;
         ++parseContext.controlFlowNestingLevel;
     }
-#line 7446 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7448 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 357:
-#line 2391 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2393 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.symbolTable.pop(&parseContext.defaultPrecision[0]);
         (yyval.interm.intermNode) = parseContext.intermediate.addLoop((yyvsp[0].interm.intermNode), (yyvsp[-2].interm.intermTypedNode), 0, true, (yyvsp[-5].lex).loc);
@@ -7454,21 +7456,21 @@ yyreduce:
         --parseContext.statementNestingLevel;
         --parseContext.controlFlowNestingLevel;
     }
-#line 7458 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7460 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 358:
-#line 2398 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2400 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         ++parseContext.loopNestingLevel;
         ++parseContext.statementNestingLevel;
         ++parseContext.controlFlowNestingLevel;
     }
-#line 7468 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7470 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 359:
-#line 2403 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2405 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if (! parseContext.limits.whileLoops)
             parseContext.error((yyvsp[-7].lex).loc, "do-while loops not available", "limitation", "");
@@ -7480,22 +7482,22 @@ yyreduce:
         --parseContext.statementNestingLevel;
         --parseContext.controlFlowNestingLevel;
     }
-#line 7484 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7486 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 360:
-#line 2414 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2416 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.symbolTable.push();
         ++parseContext.loopNestingLevel;
         ++parseContext.statementNestingLevel;
         ++parseContext.controlFlowNestingLevel;
     }
-#line 7495 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7497 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 361:
-#line 2420 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2422 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.symbolTable.pop(&parseContext.defaultPrecision[0]);
         (yyval.interm.intermNode) = parseContext.intermediate.makeAggregate((yyvsp[-3].interm.intermNode), (yyvsp[-5].lex).loc);
@@ -7508,81 +7510,81 @@ yyreduce:
         --parseContext.statementNestingLevel;
         --parseContext.controlFlowNestingLevel;
     }
-#line 7512 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7514 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 362:
-#line 2435 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2437 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7520 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7522 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 363:
-#line 2438 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2440 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7528 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7530 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 364:
-#line 2444 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2446 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermTypedNode) = (yyvsp[0].interm.intermTypedNode);
     }
-#line 7536 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7538 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 365:
-#line 2447 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2449 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermTypedNode) = 0;
     }
-#line 7544 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7546 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 366:
-#line 2453 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2455 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.nodePair).node1 = (yyvsp[-1].interm.intermTypedNode);
         (yyval.interm.nodePair).node2 = 0;
     }
-#line 7553 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7555 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 367:
-#line 2457 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2459 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.nodePair).node1 = (yyvsp[-2].interm.intermTypedNode);
         (yyval.interm.nodePair).node2 = (yyvsp[0].interm.intermTypedNode);
     }
-#line 7562 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7564 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 368:
-#line 2464 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2466 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if (parseContext.loopNestingLevel <= 0)
             parseContext.error((yyvsp[-1].lex).loc, "continue statement only allowed in loops", "", "");
         (yyval.interm.intermNode) = parseContext.intermediate.addBranch(EOpContinue, (yyvsp[-1].lex).loc);
     }
-#line 7572 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7574 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 369:
-#line 2469 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2471 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if (parseContext.loopNestingLevel + parseContext.switchSequenceStack.size() <= 0)
             parseContext.error((yyvsp[-1].lex).loc, "break statement only allowed in switch and loops", "", "");
         (yyval.interm.intermNode) = parseContext.intermediate.addBranch(EOpBreak, (yyvsp[-1].lex).loc);
     }
-#line 7582 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7584 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 370:
-#line 2474 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2476 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = parseContext.intermediate.addBranch(EOpReturn, (yyvsp[-1].lex).loc);
         if (parseContext.currentFunctionType->getBasicType() != EbtVoid)
@@ -7590,83 +7592,83 @@ yyreduce:
         if (parseContext.inMain)
             parseContext.postEntryPointReturn = true;
     }
-#line 7594 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7596 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 371:
-#line 2481 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2483 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = parseContext.handleReturnValue((yyvsp[-2].lex).loc, (yyvsp[-1].interm.intermTypedNode));
     }
-#line 7602 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7604 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 372:
-#line 2484 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2486 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.requireStage((yyvsp[-1].lex).loc, EShLangFragment, "discard");
         (yyval.interm.intermNode) = parseContext.intermediate.addBranch(EOpKill, (yyvsp[-1].lex).loc);
     }
-#line 7611 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7613 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 373:
-#line 2493 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2495 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
         parseContext.intermediate.setTreeRoot((yyval.interm.intermNode));
     }
-#line 7620 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7622 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 374:
-#line 2497 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2499 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0].interm.intermNode) != nullptr) {
             (yyval.interm.intermNode) = parseContext.intermediate.growAggregate((yyvsp[-1].interm.intermNode), (yyvsp[0].interm.intermNode));
             parseContext.intermediate.setTreeRoot((yyval.interm.intermNode));
         }
     }
-#line 7631 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7633 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 375:
-#line 2506 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2508 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7639 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7641 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 376:
-#line 2509 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2511 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyval.interm.intermNode) = (yyvsp[0].interm.intermNode);
     }
-#line 7647 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7649 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 377:
-#line 2512 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2514 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         parseContext.requireProfile((yyvsp[0].lex).loc, ~EEsProfile, "extraneous semicolon");
         parseContext.profileRequires((yyvsp[0].lex).loc, ~EEsProfile, 460, nullptr, "extraneous semicolon");
         (yyval.interm.intermNode) = nullptr;
     }
-#line 7657 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7659 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 378:
-#line 2520 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2522 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         (yyvsp[0].interm).function = parseContext.handleFunctionDeclarator((yyvsp[0].interm).loc, *(yyvsp[0].interm).function, false /* not prototype */);
         (yyvsp[0].interm).intermNode = parseContext.handleFunctionDefinition((yyvsp[0].interm).loc, *(yyvsp[0].interm).function);
     }
-#line 7666 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7668 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
   case 379:
-#line 2524 "MachineIndependent/glslang.y" /* yacc.c:1646  */
+#line 2526 "MachineIndependent/glslang.y" /* yacc.c:1646  */
     {
         //   May be best done as post process phase on intermediate code
         if (parseContext.currentFunctionType->getBasicType() != EbtVoid && ! parseContext.functionReturnsValue)
@@ -7682,11 +7684,11 @@ yyreduce:
         (yyval.interm.intermNode)->getAsAggregate()->setDebug(parseContext.contextPragma.debug);
         (yyval.interm.intermNode)->getAsAggregate()->setPragmaTable(parseContext.contextPragma.pragmaTable);
     }
-#line 7686 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7688 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 7690 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
+#line 7692 "MachineIndependent/glslang_tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -7914,5 +7916,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 2541 "MachineIndependent/glslang.y" /* yacc.c:1906  */
+#line 2543 "MachineIndependent/glslang.y" /* yacc.c:1906  */
 

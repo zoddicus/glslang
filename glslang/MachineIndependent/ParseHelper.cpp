@@ -175,12 +175,14 @@ void TParseContext::setLimits(const TBuiltInResource& r)
 
     intermediate.setLimits(resources);
 
+#ifndef GLSLANG_WEB
     // "Each binding point tracks its own current default offset for
     // inheritance of subsequent variables using the same binding. The initial state of compilation is that all
     // binding points have an offset of 0."
     atomicUintOffsets = new int[resources.maxAtomicCounterBindings];
     for (int b = 0; b < resources.maxAtomicCounterBindings; ++b)
         atomicUintOffsets[b] = 0;
+#endif
 }
 
 //
@@ -3082,10 +3084,12 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
         error(loc, "cannot convert a sampler", "constructor", "");
         return true;
     }
+#ifndef GLSLANG_WEB
     if (op != EOpConstructStruct && typed->getBasicType() == EbtAtomicUint) {
         error(loc, "cannot convert an atomic_uint", "constructor", "");
         return true;
     }
+#endif
     if (typed->getBasicType() == EbtVoid) {
         error(loc, "cannot convert a void", "constructor", "");
         return true;
@@ -3206,6 +3210,7 @@ void TParseContext::samplerCheck(const TSourceLoc& loc, const TType& type, const
     }
 }
 
+#ifndef GLSLANG_WEB
 void TParseContext::atomicUintCheck(const TSourceLoc& loc, const TType& type, const TString& identifier)
 {
     if (type.getQualifier().storage == EvqUniform)
@@ -3216,7 +3221,7 @@ void TParseContext::atomicUintCheck(const TSourceLoc& loc, const TType& type, co
     else if (type.getBasicType() == EbtAtomicUint && type.getQualifier().storage != EvqUniform)
         error(loc, "atomic_uints can only be used in uniform variables or function parameters:", type.getBasicTypeString().c_str(), identifier.c_str());
 }
-#ifdef NV_EXTENSIONS
+
 void TParseContext::accStructNVCheck(const TSourceLoc& loc, const TType& type, const TString& identifier)
 {
     if (type.getQualifier().storage == EvqUniform)
@@ -3616,12 +3621,14 @@ void TParseContext::setDefaultPrecision(const TSourceLoc& loc, TPublicType& publ
         }
     }
 
+#ifndef GLSLANG_WEB
     if (basicType == EbtAtomicUint) {
         if (qualifier != EpqHigh)
             error(loc, "can only apply highp to atomic_uint", "precision", "");
 
         return;
     }
+#endif
 
     error(loc, "cannot apply precision statement to this type; use 'float', 'int' or a sampler type", TType::getBasicString(basicType), "");
 }
@@ -3662,8 +3669,10 @@ void TParseContext::precisionQualifierCheck(const TSourceLoc& loc, TBasicType ba
     if (! obeyPrecisionQualifiers() || parsingBuiltins)
         return;
 
+#ifndef GLSLANG_WEB
     if (baseType == EbtAtomicUint && qualifier.precision != EpqNone && qualifier.precision != EpqHigh)
         error(loc, "atomic counters can only be highp", "atomic_uint", "");
+#endif
 
     if (baseType == EbtFloat || baseType == EbtUint || baseType == EbtInt || baseType == EbtSampler || baseType == EbtAtomicUint) {
         if (qualifier.precision == EpqNone) {
@@ -5627,14 +5636,14 @@ void TParseContext::layoutObjectCheck(const TSourceLoc& loc, const TSymbol& symb
                 if (qualifier.hasPacking())
                     error(loc, "cannot specify packing on a variable declaration", "layout", "");
                 // "The offset qualifier can only be used on block members of blocks..."
-                if (qualifier.hasOffset() && type.getBasicType() != EbtAtomicUint)
-                    error(loc, "cannot specify on a variable declaration", "offset", "");
                 // "The align qualifier can only be used on blocks or block members..."
                 if (qualifier.hasAlign())
                     error(loc, "cannot specify on a variable declaration", "align", "");
                 if (qualifier.layoutPushConstant)
                     error(loc, "can only specify on a uniform block", "push_constant", "");
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
+                if (qualifier.hasOffset() && type.getBasicType() != EbtAtomicUint)
+                    error(loc, "cannot specify on a variable declaration", "offset", "");
                 if (qualifier.layoutShaderRecordNV)
                     error(loc, "can only specify on a buffer block", "shaderRecordNV", "");
 #endif
@@ -5792,19 +5801,22 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
             if (spvVersion.vulkan == 0 && lastBinding >= resources.maxCombinedTextureImageUnits)
                 error(loc, "sampler binding not less than gl_MaxCombinedTextureImageUnits", "binding", type.isArray() ? "(using array)" : "");
         }
+#ifndef GLSLANG_WEB
         if (type.getBasicType() == EbtAtomicUint) {
             if (qualifier.layoutBinding >= (unsigned int)resources.maxAtomicCounterBindings) {
                 error(loc, "atomic_uint binding is too large; see gl_MaxAtomicCounterBindings", "binding", "");
                 return;
             }
         }
+#endif
     } else if (!intermediate.getAutoMapBindings()) {
         // some types require bindings
 
+#ifndef GLSLANG_WEB
         // atomic_uint
         if (type.getBasicType() == EbtAtomicUint)
             error(loc, "layout(binding=X) is required", "atomic_uint", "");
-
+#endif
         // SPIR-V
         if (spvVersion.spv > 0) {
             if (qualifier.isUniformOrBuffer()) {
@@ -6096,6 +6108,7 @@ void TParseContext::checkNoShaderLayouts(const TSourceLoc& loc, const TShaderQua
         error(loc, message, TQualifier::getInterlockOrderingString(shaderQualifiers.interlockOrdering), "");
 }
 
+#ifndef GLSLANG_WEB
 // Correct and/or advance an object's offset layout qualifier.
 void TParseContext::fixOffset(const TSourceLoc& loc, TSymbol& symbol)
 {
@@ -6130,6 +6143,7 @@ void TParseContext::fixOffset(const TSourceLoc& loc, TSymbol& symbol)
         }
     }
 }
+#endif
 
 //
 // Look up a function name in the symbol table, and make sure it is a function.
@@ -6249,6 +6263,7 @@ const TFunction* TParseContext::findFunction120(const TSourceLoc& loc, const TFu
     return candidate;
 }
 
+#ifndef GLSLANG_WEB
 // Function finding algorithm for desktop version 400 and above.
 //
 // "When function calls are resolved, an exact type match for all the arguments
@@ -6455,12 +6470,11 @@ void TParseContext::declareTypeDefaults(const TSourceLoc& loc, const TPublicType
         atomicUintOffsets[publicType.qualifier.layoutBinding] = publicType.qualifier.layoutOffset;
         return;
     }
-
-#ifndef GLSLANG_WEB
+    
     if (publicType.qualifier.hasLayout() && !publicType.qualifier.layoutBufferReference)
         warn(loc, "useless application of layout qualifier", "layout", "");
-#endif
 }
+#endif
 
 //
 // Do everything necessary to handle a variable (non-block) declaration.
@@ -6514,9 +6528,9 @@ TIntermNode* TParseContext::declareVariable(const TSourceLoc& loc, TString& iden
         nonInitConstCheck(loc, identifier, type);
 
     samplerCheck(loc, type, identifier, initializer);
-    atomicUintCheck(loc, type, identifier);
     transparentOpaqueCheck(loc, type, identifier);
 #ifndef GLSLANG_WEB
+    atomicUintCheck(loc, type, identifier);
     accStructNVCheck(loc, type, identifier);
     if (type.getQualifier().storage == EvqConst && type.containsBasicType(EbtReference)) {
         error(loc, "variables with reference type can't have qualifier 'const'", "qualifier", "");
@@ -6585,8 +6599,10 @@ TIntermNode* TParseContext::declareVariable(const TSourceLoc& loc, TString& iden
     // look for errors in layout qualifier use
     layoutObjectCheck(loc, *symbol);
 
+#ifndef GLSLANG_WEB
     // fix up
     fixOffset(loc, *symbol);
+#endif
 
     return initNode;
 }

@@ -1016,7 +1016,9 @@ single_declaration
     : fully_specified_type {
         $$.type = $1;
         $$.intermNode = 0;
+#ifndef GLSLANG_WEB
         parseContext.declareTypeDefaults($$.loc, $$.type);
+#endif
     }
     | fully_specified_type IDENTIFIER {
         $$.type = $1;
@@ -1479,16 +1481,6 @@ type_specifier_nonarray
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtFloat;
         $$.setMatrix(4, 4);
-    }
-    | ATOMIC_UINT {
-        parseContext.vulkanRemoved($1.loc, "atomic counter types");
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtAtomicUint;
-    }
-    | SAMPLER1D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtFloat, Esd1D);
     }
     | SAMPLER2D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
