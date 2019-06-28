@@ -42,6 +42,8 @@
 // A Builder has a 1:1 relationship with a SPIR-V module.
 //
 
+#define GLSLANG_WEB
+
 #pragma once
 #ifndef SpvBuilder_H
 #define SpvBuilder_H

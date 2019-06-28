@@ -777,8 +777,10 @@ public:
     void setNeedsLegalization() { needToLegalize = true; }
     bool needsLegalization() const { return needToLegalize; }
 
+#ifndef GLSLANG_WEB
     void setBinaryDoubleOutput() { binaryDoubleOutput = true; }
     bool getBinaryDoubleOutput() { return binaryDoubleOutput; }
+#endif
 
     const char* const implicitThisName;
     const char* const implicitCounterName;

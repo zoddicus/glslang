@@ -276,7 +276,9 @@ void TParseContext::handlePragma(const TSourceLoc& loc, const TVector<TString>& 
             error(loc, "\")\" expected to end 'debug' pragma", "#pragma", "");
             return;
         }
-    } else if (spvVersion.spv > 0 && tokens[0].compare("use_storage_buffer") == 0) {
+    }
+#ifndef GLSLANG_WEB
+    else if (spvVersion.spv > 0 && tokens[0].compare("use_storage_buffer") == 0) {
         if (tokens.size() != 1)
             error(loc, "extra tokens", "#pragma", "");
         intermediate.setUseStorageBuffer();
@@ -294,6 +296,7 @@ void TParseContext::handlePragma(const TSourceLoc& loc, const TVector<TString>& 
         warn(loc, "not implemented", "#pragma once", "");
     } else if (tokens[0].compare("glslang_binary_double_output") == 0)
         intermediate.setBinaryDoubleOutput();
+#endif
 }
 
 //
@@ -5678,6 +5681,7 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
                     error(loc, "too large for fragment output", "location", "");
             }
         }
+#ifndef GLSLANG_WEB
         if (qualifier.hasComponent()) {
             // "It is a compile-time error if this sequence of components gets larger than 3."
             if (qualifier.layoutComponent + type.getVectorSize() * (type.getBasicType() == EbtDouble ? 2 : 1) > 4)
@@ -5692,7 +5696,7 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
                 if (qualifier.layoutComponent & 1)
                     error(loc, "doubles cannot start on an odd-numbered component", "component", "");
         }
-
+#endif
         switch (qualifier.storage) {
         case EvqVaryingIn:
         case EvqVaryingOut:

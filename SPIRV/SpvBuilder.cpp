@@ -939,6 +939,7 @@ Id Builder::makeFloatConstant(float f, bool specConstant)
     return c->getResultId();
 }
 
+#ifndef GLSLANG_WEB
 Id Builder::makeDoubleConstant(double d, bool specConstant)
 {
     Op opcode = specConstant ? OpSpecConstant : OpConstant;
@@ -994,18 +995,21 @@ Id Builder::makeFloat16Constant(float f16, bool specConstant)
 
     return c->getResultId();
 }
+#endif
 
 Id Builder::makeFpConstant(Id type, double d, bool specConstant)
 {
         assert(isFloatType(type));
 
         switch (getScalarTypeWidth(type)) {
-        case 16:
-                return makeFloat16Constant((float)d, specConstant);
         case 32:
                 return makeFloatConstant((float)d, specConstant);
+#ifndef GLSLANG_WEB
+        case 16:
+                return makeFloat16Constant((float)d, specConstant);
         case 64:
                 return makeDoubleConstant(d, specConstant);
+#endif
         default:
                 break;
         }
@@ -2324,8 +2328,13 @@ Id Builder::createMatrixConstructor(Decoration precision, const std::vector<Id>&
 
     // initialize the array to the identity matrix
     Id ids[maxMatrixSize][maxMatrixSize];
+#ifndef GLSLANG_WEB
     Id  one = (bitCount == 64 ? makeDoubleConstant(1.0) : makeFloatConstant(1.0));
     Id zero = (bitCount == 64 ? makeDoubleConstant(0.0) : makeFloatConstant(0.0));
+#else
+    Id  one = makeFloatConstant(1.0);
+    Id zero = makeFloatConstant(0.0);
+#endif
     for (int col = 0; col < 4; ++col) {
         for (int row = 0; row < 4; ++row) {
             if (col == row)

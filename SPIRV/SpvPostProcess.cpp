@@ -36,7 +36,6 @@
 // Post-processing for SPIR-V IR, in internal form, not standard binary form.
 //
 
-#ifndef GLSLANG_WEB
 
 #include <cassert>
 #include <cstdlib>
@@ -60,6 +59,8 @@ namespace spv {
     #include "GLSL.ext.NV.h"
 #endif
 }
+
+#ifndef GLSLANG_WEB
 
 namespace spv {
 

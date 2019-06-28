@@ -5610,6 +5610,7 @@ spv::Id TGlslangToSpvTraverser::createUnaryOperation(glslang::TOperator op, OpDe
     case glslang::EOpUnpackHalf2x16:
         libCall = spv::GLSLstd450UnpackHalf2x16;
         break;
+#ifndef GLSLANG_WEB
     case glslang::EOpPackSnorm4x8:
         libCall = spv::GLSLstd450PackSnorm4x8;
         break;
@@ -5628,6 +5629,7 @@ spv::Id TGlslangToSpvTraverser::createUnaryOperation(glslang::TOperator op, OpDe
     case glslang::EOpUnpackDouble2x32:
         libCall = spv::GLSLstd450UnpackDouble2x32;
         break;
+#endif
 
     case glslang::EOpPackInt2x32:
     case glslang::EOpUnpackInt2x32:

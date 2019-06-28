@@ -635,12 +635,12 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     }
 
     switch (convertTo) {
+#ifndef GLSLANG_WEB
     case EbtDouble:
         switch (node->getBasicType()) {
         case EbtUint:    newOp = EOpConvUintToDouble;    break;
         case EbtBool:    newOp = EOpConvBoolToDouble;    break;
         case EbtFloat:   newOp = EOpConvFloatToDouble;   break;
-#ifndef GLSLANG_WEB
         case EbtInt:     newOp = EOpConvIntToDouble;     break;
         case EbtInt8:    newOp = EOpConvInt8ToDouble;    break;
         case EbtUint8:   newOp = EOpConvUint8ToDouble;   break;
@@ -649,11 +649,11 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
         case EbtFloat16: newOp = EOpConvFloat16ToDouble; break;
         case EbtInt64:   newOp = EOpConvInt64ToDouble;   break;
         case EbtUint64:  newOp = EOpConvUint64ToDouble;  break;
-#endif
         default:
             return nullptr;
         }
         break;
+#endif
     case EbtFloat:
         switch (node->getBasicType()) {
         case EbtInt:     newOp = EOpConvIntToFloat;     break;
@@ -1602,12 +1602,14 @@ bool TIntermediate::isFPIntegralConversion(TBasicType from, TBasicType to) const
             break;
         }
         break;
+#ifndef GLSLANG_WEB
     case EbtInt64:
     case EbtUint64:
         if (to == EbtDouble) {
             return true;
         }
         break;
+#endif
 
     default:
         break;
@@ -1956,19 +1958,23 @@ std::tuple<TBasicType, TBasicType> TIntermediate::getConversionDestinatonType(TB
         return std::make_tuple(res0, res1);
     }
 
+    if ((type0 == EbtFloat && canImplicitlyPromote(type1, EbtFloat, op)) ||
+               (type1 == EbtFloat && canImplicitlyPromote(type0, EbtFloat, op)) ) {
+        res0 = EbtFloat;
+        res1 = EbtFloat;
+    } else
+#ifndef GLSLANG_WEB
     if ((type0 == EbtDouble && canImplicitlyPromote(type1, EbtDouble, op)) ||
         (type1 == EbtDouble && canImplicitlyPromote(type0, EbtDouble, op)) ) {
         res0 = EbtDouble;
         res1 = EbtDouble;
-    } else if ((type0 == EbtFloat && canImplicitlyPromote(type1, EbtFloat, op)) ||
-               (type1 == EbtFloat && canImplicitlyPromote(type0, EbtFloat, op)) ) {
-        res0 = EbtFloat;
-        res1 = EbtFloat;
     } else if ((type0 == EbtFloat16 && canImplicitlyPromote(type1, EbtFloat16, op)) ||
                (type1 == EbtFloat16 && canImplicitlyPromote(type0, EbtFloat16, op)) ) {
         res0 = EbtFloat16;
         res1 = EbtFloat16;
-    } else if (isTypeInt(type0) && isTypeInt(type1) &&
+    } else
+#endif
+    if (isTypeInt(type0) && isTypeInt(type1) &&
                (canImplicitlyPromote(type0, type1, op) || canImplicitlyPromote(type1, type0, op))) {
         if ((isTypeSignedInt(type0) && isTypeSignedInt(type1)) ||
             (isTypeUnsignedInt(type0) && isTypeUnsignedInt(type1))) {
@@ -3855,6 +3861,7 @@ TIntermTyped* TIntermediate::promoteConstantUnion(TBasicType promoteTo, TIntermC
                 return node;
             }
             break;
+#ifndef GLSLANG_WEB
         case EbtDouble:
             switch (node->getType().getBasicType()) {
             case EbtInt:
@@ -3907,6 +3914,7 @@ TIntermTyped* TIntermediate::promoteConstantUnion(TBasicType promoteTo, TIntermC
                 return node;
             }
             break;
+#endif
         case EbtInt:
             switch (node->getType().getBasicType()) {
             case EbtInt:
@@ -3985,6 +3993,7 @@ TIntermTyped* TIntermediate::promoteConstantUnion(TBasicType promoteTo, TIntermC
                 return node;
             }
             break;
+#ifndef GLSLANG_WEB
         case EbtInt64:
             switch (node->getType().getBasicType()) {
             case EbtInt:
@@ -4037,6 +4046,7 @@ TIntermTyped* TIntermediate::promoteConstantUnion(TBasicType promoteTo, TIntermC
                 return node;
             }
             break;
+#endif
         default:
             return node;
         }

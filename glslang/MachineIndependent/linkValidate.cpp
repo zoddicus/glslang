@@ -1074,6 +1074,7 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
     // So, for the case of dvec3, we need two independent ioRanges.
 
     int collision = -1; // no collision
+#ifndef GLSLANG_WEB
     if (size == 2 && type.getBasicType() == EbtDouble && type.getVectorSize() == 3 &&
         (qualifier.isPipeInput() || qualifier.isPipeOutput())) {
         // Dealing with dvec3 in/out split across two locations.
@@ -1100,7 +1101,9 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
             if (collision < 0)
                 usedIo[set].push_back(range2);
         }
-    } else {
+    } else
+#endif
+    {
         // Not a dvec3 in/out split across two locations, generic path.
         // Need a single IO-range block.
 
