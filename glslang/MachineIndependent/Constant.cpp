@@ -1367,9 +1367,12 @@ TIntermTyped* TIntermediate::foldDereference(TIntermTyped* node, int index, cons
     // arrays, vectors, matrices, all use simple multiplicative math
     // while structures need to add up heterogeneous members
     int start;
+#ifndef GLSLANG_WEB
     if (node->getType().isCoopMat())
         start = 0;
-    else if (node->isArray() || ! node->isStruct())
+    else
+#endif
+    if (node->isArray() || ! node->isStruct())
         start = size * index;
     else {
         // it is a structure

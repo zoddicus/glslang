@@ -83,6 +83,7 @@ TParseContext::TParseContext(TSymbolTable& symbolTable, TIntermediate& interm, b
     globalInputDefaults.clear();
     globalOutputDefaults.clear();
 
+#ifndef GLSLANG_WEB
     // "Shaders in the transform
     // feedback capturing mode have an initial global default of
     //     layout(xfb_buffer = 0) out;"
@@ -97,6 +98,7 @@ TParseContext::TParseContext(TSymbolTable& symbolTable, TIntermediate& interm, b
 
     if (entryPoint != nullptr && entryPoint->size() > 0 && *entryPoint != "main")
         infoSink.info.message(EPrefixError, "Source entry point must be \"main\"");
+#endif
 }
 
 TParseContext::~TParseContext()
@@ -229,6 +231,7 @@ void TParseContext::parserError(const char* s)
 
 void TParseContext::handlePragma(const TSourceLoc& loc, const TVector<TString>& tokens)
 {
+#ifndef GLSLANG_WEB
     if (pragmaCallback)
         pragmaCallback(loc.line, tokens);
 
@@ -284,7 +287,6 @@ void TParseContext::handlePragma(const TSourceLoc& loc, const TVector<TString>& 
             return;
         }
     }
-#ifndef GLSLANG_WEB
     else if (spvVersion.spv > 0 && tokens[0].compare("use_storage_buffer") == 0) {
         if (tokens.size() != 1)
             error(loc, "extra tokens", "#pragma", "");
@@ -788,6 +790,7 @@ TIntermTyped* TParseContext::handleDotDereference(const TSourceLoc& loc, TInterm
 {
     variableCheck(base);
 
+#ifndef GLSLANG_WEB
     //
     // .length() can't be resolved until we later see the function-calling syntax.
     // Save away the name in the AST for now.  Processing is completed in
@@ -809,6 +812,7 @@ TIntermTyped* TParseContext::handleDotDereference(const TSourceLoc& loc, TInterm
 
         return intermediate.addMethod(base, TType(EbtInt), &field, loc);
     }
+#endif
 
     // It's not .length() if we get to here.
 
@@ -818,10 +822,12 @@ TIntermTyped* TParseContext::handleDotDereference(const TSourceLoc& loc, TInterm
         return base;
     }
 
+#ifndef GLSLANG_WEB
     if (base->getType().isCoopMat()) {
         error(loc, "cannot apply to a cooperative matrix type:", ".", field.c_str());
         return base;
     }
+#endif
 
     // It's neither an array nor .length() if we get here,
     // leaving swizzles and struct/block dereferences.
@@ -1269,12 +1275,14 @@ TIntermTyped* TParseContext::handleFunctionCall(const TSourceLoc& loc, TFunction
                 result = addOutputArgumentConversions(*fnCandidate, *result->getAsAggregate());
             }
 
+#ifndef GLSLANG_WEB
             if (result->getAsTyped()->getType().isCoopMat() &&
                !result->getAsTyped()->getType().isParameterized()) {
                 assert(fnCandidate->getBuiltInOp() == EOpCooperativeMatrixMulAdd);
 
                 result->setType(result->getAsAggregate()->getSequence()[2]->getAsTyped()->getType());
             }
+#endif
         }
     }
 
@@ -3841,6 +3849,7 @@ void TParseContext::arraySizesCheck(const TSourceLoc& loc, const TQualifier& qua
         (qualifier.storage != EvqTemporary && qualifier.storage != EvqGlobal && qualifier.storage != EvqShared && qualifier.storage != EvqConst))
         error(loc, "only outermost dimension of an array of arrays can be a specialization constant", "[]", "");
 
+#ifndef GLSLANG_WEB
     // desktop always allows outer-dimension-unsized variable arrays,
     if (profile != EEsProfile)
         return;
@@ -3852,7 +3861,6 @@ void TParseContext::arraySizesCheck(const TSourceLoc& loc, const TQualifier& qua
     if (qualifier.storage == EvqBuffer && lastMember)
         return;
 
-#ifndef GLSLANG_WEB
     // implicitly-sized io exceptions:
     switch (language) {
     case EShLangGeometry:
@@ -5784,15 +5792,12 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
         // SPIR-V
         if (spvVersion.spv > 0) {
             if (qualifier.isUniformOrBuffer()) {
-                if (type.getBasicType() == EbtBlock && !qualifier.layoutPushConstant &&
+                if (type.getBasicType() == EbtBlock && !qualifier.layoutPushConstant
 #ifndef GLSLANG_WEB
-                       !qualifier.layoutShaderRecordNV &&
-#endif
-                       !qualifier.layoutAttachment
-#ifndef GLSLANG_WEB
+                       && !qualifier.layoutShaderRecordNV
                        && !qualifier.layoutBufferReference
 #endif
-                       )
+                       && !qualifier.layoutAttachment)
                     error(loc, "uniform/buffer blocks require layout(binding=X)", "binding", "");
                 else if (spvVersion.vulkan > 0 && type.getBasicType() == EbtSampler)
                     error(loc, "sampler/texture/image requires layout(binding=X)", "binding", "");
@@ -6044,32 +6049,28 @@ void TParseContext::checkNoShaderLayouts(const TSourceLoc& loc, const TShaderQua
         if (shaderQualifiers.localSizeSpecId[i] != TQualifier::layoutNotSet)
             error(loc, message, "local_size id", "");
     }
-    if (shaderQualifiers.vertices != TQualifier::layoutNotSet) {
-        if (language == EShLangGeometry
 #ifndef GLSLANG_WEB
-            || language == EShLangMeshNV
-#endif
-           )
+    if (shaderQualifiers.vertices != TQualifier::layoutNotSet) {
+        if (language == EShLangGeometry || language == EShLangMeshNV)
             error(loc, message, "max_vertices", "");
         else if (language == EShLangTessControl)
             error(loc, message, "vertices", "");
         else
             assert(0);
     }
-#ifndef GLSLANG_WEB
     if (shaderQualifiers.primitives != TQualifier::layoutNotSet) {
         if (language == EShLangMeshNV)
             error(loc, message, "max_primitives", "");
         else
             assert(0);
     }
-#endif
     if (shaderQualifiers.blendEquation)
         error(loc, message, "blend equation", "");
     if (shaderQualifiers.numViews != TQualifier::layoutNotSet)
         error(loc, message, "num_views", "");
     if (shaderQualifiers.interlockOrdering != EioNone)
         error(loc, message, TQualifier::getInterlockOrderingString(shaderQualifiers.interlockOrdering), "");
+#endif
 }
 
 #ifndef GLSLANG_WEB
@@ -6116,12 +6117,18 @@ void TParseContext::fixOffset(const TSourceLoc& loc, TSymbol& symbol)
 //
 const TFunction* TParseContext::findFunction(const TSourceLoc& loc, const TFunction& call, bool& builtIn)
 {
-    const TFunction* function = nullptr;
-
     if (symbolTable.isFunctionNameVariable(call.getName())) {
         error(loc, "can't use function syntax on variable", call.getName().c_str(), "");
         return nullptr;
     }
+
+#ifdef GLSLANG_WEB
+    return findFunctionExact(loc, call, builtIn);
+#else
+    if (profile == EEsProfile || version < 120)
+        return findFunctionExact(loc, call, builtIn);
+    if (version < 400)
+        return findFunction120(loc, call, builtIn);
 
     bool explicitTypesEnabled = extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                 extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types_int8) ||
@@ -6132,18 +6139,11 @@ const TFunction* TParseContext::findFunction(const TSourceLoc& loc, const TFunct
                                 extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types_float32) ||
                                 extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types_float64);
 
-    if (profile == EEsProfile || version < 120)
-        function = findFunctionExact(loc, call, builtIn);
-    else if (version < 400)
-        function = findFunction120(loc, call, builtIn);
-#ifndef GLSLANG_WEB
-    else if (explicitTypesEnabled)
-        function = findFunctionExplicitTypes(loc, call, builtIn);
+    if (explicitTypesEnabled)
+        return findFunctionExplicitTypes(loc, call, builtIn);
     else
-        function = findFunction400(loc, call, builtIn);
+        return findFunction400(loc, call, builtIn);
 #endif
-
-    return function;
 }
 
 // Function finding algorithm for ES and desktop 110.
@@ -6159,6 +6159,7 @@ const TFunction* TParseContext::findFunctionExact(const TSourceLoc& loc, const T
     return symbol->getAsFunction();
 }
 
+#ifndef GLSLANG_WEB
 // Function finding algorithm for desktop versions 120 through 330.
 const TFunction* TParseContext::findFunction120(const TSourceLoc& loc, const TFunction& call, bool& builtIn)
 {
@@ -6227,7 +6228,6 @@ const TFunction* TParseContext::findFunction120(const TSourceLoc& loc, const TFu
     return candidate;
 }
 
-#ifndef GLSLANG_WEB
 // Function finding algorithm for desktop version 400 and above.
 //
 // "When function calls are resolved, an exact type match for all the arguments
@@ -7216,6 +7216,8 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
             memberQualifier.perViewNV = currentBlockQualifier.perViewNV;
         if (currentBlockQualifier.perTaskNV)
             memberQualifier.perTaskNV = currentBlockQualifier.perTaskNV;
+        if (memberType.containsCoopMat())
+            error(memberLoc, "member of block cannot be or contain a cooperative matrix type", typeList[member].type->getFieldName().c_str(), "");
 #endif
         if ((currentBlockQualifier.storage == EvqUniform || currentBlockQualifier.storage == EvqBuffer) && (memberQualifier.isInterpolation() || memberQualifier.isAuxiliary()))
             error(memberLoc, "member of uniform or buffer block cannot have an auxiliary or interpolation qualifier", memberType.getFieldName().c_str(), "");
@@ -7227,12 +7229,8 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
                 profileRequires(memberLoc, ~EEsProfile, 440, E_GL_ARB_enhanced_layouts, "offset on block member");
             }
         }
-
         if (memberType.containsOpaque())
             error(memberLoc, "member of block cannot be or contain a sampler, image, or atomic_uint type", typeList[member].type->getFieldName().c_str(), "");
-
-        if (memberType.containsCoopMat())
-            error(memberLoc, "member of block cannot be or contain a cooperative matrix type", typeList[member].type->getFieldName().c_str(), "");
     }
 
     // This might be a redeclaration of a built-in block.  If so, redeclareBuiltinBlock() will
@@ -7504,11 +7502,8 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
         profileRequires(loc, ~EEsProfile, 150, E_GL_ARB_separate_shader_objects, "input block");
         // It is a compile-time error to have an input block in a vertex shader or an output block in a fragment shader
         // "Compute shaders do not permit user-defined input variables..."
-        requireStage(loc, (EShLanguageMask)(EShLangTessControlMask|EShLangTessEvaluationMask|EShLangGeometryMask|EShLangFragmentMask
-#ifndef GLSLANG_WEB
-                                            |EShLangMeshNVMask
-#endif
-                                           ), "input block");
+        requireStage(loc, (EShLanguageMask)(EShLangTessControlMask|EShLangTessEvaluationMask|EShLangGeometryMask|
+                                            EShLangFragmentMask|EShLangMeshNVMask), "input block");
         if (language == EShLangFragment) {
             profileRequires(loc, EEsProfile, 320, Num_AEP_shader_io_blocks, AEP_shader_io_blocks, "fragment input block");
         } else if (language == EShLangMeshNV && ! qualifier.isTaskMemory()) {
@@ -7517,11 +7512,8 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
         break;
     case EvqVaryingOut:
         profileRequires(loc, ~EEsProfile, 150, E_GL_ARB_separate_shader_objects, "output block");
-        requireStage(loc, (EShLanguageMask)(EShLangVertexMask|EShLangTessControlMask|EShLangTessEvaluationMask|EShLangGeometryMask
-#ifndef GLSLANG_WEB
-                                            |EShLangMeshNVMask|EShLangTaskNVMask
-#endif
-                                           ), "output block");
+        requireStage(loc, (EShLanguageMask)(EShLangVertexMask|EShLangTessControlMask|EShLangTessEvaluationMask|
+                                            EShLangGeometryMask|EShLangMeshNVMask|EShLangTaskNVMask), "output block");
         // ES 310 can have a block before shader_io is turned on, so skip this test for built-ins
         if (language == EShLangVertex && ! parsingBuiltins) {
             profileRequires(loc, EEsProfile, 320, Num_AEP_shader_io_blocks, AEP_shader_io_blocks, "vertex output block");

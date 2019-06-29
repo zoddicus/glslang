@@ -371,6 +371,10 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["ivec2"] =                   IVEC2;
     (*KeywordMap)["ivec3"] =                   IVEC3;
     (*KeywordMap)["ivec4"] =                   IVEC4;
+    (*KeywordMap)["uint"] =                    UINT;
+    (*KeywordMap)["uvec2"] =                   UVEC2;
+    (*KeywordMap)["uvec3"] =                   UVEC3;
+    (*KeywordMap)["uvec4"] =                   UVEC4;
     (*KeywordMap)["mat2"] =                    MAT2;
     (*KeywordMap)["mat3"] =                    MAT3;
     (*KeywordMap)["mat4"] =                    MAT4;
@@ -379,6 +383,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["attribute"] =               ATTRIBUTE;
     (*KeywordMap)["varying"] =                 VARYING;
     (*KeywordMap)["buffer"] =                  BUFFER;
+#ifndef GLSLANG_WEB
     (*KeywordMap)["coherent"] =                COHERENT;
     (*KeywordMap)["devicecoherent"] =          DEVICECOHERENT;
     (*KeywordMap)["queuefamilycoherent"] =     QUEUEFAMILYCOHERENT;
@@ -390,6 +395,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["writeonly"] =               WRITEONLY;
     (*KeywordMap)["atomic_uint"] =             ATOMIC_UINT;
     (*KeywordMap)["volatile"] =                VOLATILE;
+#endif
     (*KeywordMap)["layout"] =                  LAYOUT;
     (*KeywordMap)["shared"] =                  SHARED;
     (*KeywordMap)["patch"] =                   PATCH;
@@ -408,6 +414,11 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["mat4x2"] =                  MAT4X2;
     (*KeywordMap)["mat4x3"] =                  MAT4X3;
     (*KeywordMap)["mat4x4"] =                  MAT4X4;
+#ifndef GLSLANG_WEB
+    (*KeywordMap)["double"] =                  DOUBLE;
+    (*KeywordMap)["dvec2"] =                   DVEC2;
+    (*KeywordMap)["dvec3"] =                   DVEC3;
+    (*KeywordMap)["dvec4"] =                   DVEC4;
     (*KeywordMap)["dmat2"] =                   DMAT2;
     (*KeywordMap)["dmat3"] =                   DMAT3;
     (*KeywordMap)["dmat4"] =                   DMAT4;
@@ -453,15 +464,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["image2DMSArray"] =          IMAGE2DMSARRAY;
     (*KeywordMap)["iimage2DMSArray"] =         IIMAGE2DMSARRAY;
     (*KeywordMap)["uimage2DMSArray"] =         UIMAGE2DMSARRAY;
-    (*KeywordMap)["double"] =                  DOUBLE;
-    (*KeywordMap)["dvec2"] =                   DVEC2;
-    (*KeywordMap)["dvec3"] =                   DVEC3;
-    (*KeywordMap)["dvec4"] =                   DVEC4;
-    (*KeywordMap)["uint"] =                    UINT;
-    (*KeywordMap)["uvec2"] =                   UVEC2;
-    (*KeywordMap)["uvec3"] =                   UVEC3;
-    (*KeywordMap)["uvec4"] =                   UVEC4;
-
     (*KeywordMap)["int64_t"] =                 INT64_T;
     (*KeywordMap)["uint64_t"] =                UINT64_T;
     (*KeywordMap)["i64vec2"] =                 I64VEC2;
@@ -548,6 +550,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["f64mat4x2"] =               F64MAT4X2;
     (*KeywordMap)["f64mat4x3"] =               F64MAT4X3;
     (*KeywordMap)["f64mat4x4"] =               F64MAT4X4;
+#endif
 
     (*KeywordMap)["sampler2D"] =               SAMPLER2D;
     (*KeywordMap)["samplerCube"] =             SAMPLERCUBE;
@@ -590,9 +593,10 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["sampler2DRectShadow"] =     SAMPLER2DRECTSHADOW;
     (*KeywordMap)["sampler1DArray"] =          SAMPLER1DARRAY;
 
+#ifndef GLSLANG_WEB
     (*KeywordMap)["samplerExternalOES"] =      SAMPLEREXTERNALOES; // GL_OES_EGL_image_external
-
     (*KeywordMap)["__samplerExternal2DY2YEXT"] = SAMPLEREXTERNAL2DY2YEXT; // GL_EXT_YUV_target
+#endif
 
     (*KeywordMap)["sampler"] =                 SAMPLER;
     (*KeywordMap)["samplerShadow"] =           SAMPLERSHADOW;
@@ -689,13 +693,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["noperspective"] =           NOPERSPECTIVE;
     (*KeywordMap)["smooth"] =                  SMOOTH;
     (*KeywordMap)["flat"] =                    FLAT;
-#ifndef GLSLANG_WEB
-    (*KeywordMap)["__explicitInterpAMD"] =     EXPLICITINTERPAMD;
-#endif
     (*KeywordMap)["centroid"] =                CENTROID;
-#ifndef GLSLANG_WEB
-    (*KeywordMap)["pervertexNV"] =             PERVERTEXNV;
-#endif
     (*KeywordMap)["precise"] =                 PRECISE;
     (*KeywordMap)["invariant"] =               INVARIANT;
     (*KeywordMap)["packed"] =                  PACKED;
@@ -703,6 +701,8 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["superp"] =                  SUPERP;
 
 #ifndef GLSLANG_WEB
+    (*KeywordMap)["__explicitInterpAMD"] =     EXPLICITINTERPAMD;
+    (*KeywordMap)["pervertexNV"] =             PERVERTEXNV;
     (*KeywordMap)["rayPayloadNV"] =            PAYLOADNV;
     (*KeywordMap)["rayPayloadInNV"] =          PAYLOADINNV;
     (*KeywordMap)["hitAttributeNV"] =          HITATTRNV;
@@ -967,7 +967,6 @@ int TScanContext::tokenizeIdentifier()
                  && parseContext.extensionTurnedOn(E_GL_NV_ray_tracing)))
             return keyword;
         return identifierOrType();
-#endif
 
     case ATOMIC_UINT:
         if ((parseContext.profile == EEsProfile && parseContext.version >= 310) ||
@@ -995,6 +994,7 @@ int TScanContext::tokenizeIdentifier()
             (parseContext.version < 420 && ! parseContext.extensionTurnedOn(E_GL_ARB_shader_image_load_store))))
             reservedWord();
         return keyword;
+#endif
 
     case LAYOUT:
     {
@@ -1542,9 +1542,6 @@ int TScanContext::tokenizeIdentifier()
             parseContext.extensionTurnedOn(E_GL_AMD_shader_explicit_vertex_parameter))
             return keyword;
         return identifierOrType();
-#endif
-
-#ifndef GLSLANG_WEB
     case PERVERTEXNV:
         if (((parseContext.profile != EEsProfile && parseContext.version >= 450) ||
             (parseContext.profile == EEsProfile && parseContext.version >= 320)) &&
@@ -1608,7 +1605,6 @@ int TScanContext::tokenizeIdentifier()
             parseContext.extensionTurnedOn(E_GL_NV_mesh_shader))
             return keyword;
         return identifierOrType();
-#endif
 
     case FCOOPMATNV:
         afterType = true;
@@ -1616,6 +1612,7 @@ int TScanContext::tokenizeIdentifier()
             parseContext.extensionTurnedOn(E_GL_NV_cooperative_matrix))
             return keyword;
         return identifierOrType();
+#endif
 
     default:
         parseContext.infoSink.info.message(EPrefixInternalError, "Unknown glslang keyword", loc);

@@ -1455,9 +1455,11 @@ public:
                                         // dereference from vector to scalar
                                         vectorSize = 1;
                                         vector1 = false;
+#ifndef GLSLANG_WEB
                                     } else if (isCoopMat()) {
                                         coopmat = false;
                                         typeParameters = nullptr;
+#endif
                                     }
                                 }
                             }

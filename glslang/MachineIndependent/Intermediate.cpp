@@ -909,9 +909,11 @@ TIntermediate::addConversion(TOperator op, TIntermTyped* node0, TIntermTyped* no
         if (node0->getType().isArray() || node1->getType().isArray())
             return std::make_tuple(nullptr, nullptr);
 
+#ifndef GLSLANG_WEB
         // No implicit conversions for operations involving cooperative matrices
         if (node0->getType().isCoopMat() || node1->getType().isCoopMat())
             return std::make_tuple(node0, node1);
+#endif
     }
 
     auto promoteTo = std::make_tuple(EbtNumTypes, EbtNumTypes);
@@ -2023,8 +2025,10 @@ TOperator TIntermediate::mapTypeToConstructorOp(const TType& type) const
     if (type.getQualifier().nonUniform)
         return EOpConstructNonuniform;
 
+#ifndef GLSLANG_WEB
     if (type.isCoopMat())
         return EOpConstructCooperativeMatrix;
+#endif
 
     switch (type.getBasicType()) {
     case EbtStruct:
