@@ -189,6 +189,21 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
                 else
                     newConstArray[i].setDConst((double)NAN);
                 break;
+            case EbtInt:
+                if (rightUnionArray[i] == 0)
+                    newConstArray[i].setIConst(0x7FFFFFFF);
+                else if (rightUnionArray[i].getIConst() == -1 && leftUnionArray[i].getIConst() == (int)-0x80000000ll)
+                    newConstArray[i].setIConst((int)-0x80000000ll);
+                else
+                    newConstArray[i].setIConst(leftUnionArray[i].getIConst() / rightUnionArray[i].getIConst());
+                break;
+
+            case EbtUint:
+                if (rightUnionArray[i] == 0u)
+                    newConstArray[i].setUConst(0xFFFFFFFFu);
+                else
+                    newConstArray[i].setUConst(leftUnionArray[i].getUConst() / rightUnionArray[i].getUConst());
+                break;
 #ifndef GLSLANG_WEB
             case EbtInt8:
                 if (rightUnionArray[i] == (signed char)0)
@@ -221,24 +236,6 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
                 else
                     newConstArray[i].setU16Const(leftUnionArray[i].getU16Const() / rightUnionArray[i].getU16Const());
                 break;
-#endif
-
-            case EbtInt:
-                if (rightUnionArray[i] == 0)
-                    newConstArray[i].setIConst(0x7FFFFFFF);
-                else if (rightUnionArray[i].getIConst() == -1 && leftUnionArray[i].getIConst() == (int)-0x80000000ll)
-                    newConstArray[i].setIConst((int)-0x80000000ll);
-                else
-                    newConstArray[i].setIConst(leftUnionArray[i].getIConst() / rightUnionArray[i].getIConst());
-                break;
-
-            case EbtUint:
-                if (rightUnionArray[i] == 0u)
-                    newConstArray[i].setUConst(0xFFFFFFFFu);
-                else
-                    newConstArray[i].setUConst(leftUnionArray[i].getUConst() / rightUnionArray[i].getUConst());
-                break;
-#ifndef GLSLANG_WEB
             case EbtInt64:
                 if (rightUnionArray[i] == 0ll)
                     newConstArray[i].setI64Const(0x7FFFFFFFFFFFFFFFll);
@@ -584,14 +581,12 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
         case EOpDPdx:
         case EOpDPdy:
         case EOpFwidth:
-#ifndef GLSLANG_WEB
         case EOpDPdxFine:
         case EOpDPdyFine:
         case EOpFwidthFine:
         case EOpDPdxCoarse:
         case EOpDPdyCoarse:
         case EOpFwidthCoarse:
-#endif
             // The derivatives are all mandated to create a constant 0.
             newConstArray[i].setDConst(0.0);
             break;
@@ -1159,6 +1154,14 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                     newConstArray[comp].setDConst(std::min(std::max(childConstUnions[0][arg0comp].getDConst(), childConstUnions[1][arg1comp].getDConst()),
                                                                                                                childConstUnions[2][arg2comp].getDConst()));
                     break;
+                case EbtInt:
+                    newConstArray[comp].setIConst(std::min(std::max(childConstUnions[0][arg0comp].getIConst(), childConstUnions[1][arg1comp].getIConst()),
+                                                                                                                   childConstUnions[2][arg2comp].getIConst()));
+                    break;
+                case EbtUint:
+                    newConstArray[comp].setUConst(std::min(std::max(childConstUnions[0][arg0comp].getUConst(), childConstUnions[1][arg1comp].getUConst()),
+                                                                                                                   childConstUnions[2][arg2comp].getUConst()));
+                    break;
 #ifndef GLSLANG_WEB
                 case EbtInt8:
                     newConstArray[comp].setI8Const(std::min(std::max(childConstUnions[0][arg0comp].getI8Const(), childConstUnions[1][arg1comp].getI8Const()),
@@ -1176,16 +1179,6 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                     newConstArray[comp].setU16Const(std::min(std::max(childConstUnions[0][arg0comp].getU16Const(), childConstUnions[1][arg1comp].getU16Const()),
                                                                                                                    childConstUnions[2][arg2comp].getU16Const()));
                     break;
-#endif
-                case EbtInt:
-                    newConstArray[comp].setIConst(std::min(std::max(childConstUnions[0][arg0comp].getIConst(), childConstUnions[1][arg1comp].getIConst()),
-                                                                                                                   childConstUnions[2][arg2comp].getIConst()));
-                    break;
-                case EbtUint:
-                    newConstArray[comp].setUConst(std::min(std::max(childConstUnions[0][arg0comp].getUConst(), childConstUnions[1][arg1comp].getUConst()),
-                                                                                                                   childConstUnions[2][arg2comp].getUConst()));
-                    break;
-#ifndef GLSLANG_WEB
                 case EbtInt64:
                     newConstArray[comp].setI64Const(std::min(std::max(childConstUnions[0][arg0comp].getI64Const(), childConstUnions[1][arg1comp].getI64Const()),
                                                                                                                        childConstUnions[2][arg2comp].getI64Const()));
