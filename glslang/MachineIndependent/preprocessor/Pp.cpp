@@ -792,10 +792,8 @@ int TPpContext::CPPpragma(TPpToken* ppToken)
         case PpAtomConstUint:
         case PpAtomConstInt64:
         case PpAtomConstUint64:
-#ifdef AMD_EXTENSIONS
         case PpAtomConstInt16:
         case PpAtomConstUint16:
-#endif
         case PpAtomConstFloat:
         case PpAtomConstDouble:
         case PpAtomConstFloat16:

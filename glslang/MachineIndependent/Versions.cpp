@@ -219,7 +219,7 @@ void TParseVersions::initializeExtensionBehavior()
     extensionBehavior[E_GL_GOOGLE_cpp_style_line_directive]          = EBhDisable;
     extensionBehavior[E_GL_GOOGLE_include_directive]                 = EBhDisable;
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     extensionBehavior[E_GL_AMD_shader_ballot]                        = EBhDisable;
     extensionBehavior[E_GL_AMD_shader_trinary_minmax]                = EBhDisable;
     extensionBehavior[E_GL_AMD_shader_explicit_vertex_parameter]     = EBhDisable;
@@ -230,9 +230,6 @@ void TParseVersions::initializeExtensionBehavior()
     extensionBehavior[E_GL_AMD_shader_image_load_store_lod]          = EBhDisable;
     extensionBehavior[E_GL_AMD_shader_fragment_mask]                 = EBhDisable;
     extensionBehavior[E_GL_AMD_gpu_shader_half_float_fetch]          = EBhDisable;
-#endif
-
-#ifdef NV_EXTENSIONS
     extensionBehavior[E_GL_NV_sample_mask_override_coverage]         = EBhDisable;
     extensionBehavior[E_SPV_NV_geometry_shader_passthrough]          = EBhDisable;
     extensionBehavior[E_GL_NV_viewport_array2]                       = EBhDisable;
@@ -347,7 +344,7 @@ void TParseVersions::getPreamble(std::string& preamble)
             "#define GL_EXT_shader_non_constant_global_initializers 1\n"
             ;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
             if (profile == EEsProfile && version >= 300) {
                 preamble += "#define GL_NV_shader_noperspective_interpolation 1\n";
             }
@@ -407,7 +404,7 @@ void TParseVersions::getPreamble(std::string& preamble)
 
             "#define E_GL_EXT_shader_atomic_int64 1\n"
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             "#define GL_AMD_shader_ballot 1\n"
             "#define GL_AMD_shader_trinary_minmax 1\n"
             "#define GL_AMD_shader_explicit_vertex_parameter 1\n"
@@ -420,7 +417,7 @@ void TParseVersions::getPreamble(std::string& preamble)
             "#define GL_AMD_gpu_shader_half_float_fetch 1\n"
 #endif
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
             "#define GL_NV_sample_mask_override_coverage 1\n"
             "#define GL_NV_geometry_shader_passthrough 1\n"
             "#define GL_NV_viewport_array2 1\n"
@@ -523,7 +520,7 @@ const char* StageName(EShLanguage stage)
     case EShLangGeometry:       return "geometry";
     case EShLangFragment:       return "fragment";
     case EShLangCompute:        return "compute";
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case EShLangRayGenNV:       return "ray-generation";
     case EShLangIntersectNV:    return "intersection";
     case EShLangAnyHitNV:       return "any-hit";
@@ -810,7 +807,7 @@ void TParseVersions::updateExtensionBehavior(int line, const char* extension, co
         updateExtensionBehavior(line, "GL_KHR_shader_subgroup_basic", behaviorString);
     else if (strcmp(extension, "GL_KHR_shader_subgroup_quad") == 0)
         updateExtensionBehavior(line, "GL_KHR_shader_subgroup_basic", behaviorString);
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     else if (strcmp(extension, "GL_NV_shader_subgroup_partitioned") == 0)
         updateExtensionBehavior(line, "GL_KHR_shader_subgroup_basic", behaviorString);
 #endif
@@ -861,7 +858,7 @@ void TParseVersions::updateExtensionBehavior(const char* extension, TExtensionBe
 // Check if extension is used with correct shader stage.
 void TParseVersions::checkExtensionStage(const TSourceLoc& loc, const char * const extension)
 {
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     // GL_NV_mesh_shader extension is only allowed in task/mesh shaders
     if (strcmp(extension, "GL_NV_mesh_shader") == 0) {
         requireStage(loc, (EShLanguageMask)(EShLangTaskNVMask | EShLangMeshNVMask | EShLangFragmentMask),
@@ -891,7 +888,7 @@ void TParseVersions::float16Check(const TSourceLoc& loc, const char* op, bool bu
 {
     if (!builtIn) {
         const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                            E_GL_AMD_gpu_shader_half_float,
 #endif
                                            E_GL_EXT_shader_explicit_arithmetic_types,
@@ -903,7 +900,7 @@ void TParseVersions::float16Check(const TSourceLoc& loc, const char* op, bool bu
 bool TParseVersions::float16Arithmetic()
 {
     const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                        E_GL_AMD_gpu_shader_half_float,
 #endif
                                        E_GL_EXT_shader_explicit_arithmetic_types,
@@ -914,7 +911,7 @@ bool TParseVersions::float16Arithmetic()
 bool TParseVersions::int16Arithmetic()
 {
     const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                        E_GL_AMD_gpu_shader_int16,
 #endif
                                        E_GL_EXT_shader_explicit_arithmetic_types,
@@ -938,7 +935,7 @@ void TParseVersions::requireFloat16Arithmetic(const TSourceLoc& loc, const char*
     combined += featureDesc;
 
     const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                        E_GL_AMD_gpu_shader_half_float,
 #endif
                                        E_GL_EXT_shader_explicit_arithmetic_types,
@@ -954,7 +951,7 @@ void TParseVersions::requireInt16Arithmetic(const TSourceLoc& loc, const char* o
     combined += featureDesc;
 
     const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                        E_GL_AMD_gpu_shader_int16,
 #endif
                                        E_GL_EXT_shader_explicit_arithmetic_types,
@@ -979,7 +976,7 @@ void TParseVersions::float16ScalarVectorCheck(const TSourceLoc& loc, const char*
 {
     if (!builtIn) {
         const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                            E_GL_AMD_gpu_shader_half_float,
 #endif
                                            E_GL_EXT_shader_16bit_storage,
@@ -1021,7 +1018,7 @@ void TParseVersions::explicitInt8Check(const TSourceLoc& loc, const char* op, bo
     }
 }
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
 // Call for any operation needing GLSL float16 opaque-type support
 void TParseVersions::float16OpaqueCheck(const TSourceLoc& loc, const char* op, bool builtIn)
 {
@@ -1038,7 +1035,7 @@ void TParseVersions::explicitInt16Check(const TSourceLoc& loc, const char* op, b
 {
     if (! builtIn) {
         const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                            E_GL_AMD_gpu_shader_int16,
 #endif
                                            E_GL_EXT_shader_explicit_arithmetic_types,
@@ -1051,7 +1048,7 @@ void TParseVersions::int16ScalarVectorCheck(const TSourceLoc& loc, const char* o
 {
     if (! builtIn) {
     	const char* const extensions[] = {
-#if AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                                            E_GL_AMD_gpu_shader_int16,
 #endif
                                            E_GL_EXT_shader_16bit_storage,

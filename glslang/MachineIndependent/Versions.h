@@ -190,7 +190,7 @@ const int Num_OVR_multiview_EXTs = sizeof(OVR_multiview_EXTs) / sizeof(OVR_multi
 const char* const E_GL_GOOGLE_cpp_style_line_directive          = "GL_GOOGLE_cpp_style_line_directive";
 const char* const E_GL_GOOGLE_include_directive                 = "GL_GOOGLE_include_directive";
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
 const char* const E_GL_AMD_shader_ballot                        = "GL_AMD_shader_ballot";
 const char* const E_GL_AMD_shader_trinary_minmax                = "GL_AMD_shader_trinary_minmax";
 const char* const E_GL_AMD_shader_explicit_vertex_parameter     = "GL_AMD_shader_explicit_vertex_parameter";
@@ -201,9 +201,6 @@ const char* const E_GL_AMD_gpu_shader_int16                     = "GL_AMD_gpu_sh
 const char* const E_GL_AMD_shader_image_load_store_lod          = "GL_AMD_shader_image_load_store_lod";
 const char* const E_GL_AMD_shader_fragment_mask                 = "GL_AMD_shader_fragment_mask";
 const char* const E_GL_AMD_gpu_shader_half_float_fetch          = "GL_AMD_gpu_shader_half_float_fetch";
-#endif
-
-#ifdef NV_EXTENSIONS
 
 const char* const E_GL_NV_sample_mask_override_coverage         = "GL_NV_sample_mask_override_coverage";
 const char* const E_SPV_NV_geometry_shader_passthrough          = "GL_NV_geometry_shader_passthrough";

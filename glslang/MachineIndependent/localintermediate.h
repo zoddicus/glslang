@@ -214,7 +214,7 @@ class TSymbolTable;
 class TSymbol;
 class TVariable;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
 //
 // Texture and Sampler transformation mode.
 //
@@ -242,7 +242,7 @@ public:
 #ifndef GLSLANG_WEB
         pointMode(false),
         earlyFragmentTests(false),
-        postDepthCoverage(false), depthLayout(EldNone)
+        postDepthCoverage(false), depthLayout(EldNone),
         hlslFunctionality1(false),
         blendEquations(0), xfbMode(false), multiStream(false),
         layoutOverrideCoverage(false),
@@ -486,7 +486,7 @@ public:
     int getNumEntryPoints() const { return numEntryPoints; }
     int getNumErrors() const { return numErrors; }
     void addPushConstantCount() { ++numPushConstants; }
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     void addShaderRecordNVCount() { ++numShaderRecordNVBlocks; }
     void addTaskNVCount() { ++numTaskNVBlocks; }
 #endif
@@ -715,7 +715,7 @@ public:
     static int computeBufferReferenceTypeSize(const TType&);
     bool promote(TIntermOperator*);
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     void setLayoutOverrideCoverage() { layoutOverrideCoverage = true; }
     bool getLayoutOverrideCoverage() const { return layoutOverrideCoverage; }
     void setGeoPassthroughEXT() { geoPassthroughEXT = true; }

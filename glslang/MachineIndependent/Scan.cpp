@@ -638,7 +638,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["usubpassInput"] =           USUBPASSINPUT;
     (*KeywordMap)["usubpassInputMS"] =         USUBPASSINPUTMS;
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     (*KeywordMap)["f16sampler1D"] =                 F16SAMPLER1D;
     (*KeywordMap)["f16sampler2D"] =                 F16SAMPLER2D;
     (*KeywordMap)["f16sampler3D"] =                 F16SAMPLER3D;
@@ -689,11 +689,11 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["noperspective"] =           NOPERSPECTIVE;
     (*KeywordMap)["smooth"] =                  SMOOTH;
     (*KeywordMap)["flat"] =                    FLAT;
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     (*KeywordMap)["__explicitInterpAMD"] =     EXPLICITINTERPAMD;
 #endif
     (*KeywordMap)["centroid"] =                CENTROID;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     (*KeywordMap)["pervertexNV"] =             PERVERTEXNV;
 #endif
     (*KeywordMap)["precise"] =                 PRECISE;
@@ -702,7 +702,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["resource"] =                RESOURCE;
     (*KeywordMap)["superp"] =                  SUPERP;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     (*KeywordMap)["rayPayloadNV"] =            PAYLOADNV;
     (*KeywordMap)["rayPayloadInNV"] =          PAYLOADINNV;
     (*KeywordMap)["hitAttributeNV"] =          HITATTRNV;
@@ -955,7 +955,7 @@ int TScanContext::tokenizeIdentifier()
             return identifierOrType();
         return keyword;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case PAYLOADNV:
     case PAYLOADINNV:
     case HITATTRNV:
@@ -1173,9 +1173,7 @@ int TScanContext::tokenizeIdentifier()
         if (parseContext.symbolTable.atBuiltInLevel() ||
             (parseContext.profile != EEsProfile && parseContext.version >= 450 &&
              (
-#ifdef AMD_EXTENSIONS
               parseContext.extensionTurnedOn(E_GL_AMD_gpu_shader_int16) ||
-#endif
               parseContext.extensionTurnedOn(E_GL_EXT_shader_16bit_storage) ||
               parseContext.extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types) ||
               parseContext.extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types_int16))))
@@ -1252,9 +1250,7 @@ int TScanContext::tokenizeIdentifier()
         if (parseContext.symbolTable.atBuiltInLevel() ||
             (parseContext.profile != EEsProfile && parseContext.version >= 450 &&
              (
-#ifdef AMD_EXTENSIONS
               parseContext.extensionTurnedOn(E_GL_AMD_gpu_shader_half_float) ||
-#endif
               parseContext.extensionTurnedOn(E_GL_EXT_shader_16bit_storage) ||
               parseContext.extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types) ||
               parseContext.extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types_float16))))
@@ -1278,9 +1274,7 @@ int TScanContext::tokenizeIdentifier()
         if (parseContext.symbolTable.atBuiltInLevel() ||
             (parseContext.profile != EEsProfile && parseContext.version >= 450 &&
              (
-#ifdef AMD_EXTENSIONS
               parseContext.extensionTurnedOn(E_GL_AMD_gpu_shader_half_float) ||
-#endif
               parseContext.extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types) ||
               parseContext.extensionTurnedOn(E_GL_EXT_shader_explicit_arithmetic_types_float16))))
             return keyword;
@@ -1474,7 +1468,7 @@ int TScanContext::tokenizeIdentifier()
         else
             return identifierOrType();
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     case F16SAMPLER1D:
     case F16SAMPLER2D:
     case F16SAMPLER3D:
@@ -1529,7 +1523,7 @@ int TScanContext::tokenizeIdentifier()
 #endif
 
     case NOPERSPECTIVE:
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         if (parseContext.profile == EEsProfile && parseContext.version >= 300 &&
             parseContext.extensionTurnedOn(E_GL_NV_shader_noperspective_interpolation))
             return keyword;
@@ -1542,7 +1536,7 @@ int TScanContext::tokenizeIdentifier()
             return identifierOrType();
         return keyword;
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     case EXPLICITINTERPAMD:
         if (parseContext.profile != EEsProfile && parseContext.version >= 450 &&
             parseContext.extensionTurnedOn(E_GL_AMD_shader_explicit_vertex_parameter))
@@ -1550,7 +1544,7 @@ int TScanContext::tokenizeIdentifier()
         return identifierOrType();
 #endif
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case PERVERTEXNV:
         if (((parseContext.profile != EEsProfile && parseContext.version >= 450) ||
             (parseContext.profile == EEsProfile && parseContext.version >= 320)) &&
@@ -1605,7 +1599,7 @@ int TScanContext::tokenizeIdentifier()
         return identifierOrReserved(reserved);
     }
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case PERPRIMITIVENV:
     case PERVIEWNV:
     case PERTASKNV:

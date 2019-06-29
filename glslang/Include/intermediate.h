@@ -422,15 +422,14 @@ enum TOperator {
     EOpReflect,
     EOpRefract,
 
-#ifdef AMD_EXTENSIONS
     EOpMin3,
     EOpMax3,
     EOpMid3,
-#endif
 
     EOpDPdx,            // Fragment only
     EOpDPdy,            // Fragment only
     EOpFwidth,          // Fragment only
+
     EOpDPdxFine,        // Fragment only
     EOpDPdyFine,        // Fragment only
     EOpFwidthFine,      // Fragment only
@@ -442,9 +441,7 @@ enum TOperator {
     EOpInterpolateAtSample,   // Fragment only
     EOpInterpolateAtOffset,   // Fragment only
 
-#ifdef AMD_EXTENSIONS
     EOpInterpolateAtVertex,
-#endif
 
     EOpMatrixTimesMatrix,
     EOpOuterProduct,
@@ -534,7 +531,6 @@ enum TOperator {
     EOpSubgroupQuadSwapVertical,
     EOpSubgroupQuadSwapDiagonal,
 
-#ifdef NV_EXTENSIONS
     EOpSubgroupPartition,
     EOpSubgroupPartitionedAdd,
     EOpSubgroupPartitionedMul,
@@ -557,11 +553,9 @@ enum TOperator {
     EOpSubgroupPartitionedExclusiveAnd,
     EOpSubgroupPartitionedExclusiveOr,
     EOpSubgroupPartitionedExclusiveXor,
-#endif
 
     EOpSubgroupGuardStop,
 
-#ifdef AMD_EXTENSIONS
     EOpMinInvocations,
     EOpMaxInvocations,
     EOpAddInvocations,
@@ -588,7 +582,6 @@ enum TOperator {
     EOpCubeFaceIndex,
     EOpCubeFaceCoord,
     EOpTime,
-#endif
 
     EOpAtomicAdd,
     EOpAtomicMin,
@@ -789,10 +782,8 @@ enum TOperator {
     EOpImageQuerySamples,
     EOpImageLoad,
     EOpImageStore,
-#ifdef AMD_EXTENSIONS
     EOpImageLoadLod,
     EOpImageStoreLod,
-#endif
     EOpImageAtomicAdd,
     EOpImageAtomicMin,
     EOpImageAtomicMax,
@@ -807,9 +798,7 @@ enum TOperator {
     EOpSubpassLoad,
     EOpSubpassLoadMS,
     EOpSparseImageLoad,
-#ifdef AMD_EXTENSIONS
     EOpSparseImageLoadLod,
-#endif
 
     EOpImageGuardEnd,
 
@@ -847,13 +836,11 @@ enum TOperator {
     EOpTextureOffsetClamp,
     EOpTextureGradClamp,
     EOpTextureGradOffsetClamp,
-#ifdef AMD_EXTENSIONS
     EOpTextureGatherLod,
     EOpTextureGatherLodOffset,
     EOpTextureGatherLodOffsets,
     EOpFragmentMaskFetch,
     EOpFragmentFetch,
-#endif
 
     EOpSparseTextureGuardBegin,
 
@@ -873,15 +860,12 @@ enum TOperator {
     EOpSparseTextureOffsetClamp,
     EOpSparseTextureGradClamp,
     EOpSparseTextureGradOffsetClamp,
-#ifdef AMD_EXTENSIONS
     EOpSparseTextureGatherLod,
     EOpSparseTextureGatherLodOffset,
     EOpSparseTextureGatherLodOffsets,
-#endif
 
     EOpSparseTextureGuardEnd,
 
-#ifdef NV_EXTENSIONS
     EOpImageFootprintGuardBegin,
     EOpImageSampleFootprintNV,
     EOpImageSampleFootprintClampNV,
@@ -889,7 +873,6 @@ enum TOperator {
     EOpImageSampleFootprintGradNV,
     EOpImageSampleFootprintGradClampNV,
     EOpImageFootprintGuardEnd,
-#endif
     EOpSamplingGuardEnd,
     EOpTextureGuardEnd,
 
@@ -908,14 +891,12 @@ enum TOperator {
     EOpFindLSB,
     EOpFindMSB,
 
-#ifdef NV_EXTENSIONS
     EOpTraceNV,
     EOpReportIntersectionNV,
     EOpIgnoreIntersectionNV,
     EOpTerminateRayNV,
     EOpExecuteCallableNV,
     EOpWritePackedPrimitiveIndices4x8NV,
-#endif
     //
     // HLSL operations
     //
@@ -1100,7 +1081,11 @@ public:
     virtual bool isStruct() const { return type.isStruct(); }
     virtual bool isFloatingDomain() const { return type.isFloatingDomain(); }
     virtual bool isIntegerDomain() const { return type.isIntegerDomain(); }
+#ifdef GLSLANG_WEB
+    TString getCompleteString() const { return ""; }
+#else
     TString getCompleteString() const { return type.getCompleteString(); }
+#endif
 
 protected:
     TIntermTyped& operator=(const TIntermTyped&);
@@ -1313,7 +1298,7 @@ public:
     bool isSampling() const { return op > EOpSamplingGuardBegin && op < EOpSamplingGuardEnd; }
     bool isImage()    const { return op > EOpImageGuardBegin    && op < EOpImageGuardEnd; }
     bool isSparseTexture() const { return op > EOpSparseTextureGuardBegin && op < EOpSparseTextureGuardEnd; }
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     bool isImageFootprint() const { return op > EOpImageFootprintGuardBegin && op < EOpImageFootprintGuardEnd; }
 #endif
     bool isSparseImage()   const { return op == EOpSparseImageLoad; }
@@ -1322,6 +1307,7 @@ public:
     TPrecisionQualifier getOperationPrecision() const { return operationPrecision != EpqNone ?
                                                                                      operationPrecision :
                                                                                      type.getQualifier().precision; }
+#ifndef GLSLANG_WEB
     TString getCompleteString() const
     {
         TString cs = type.getCompleteString();
@@ -1332,6 +1318,7 @@ public:
 
         return cs;
     }
+#endif
 
     // Crack the op into the individual dimensions of texturing operation.
     void crackTexture(TSampler sampler, TCrackedTextureOp& cracked) const
@@ -1363,12 +1350,6 @@ public:
         case EOpTexture:
         case EOpSparseTexture:
             break;
-#ifndef GLSLANG_WEB
-        case EOpTextureClamp:
-        case EOpSparseTextureClamp:
-            cracked.lodClamp = true;
-            break;
-#endif
         case EOpTextureProj:
             cracked.proj = true;
             break;
@@ -1379,13 +1360,6 @@ public:
         case EOpTextureOffset:
         case EOpSparseTextureOffset:
             cracked.offset = true;
-            break;
-        case EOpTextureOffsetClamp:
-        case EOpSparseTextureOffsetClamp:
-            cracked.offset = true;
-#ifndef GLSLANG_WEB
-            cracked.lodClamp = true;
-#endif
             break;
         case EOpTextureFetch:
         case EOpSparseTextureFetch:
@@ -1422,13 +1396,6 @@ public:
         case EOpSparseTextureGrad:
             cracked.grad = true;
             break;
-        case EOpTextureGradClamp:
-        case EOpSparseTextureGradClamp:
-            cracked.grad = true;
-#ifndef GLSLANG_WEB
-            cracked.lodClamp = true;
-#endif
-            break;
         case EOpTextureGradOffset:
         case EOpSparseTextureGradOffset:
             cracked.grad = true;
@@ -1444,13 +1411,26 @@ public:
             cracked.proj = true;
             break;
 #ifndef GLSLANG_WEB
+        case EOpTextureClamp:
+        case EOpSparseTextureClamp:
+            cracked.lodClamp = true;
+            break;
+        case EOpTextureOffsetClamp:
+        case EOpSparseTextureOffsetClamp:
+            cracked.offset = true;
+            cracked.lodClamp = true;
+            break;
+        case EOpTextureGradClamp:
+        case EOpSparseTextureGradClamp:
+            cracked.grad = true;
+            cracked.lodClamp = true;
+            break;
         case EOpTextureGradOffsetClamp:
         case EOpSparseTextureGradOffsetClamp:
             cracked.grad = true;
             cracked.offset = true;
             cracked.lodClamp = true;
             break;
-#endif
         case EOpTextureGather:
         case EOpSparseTextureGather:
             cracked.gather = true;
@@ -1465,7 +1445,6 @@ public:
             cracked.gather = true;
             cracked.offsets = true;
             break;
-#ifndef GLSLANG_WEB
         case EOpTextureGatherLod:
         case EOpSparseTextureGatherLod:
             cracked.gather = true;

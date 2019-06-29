@@ -1246,7 +1246,7 @@ storage_qualifier
         parseContext.globalCheck($1.loc, "shared");
         parseContext.profileRequires($1.loc, ECoreProfile | ECompatibilityProfile, 430, E_GL_ARB_compute_shader, "shared");
         parseContext.profileRequires($1.loc, EEsProfile, 310, 0, "shared");
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         parseContext.requireStage($1.loc, (EShLanguageMask)(EShLangComputeMask | EShLangMeshNVMask | EShLangTaskNVMask), "shared");
 #else
         parseContext.requireStage($1.loc, EShLangCompute, "shared");
@@ -2413,8 +2413,10 @@ iteration_statement_nonattributed
         parseContext.symbolTable.pop(&parseContext.defaultPrecision[0]);
         $$ = parseContext.intermediate.makeAggregate($4, $2.loc);
         TIntermLoop* forLoop = parseContext.intermediate.addLoop($7, reinterpret_cast<TIntermTyped*>($5.node1), reinterpret_cast<TIntermTyped*>($5.node2), true, $1.loc);
+#ifndef GLSLANG_WEB
         if (! parseContext.limits.nonInductiveForLoops)
             parseContext.inductiveLoopCheck($1.loc, $4, forLoop);
+#endif
         $$ = parseContext.intermediate.growAggregate($$, forLoop, $1.loc);
         $$->getAsAggregate()->setOperator(EOpSequence);
         --parseContext.loopNestingLevel;

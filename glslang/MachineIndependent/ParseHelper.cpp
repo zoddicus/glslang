@@ -208,6 +208,9 @@ bool TParseContext::parseShaderStrings(TPpContext& ppContext, TInputScanner& inp
 #define error5(A, B, C, D, E) 
 #define error6(A, B, C, D, E, F) 
 #define warn(A, B, C, D)
+#else
+#define error5(A, B, C, D, E) error(A, B, C, D, E)
+#define error6(A, B, C, D, E, F)  error(A, B, C, D, E, F)
 #endif
 
 // This is called from bison when it has a parse (syntax) error
@@ -432,18 +435,17 @@ TIntermTyped* TParseContext::handleBracketDereference(const TSourceLoc& loc, TIn
         result->setType(base->getType());
         return result;
     }
+    if (base->getAsSymbolNode() && isIoResizeArray(base->getType()))
+        handleIoResizeArrayAccess(loc, base);
 #endif
 
     if (index->getQualifier().isFrontEndConstant())
         checkIndex(loc, base->getType(), indexValue);
 
-    if (base->getAsSymbolNode() && isIoResizeArray(base->getType()))
-        handleIoResizeArrayAccess(loc, base);
-
     if (index->getQualifier().isFrontEndConstant()) {
+#ifndef GLSLANG_WEB
         if (base->getType().isUnsizedArray()) {
             base->getWritableType().updateImplicitArraySize(indexValue + 1);
-#ifdef NV_EXTENSIONS
             // For 2D per-view builtin arrays, update the inner dimension size in parent type
             if (base->getQualifier().isPerView() && base->getQualifier().builtIn != EbvNone) {
                 TIntermBinary* binaryNode = base->getAsBinaryNode();
@@ -454,8 +456,8 @@ TIntermTyped* TParseContext::handleBracketDereference(const TSourceLoc& loc, TIn
                     arraySizes.setDimSize(1, std::max(arraySizes.getDimSize(1), indexValue + 1));
                 }
             }
-#endif
         } else
+#endif
             checkIndex(loc, base->getType(), indexValue);
         result = intermediate.addIndex(EOpIndexDirect, base, index, loc);
     } else {
@@ -534,13 +536,13 @@ void TParseContext::handleIndexLimits(const TSourceLoc& /*loc*/, TIntermTyped* b
     }
 }
 
+#ifndef GLSLANG_WEB
 // Make a shared symbol have a non-shared version that can be edited by the current
 // compile, such that editing its type will not change the shared version and will
 // effect all nodes sharing it.
 void TParseContext::makeEditable(TSymbol*& symbol)
 {
     TParseContextBase::makeEditable(symbol);
-
     // See if it's tied to IO resizing
     if (isIoResizeArray(symbol->getType()))
         ioArraySymbolResizeList.push_back(symbol);
@@ -550,13 +552,11 @@ void TParseContext::makeEditable(TSymbol*& symbol)
 // or mesh shader output array.
 bool TParseContext::isIoResizeArray(const TType& type) const
 {
-#ifndef GLSLANG_WEB
     return type.isArray() &&
            ((language == EShLangGeometry    && type.getQualifier().storage == EvqVaryingIn) ||
             (language == EShLangTessControl && type.getQualifier().storage == EvqVaryingOut && ! type.getQualifier().patch)  ||
             (language == EShLangFragment && type.getQualifier().storage == EvqVaryingIn &&  type.getQualifier().pervertexNV) ||
             (language == EShLangMeshNV && type.getQualifier().storage == EvqVaryingOut && !type.getQualifier().perTaskNV));
-#endif
 
     return false;
 }
@@ -564,7 +564,6 @@ bool TParseContext::isIoResizeArray(const TType& type) const
 // If an array is not isIoResizeArray() but is an io array, make sure it has the right size
 void TParseContext::fixIoArraySize(const TSourceLoc& loc, TType& type)
 {
-#ifndef GLSLANG_WEB
     if (! type.isArray() || type.getQualifier().patch || symbolTable.atBuiltInLevel())
         return;
 
@@ -580,7 +579,6 @@ void TParseContext::fixIoArraySize(const TSourceLoc& loc, TType& type)
             type.changeOuterArraySize(resources.maxPatchVertices);
         }
     }
-#endif
 }
 
 // Issue any errors if the non-array object is missing arrayness WRT
@@ -588,12 +586,10 @@ void TParseContext::fixIoArraySize(const TSourceLoc& loc, TType& type)
 // All arrayness checking is handled in array paths, this is for
 void TParseContext::ioArrayCheck(const TSourceLoc& loc, const TType& type, const TString& identifier)
 {
-#ifndef GLSLANG_WEB
     if (! type.isArray() && ! symbolTable.atBuiltInLevel()) {
         if (type.getQualifier().isArrayedIo(language) && !type.getQualifier().layoutPassthrough)
             error(loc, "type must be an array:", type.getStorageQualifierString(), identifier.c_str());
     }
-#endif
 }
 
 // Handle a dereference of a geometry shader input array or tessellation control output array.
@@ -638,10 +634,7 @@ void TParseContext::checkIoArraysConsistency(const TSourceLoc &loc, bool tailOnl
 
         // As I/O array sizes don't change, fetch requiredSize only once,
         // except for mesh shaders which could have different I/O array sizes based on type qualifiers.
-        if (firstIteration
-#ifdef NV_EXTENSIONS
-            || (language == EShLangMeshNV)
-#endif
+        if (firstIteration || (language == EShLangMeshNV)
         )
         {
             requiredSize = getIoArrayImplicitSize(type.getQualifier(), &featureString);
@@ -669,7 +662,6 @@ int TParseContext::getIoArrayImplicitSize(const TQualifier &qualifier, TString *
         expectedSize = maxVertices;
         str = "vertices";
     }
-#ifdef NV_EXTENSIONS
     else if (language == EShLangFragment) {
         // Number of vertices for Fragment shader is always three.
         expectedSize = 3;
@@ -692,7 +684,6 @@ int TParseContext::getIoArrayImplicitSize(const TQualifier &qualifier, TString *
             str = "max_vertices";
         }
     }
-#endif
     if (featureString)
         *featureString = str;
     return expectedSize;
@@ -707,18 +698,17 @@ void TParseContext::checkIoArrayConsistency(const TSourceLoc& loc, int requiredS
             error(loc, "inconsistent input primitive for array size of", feature, name.c_str());
         else if (language == EShLangTessControl)
             error(loc, "inconsistent output number of vertices for array size of", feature, name.c_str());
-#ifdef NV_EXTENSIONS
         else if (language == EShLangFragment) {
             if (type.getOuterArraySize() > requiredSize)
                 error(loc, " cannot be greater than 3 for pervertexNV", feature, name.c_str());
         }
         else if (language == EShLangMeshNV)
             error(loc, "inconsistent output array size of", feature, name.c_str());
-#endif
         else
             assert(0);
     }
 }
+#endif
 
 // Handle seeing a binary node with a math operation.
 // Returns nullptr if not semantically allowed.
@@ -1126,9 +1116,12 @@ TIntermTyped* TParseContext::handleFunctionCall(const TSourceLoc& loc, TFunction
 {
     TIntermTyped* result = nullptr;
 
+#ifndef GLSLANG_WEB
     if (function->getBuiltInOp() == EOpArrayLength)
         result = handleLengthMethod(loc, function, arguments);
-    else if (function->getBuiltInOp() != EOpNull) {
+    else
+#endif
+    if (function->getBuiltInOp() != EOpNull) {
         //
         // Then this should be a constructor.
         // Don't go through the symbol table for constructors.
@@ -1371,11 +1364,13 @@ void TParseContext::computeBuiltinPrecisions(TIntermTyped& node, const TFunction
         case EOpBitfieldInsert:
             numArgs = 2;
             break;
+#ifndef GLSLANG_WEB
         case EOpInterpolateAtCentroid:
         case EOpInterpolateAtOffset:
         case EOpInterpolateAtSample:
             numArgs = 1;
             break;
+#endif
         default:
             break;
         }
@@ -1385,7 +1380,7 @@ void TParseContext::computeBuiltinPrecisions(TIntermTyped& node, const TFunction
             operationPrecision = std::max(operationPrecision, function[arg].type->getQualifier().precision);
         }
         // compute the result precision
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         if (agg->isSampling() ||
             agg->getOp() == EOpImageLoad || agg->getOp() == EOpImageStore ||
             agg->getOp() == EOpImageLoadLod || agg->getOp() == EOpImageStoreLod)
@@ -1493,6 +1488,7 @@ void TParseContext::checkLocation(const TSourceLoc& loc, TOperator op)
 #endif
 }
 
+#ifndef GLSLANG_WEB
 // Finish processing object.length(). This started earlier in handleDotDereference(), where
 // the ".length" part was recognized and semantically checked, and finished here where the
 // function syntax "()" is recognized.
@@ -1515,10 +1511,8 @@ TIntermTyped* TParseContext::handleLengthMethod(const TSourceLoc& loc, TFunction
                     // redeclaration, but not an error to use the array name itself.)
                     const TString& name = intermNode->getAsSymbolNode()->getName();
                     if (name == "gl_in" || name == "gl_out"
-#ifdef NV_EXTENSIONS
                         || name == "gl_MeshVerticesNV"
                         || name == "gl_MeshPrimitivesNV"
-#endif
                         )
                     {
                         length = getIoArrayImplicitSize(type.getQualifier());
@@ -1557,6 +1551,7 @@ TIntermTyped* TParseContext::handleLengthMethod(const TSourceLoc& loc, TFunction
 
     return intermediate.addConstantUnion(length, loc);
 }
+#endif
 
 //
 // Add any needed implicit conversions for function-call arguments to input parameters.
@@ -2027,7 +2022,7 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
 
         if (arg > 0) {
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             bool f16ShadowCompare = (*argp)[1]->getAsTyped()->getBasicType() == EbtFloat16 && arg0->getType().getSampler().shadow;
             if (f16ShadowCompare)
                 ++arg;
@@ -2622,7 +2617,7 @@ void TParseContext::rValueErrorCheck(const TSourceLoc& loc, const char* op, TInt
     // Let the base class check errors
     TParseContextBase::rValueErrorCheck(loc, op, node);
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     TIntermSymbol* symNode = node->getAsSymbolNode();
     if (!(symNode && symNode->getQualifier().writeonly)) // base class checks
         if (symNode && symNode->getQualifier().explicitInterp)
@@ -3336,11 +3331,8 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
         profileRequires(loc, EEsProfile, 300, nullptr, "shader input/output");
 
     if (!qualifier.flat
-#ifdef AMD_EXTENSIONS
-        && !qualifier.explicitInterp
-#endif
-#ifdef NV_EXTENSIONS
-        && !qualifier.pervertexNV
+#ifndef GLSLANG_WEB
+        && !qualifier.explicitInterp && !qualifier.pervertexNV
 #endif
         ) {
         if (isTypeInt(publicType.basicType) ||
@@ -3487,7 +3479,7 @@ void TParseContext::mergeQualifiers(const TSourceLoc& loc, TQualifier& dst, cons
 
     // Multiple interpolation qualifiers (mostly done later by 'individual qualifiers')
     if (src.isInterpolation() && dst.isInterpolation())
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         error(loc, "can only have one interpolation qualifier (flat, smooth, noperspective, __explicitInterpAMD)", "", "");
 #else
         error(loc, "can only have one interpolation qualifier (flat, smooth, noperspective)", "", "");
@@ -3630,7 +3622,7 @@ int TParseContext::computeSamplerTypeIndex(TSampler& sampler)
 #ifdef GLSLANG_WEB
     int externalIndex = 0;
 #else
-    int externalIndex = sampler.external? 1 : 0;
+    int externalIndex = sampler.external ? 1 : 0;
 #endif
     int imageIndex    = sampler.image   ? 1 : 0;
     int msIndex       = sampler.ms      ? 1 : 0;
@@ -3930,6 +3922,7 @@ void TParseContext::declareArray(const TSourceLoc& loc, const TString& identifie
             if (symbolTable.atGlobalLevel())
                 trackLinkage(*symbol);
 
+#ifndef GLSLANG_WEB
             if (! symbolTable.atBuiltInLevel()) {
                 if (isIoResizeArray(type)) {
                     ioArraySymbolResizeList.push_back(symbol);
@@ -3937,6 +3930,7 @@ void TParseContext::declareArray(const TSourceLoc& loc, const TString& identifie
                 } else
                     fixIoArraySize(loc, symbol->getWritableType());
             }
+#endif
 
             return;
         }
@@ -3974,6 +3968,7 @@ void TParseContext::declareArray(const TSourceLoc& loc, const TString& identifie
         return;
     }
 
+#ifndef GLSLANG_WEB
     if (existingType.isSizedArray()) {
         // be more leniant for input arrays to geometry shaders and tessellation control outputs, where the redeclaration is the same size
         if (! (isIoResizeArray(type) && existingType.getOuterArraySize() == type.getOuterArraySize()))
@@ -3987,6 +3982,7 @@ void TParseContext::declareArray(const TSourceLoc& loc, const TString& identifie
 
     if (isIoResizeArray(type))
         checkIoArraysConsistency(loc);
+#endif
 }
 
 #ifndef GLSLANG_WEB
@@ -4003,9 +3999,7 @@ void TParseContext::checkRuntimeSizable(const TSourceLoc& loc, const TIntermType
         const TIntermBinary* binary = base.getAsBinaryNode();
         if (binary != nullptr &&
             binary->getOp() == EOpIndexDirectStruct
-#ifndef GLSLANG_WEB
             && binary->getLeft()->getBasicType() == EbtReference
-#endif
             ) {
 
             const int index = binary->getRight()->getAsConstantUnion()->getConstArray()[0].getIConst();
@@ -4017,20 +4011,16 @@ void TParseContext::checkRuntimeSizable(const TSourceLoc& loc, const TIntermType
 
     // check for additional things allowed by GL_EXT_nonuniform_qualifier
     if (base.getBasicType() == EbtSampler ||
-#ifdef NV_EXTENSIONS
         base.getBasicType() == EbtAccStructNV ||
-#endif
         (base.getBasicType() == EbtBlock && base.getType().getQualifier().isUniformOrBuffer()))
         requireExtensions(loc, 1, &E_GL_EXT_nonuniform_qualifier, "variable index");
     else
         error(loc, "", "[", "array must be redeclared with a size before being indexed with a variable");
 }
-#endif
 
 // Policy decision for whether a run-time .length() is allowed.
 bool TParseContext::isRuntimeLength(const TIntermTyped& base) const
 {
-#ifndef GLSLANG_WEB
     if (base.getType().getQualifier().storage == EvqBuffer) {
         // in a buffer block
         const TIntermBinary* binary = base.getAsBinaryNode();
@@ -4046,12 +4036,10 @@ bool TParseContext::isRuntimeLength(const TIntermTyped& base) const
                 return true;
         }
     }
-#endif
 
     return false;
 }
 
-#ifdef NV_EXTENSIONS
 // Fix mesh view output array dimension
 void TParseContext::resizeMeshViewDimension(const TSourceLoc& loc, TType& type)
 {
@@ -4150,11 +4138,9 @@ TSymbol* TParseContext::redeclareBuiltinVariable(const TSourceLoc& loc, const TS
         (identifier == "gl_Color"               && language == EShLangFragment)                     ||
         (identifier == "gl_FragStencilRefARB"   && (nonEsRedecls && version >= 140)
                                                 && language == EShLangFragment)                     ||
-#ifdef NV_EXTENSIONS
          identifier == "gl_SampleMask"                                                              ||
          identifier == "gl_Layer"                                                                   ||
          identifier == "gl_PrimitiveIndicesNV"                                                      ||
-#endif
          identifier == "gl_TexCoord") {
 
         // Find the existing symbol, if any.
@@ -4234,16 +4220,13 @@ TSymbol* TParseContext::redeclareBuiltinVariable(const TSourceLoc& loc, const TS
             }
         }
         else if (
-#ifdef NV_EXTENSIONS
             identifier == "gl_PrimitiveIndicesNV" ||
-#endif
             identifier == "gl_FragStencilRefARB") {
             if (qualifier.hasLayout())
                 error(loc, "cannot apply layout qualifier to", "redeclaration", symbol->getName().c_str());
             if (qualifier.storage != EvqVaryingOut)
                 error(loc, "cannot change output storage qualification of", "redeclaration", symbol->getName().c_str());
         }
-#ifndef GLSLANG_WEB
         else if (identifier == "gl_SampleMask") {
             if (!publicType.layoutOverrideCoverage) {
                 error(loc, "redeclaration only allowed for override_coverage layout", "redeclaration", symbol->getName().c_str());
@@ -4256,7 +4239,6 @@ TSymbol* TParseContext::redeclareBuiltinVariable(const TSourceLoc& loc, const TS
             symbolQualifier.layoutViewportRelative = qualifier.layoutViewportRelative;
             symbolQualifier.layoutSecondaryViewportRelativeOffset = qualifier.layoutSecondaryViewportRelativeOffset;
         }
-#endif
 
         // TODO: semantics quality: separate smooth from nothing declared, then use IsInterpolation for several tests above
 
@@ -4280,10 +4262,7 @@ void TParseContext::redeclareBuiltinBlock(const TSourceLoc& loc, TTypeList& newT
     profileRequires(loc, ~EEsProfile, 410, E_GL_ARB_separate_shader_objects, feature);
 
     if (blockName != "gl_PerVertex" && blockName != "gl_PerFragment"
-#ifdef NV_EXTENSIONS
-        && blockName != "gl_MeshPerVertexNV" && blockName != "gl_MeshPerPrimitiveNV"
-#endif
-       )
+        && blockName != "gl_MeshPerVertexNV" && blockName != "gl_MeshPerPrimitiveNV")
     {
         error(loc, "cannot redeclare block: ", "block declaration", blockName.c_str());
         return;
@@ -4343,7 +4322,6 @@ void TParseContext::redeclareBuiltinBlock(const TSourceLoc& loc, TTypeList& newT
 
     TType& type = block->getWritableType();
 
-#ifdef NV_EXTENSIONS
     // if gl_PerVertex is redeclared for the purpose of passing through "gl_Position"
     // for passthrough purpose, the redeclared block should have the same qualifers as
     // the current one
@@ -4353,7 +4331,6 @@ void TParseContext::redeclareBuiltinBlock(const TSourceLoc& loc, TTypeList& newT
         type.getQualifier().layoutStream = currentBlockQualifier.layoutStream;
         type.getQualifier().layoutXfbBuffer = currentBlockQualifier.layoutXfbBuffer;
     }
-#endif
 
     TTypeList::iterator member = type.getWritableStruct()->begin();
     size_t numOriginalMembersFound = 0;
@@ -4386,7 +4363,6 @@ void TParseContext::redeclareBuiltinBlock(const TSourceLoc& loc, TTypeList& newT
                 error(memberLoc, "cannot change array size of redeclared block member", member->type->getFieldName().c_str(), "");
             else if (! oldType.getQualifier().isPerView() && newType.isArray())
                 arrayLimitCheck(loc, member->type->getFieldName(), newType.getOuterArraySize());
-#ifdef NV_EXTENSIONS
             if (oldType.getQualifier().isPerView() && ! newType.getQualifier().isPerView())
                 error(memberLoc, "missing perviewNV qualifier to redeclared block member", member->type->getFieldName().c_str(), "");
             else if (! oldType.getQualifier().isPerView() && newType.getQualifier().isPerView())
@@ -4406,7 +4382,6 @@ void TParseContext::redeclareBuiltinBlock(const TSourceLoc& loc, TTypeList& newT
                 error(memberLoc, "missing perprimitiveNV qualifier to redeclared block member", member->type->getFieldName().c_str(), "");
             else if (! oldType.getQualifier().isPerPrimitive() && newType.getQualifier().isPerPrimitive())
                 error(memberLoc, "cannot add perprimitiveNV qualifier to redeclared block member", member->type->getFieldName().c_str(), "");
-#endif
             if (newType.getQualifier().isMemory())
                 error(memberLoc, "cannot add memory qualifier to redeclared block member", member->type->getFieldName().c_str(), "");
             if (newType.getQualifier().hasNonXfbLayout())
@@ -4662,6 +4637,7 @@ void TParseContext::structTypeCheck(const TSourceLoc& /*loc*/, TPublicType& publ
     }
 }
 
+#ifndef GLSLANG_WEB
 //
 // See if this loop satisfies the limitations for ES 2.0 (version 100) for loops in Appendex A:
 //
@@ -4682,7 +4658,6 @@ void TParseContext::structTypeCheck(const TSourceLoc& /*loc*/, TPublicType& publ
 //
 void TParseContext::inductiveLoopCheck(const TSourceLoc& loc, TIntermNode* init, TIntermLoop* loop)
 {
-#ifndef GLSLANG_WEB
     // loop index init must exist and be a declaration, which shows up in the AST as an aggregate of size 1 of the declaration
     bool badInit = false;
     if (! init || ! init->getAsAggregate() || init->getAsAggregate()->getSequence().size() != 1)
@@ -4778,7 +4753,6 @@ void TParseContext::inductiveLoopCheck(const TSourceLoc& loc, TIntermNode* init,
 
     // the body
     inductiveLoopBodyCheck(loop->getBody(), loopIndex, symbolTable);
-#endif
 }
 
 // Do limit checks for built-in arrays.
@@ -4790,13 +4764,12 @@ void TParseContext::arrayLimitCheck(const TSourceLoc& loc, const TString& identi
         limitCheck(loc, size, "gl_MaxClipDistances", "gl_ClipDistance array size");
     else if (identifier.compare("gl_CullDistance") == 0)
         limitCheck(loc, size, "gl_MaxCullDistances", "gl_CullDistance array size");
-#ifdef NV_EXTENSIONS
     else if (identifier.compare("gl_ClipDistancePerViewNV") == 0)
         limitCheck(loc, size, "gl_MaxClipDistances", "gl_ClipDistancePerViewNV array size");
     else if (identifier.compare("gl_CullDistancePerViewNV") == 0)
         limitCheck(loc, size, "gl_MaxCullDistances", "gl_CullDistancePerViewNV array size");
-#endif
 }
+#endif
 
 // See if the provided value is less than or equal to the symbol indicated by limit,
 // which should be a constant in the symbol table.
@@ -4810,6 +4783,7 @@ void TParseContext::limitCheck(const TSourceLoc& loc, int value, const char* lim
         error6(loc, "must be less than or equal to", feature, "%s (%d)", limit, constArray[0].getIConst());
 }
 
+#ifndef GLSLANG_WEB
 //
 // Do any additional error checking, etc., once we know the parsing is done.
 //
@@ -4824,7 +4798,6 @@ void TParseContext::finish()
     for (size_t i = 0; i < needsIndexLimitationChecking.size(); ++i)
         constantIndexExpressionCheck(needsIndexLimitationChecking[i]);
 
-#ifndef GLSLANG_WEB
     // Check for stages that are enabled by extension.
     // Can't do this at the beginning, it is chicken and egg to add a stage by
     // extension.
@@ -4875,8 +4848,8 @@ void TParseContext::finish()
             }
         }
     }
-#endif
 }
+#endif
 
 //
 // Layout qualifier stuff.
@@ -5656,11 +5629,10 @@ void TParseContext::layoutObjectCheck(const TSourceLoc& loc, const TSymbol& symb
 void TParseContext::layoutMemberLocationArrayCheck(const TSourceLoc& loc, bool memberWithLocation,
     TArraySizes* arraySizes)
 {
-    if (memberWithLocation && arraySizes != nullptr) {
-        if (arraySizes->getNumDims() > (currentBlockQualifier.isArrayedIo(language) ? 1 : 0))
-            error(loc, "cannot use in a block array where new locations are needed for each block element",
-                       "location", "");
-    }
+    if (memberWithLocation && arraySizes != nullptr &&
+        arraySizes->getNumDims() > (currentBlockQualifier.isArrayedIo(language) ? 1 : 0))
+        error(loc, "cannot use in a block array where new locations are needed for each block element",
+                    "location", "");
 }
 
 // Do layout error checking with respect to a type.
@@ -5701,17 +5673,15 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
         case EvqVaryingOut:
             if (type.getBasicType() == EbtBlock)
                 profileRequires(loc, ECoreProfile | ECompatibilityProfile, 440, E_GL_ARB_enhanced_layouts, "location qualifier on in/out block");
-#ifdef NV_EXTENSIONS
             if (type.getQualifier().isTaskMemory())
                 error(loc, "cannot apply to taskNV in/out blocks", "location", "");
-#endif
             break;
         case EvqUniform:
         case EvqBuffer:
             if (type.getBasicType() == EbtBlock)
                 error(loc, "cannot apply to uniform or buffer block", "location", "");
             break;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         case EvqPayloadNV:
         case EvqPayloadInNV:
         case EvqHitAttrNV:
@@ -5811,7 +5781,7 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
         if (spvVersion.spv > 0) {
             if (qualifier.isUniformOrBuffer()) {
                 if (type.getBasicType() == EbtBlock && !qualifier.layoutPushConstant &&
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
                        !qualifier.layoutShaderRecordNV &&
 #endif
                        !qualifier.layoutAttachment
@@ -6072,7 +6042,7 @@ void TParseContext::checkNoShaderLayouts(const TSourceLoc& loc, const TShaderQua
     }
     if (shaderQualifiers.vertices != TQualifier::layoutNotSet) {
         if (language == EShLangGeometry
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
             || language == EShLangMeshNV
 #endif
            )
@@ -6636,7 +6606,9 @@ TVariable* TParseContext::declareNonArray(const TSourceLoc& loc, const TString& 
     // make a new variable
     TVariable* variable = new TVariable(&identifier, type);
 
+#ifndef GLSLANG_WEB
     ioArrayCheck(loc, type, identifier);
+#endif
 
     // add variable to symbol table
     if (symbolTable.insert(*variable)) {
@@ -7233,7 +7205,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
         if (memberQualifier.storage != EvqTemporary && memberQualifier.storage != EvqGlobal && memberQualifier.storage != currentBlockQualifier.storage)
             error(memberLoc, "member storage qualifier cannot contradict block storage qualifier", memberType.getFieldName().c_str(), "");
         memberQualifier.storage = currentBlockQualifier.storage;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         if (currentBlockQualifier.perPrimitiveNV)
             memberQualifier.perPrimitiveNV = currentBlockQualifier.perPrimitiveNV;
         if (currentBlockQualifier.perViewNV)
@@ -7287,13 +7259,13 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
     // Special case for "push_constant uniform", which has a default of std430,
     // contrary to normal uniform defaults, and can't have a default tracked for it.
     if ((currentBlockQualifier.layoutPushConstant && !currentBlockQualifier.hasPacking())
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         || (currentBlockQualifier.layoutShaderRecordNV && !currentBlockQualifier.hasPacking())
 #endif
        )
         currentBlockQualifier.layoutPacking = ElpStd430;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     // Special case for "taskNV in/out", which has a default of std430,
     if (currentBlockQualifier.perTaskNV && !currentBlockQualifier.hasPacking())
         currentBlockQualifier.layoutPacking = ElpStd430;
@@ -7315,7 +7287,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
 
     bool memberWithLocation = false;
     bool memberWithoutLocation = false;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     bool memberWithPerViewQualifier = false;
 #endif
     for (unsigned int member = 0; member < typeList.size(); ++member) {
@@ -7366,7 +7338,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
                 error(memberLoc, "can only be used with std140, std430, or scalar layout packing", "offset/align", "");
         }
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         if (memberQualifier.isPerView()) {
             memberWithPerViewQualifier = true;
         }
@@ -7417,10 +7389,10 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
     TType blockType(&typeList, *blockName, currentBlockQualifier);
     if (arraySizes != nullptr)
         blockType.transferArraySizes(arraySizes);
-    else
-        ioArrayCheck(loc, blockType, instanceName ? *instanceName : *blockName);
 
 #ifndef GLSLANG_WEB
+    if (arraySizes == nullptr)
+        ioArrayCheck(loc, blockType, instanceName ? *instanceName : *blockName);
     if (currentBlockQualifier.layoutBufferReference) {
 
         if (currentBlockQualifier.storage != EvqBuffer)
@@ -7495,12 +7467,14 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
     // Check for general layout qualifier errors
     layoutObjectCheck(loc, variable);
 
+#ifndef GLSLANG_WEB
     // fix up
     if (isIoResizeArray(blockType)) {
         ioArraySymbolResizeList.push_back(&variable);
         checkIoArraysConsistency(loc, true);
     } else
         fixIoArraySize(loc, variable.getWritableType());
+#endif
 
     // Save it in the AST for linker use.
     trackLinkage(variable);
@@ -7527,23 +7501,20 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
         // It is a compile-time error to have an input block in a vertex shader or an output block in a fragment shader
         // "Compute shaders do not permit user-defined input variables..."
         requireStage(loc, (EShLanguageMask)(EShLangTessControlMask|EShLangTessEvaluationMask|EShLangGeometryMask|EShLangFragmentMask
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
                                             |EShLangMeshNVMask
 #endif
                                            ), "input block");
         if (language == EShLangFragment) {
             profileRequires(loc, EEsProfile, 320, Num_AEP_shader_io_blocks, AEP_shader_io_blocks, "fragment input block");
-        }
-#ifdef NV_EXTENSIONS
-        else if (language == EShLangMeshNV && ! qualifier.isTaskMemory()) {
+        } else if (language == EShLangMeshNV && ! qualifier.isTaskMemory()) {
             error(loc, "input blocks cannot be used in a mesh shader", "out", "");
         }
-#endif
         break;
     case EvqVaryingOut:
         profileRequires(loc, ~EEsProfile, 150, E_GL_ARB_separate_shader_objects, "output block");
         requireStage(loc, (EShLanguageMask)(EShLangVertexMask|EShLangTessControlMask|EShLangTessEvaluationMask|EShLangGeometryMask
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
                                             |EShLangMeshNVMask|EShLangTaskNVMask
 #endif
                                            ), "output block");
@@ -7551,7 +7522,7 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
         if (language == EShLangVertex && ! parsingBuiltins) {
             profileRequires(loc, EEsProfile, 320, Num_AEP_shader_io_blocks, AEP_shader_io_blocks, "vertex output block");
         }
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         else if (language == EShLangMeshNV && qualifier.isTaskMemory()) {
             error(loc, "can only use on input blocks in mesh shader", "taskNV", "");
         }
@@ -7560,7 +7531,7 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
         }
 #endif
         break;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case EvqPayloadNV:
         profileRequires(loc, ~EEsProfile, 460, E_GL_NV_ray_tracing, "rayPayloadNV block");
         requireStage(loc, (EShLanguageMask)(EShLangRayGenNVMask | EShLangAnyHitNVMask | EShLangClosestHitNVMask | EShLangMissNVMask),
@@ -7875,12 +7846,10 @@ void TParseContext::invariantCheck(const TSourceLoc& loc, const TQualifier& qual
 //
 void TParseContext::updateStandaloneQualifierDefaults(const TSourceLoc& loc, const TPublicType& publicType)
 {
+#ifndef GLSLANG_WEB
     if (publicType.shaderQualifiers.vertices != TQualifier::layoutNotSet) {
-#ifdef NV_EXTENSIONS
         assert(language == EShLangTessControl || language == EShLangGeometry || language == EShLangMeshNV);
-#else
         assert(language == EShLangTessControl || language == EShLangGeometry);
-#endif
         const char* id = (language == EShLangTessControl) ? "vertices" : "max_vertices";
 
         if (publicType.qualifier.storage != EvqVaryingOut)
@@ -7891,7 +7860,6 @@ void TParseContext::updateStandaloneQualifierDefaults(const TSourceLoc& loc, con
         if (language == EShLangTessControl)
             checkIoArraysConsistency(loc);
     }
-#ifndef GLSLANG_WEB
     if (publicType.shaderQualifiers.primitives != TQualifier::layoutNotSet) {
         assert(language == EShLangMeshNV);
         const char* id = "max_primitives";

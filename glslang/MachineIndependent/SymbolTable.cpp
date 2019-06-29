@@ -73,12 +73,12 @@ void TType::buildMangledName(TString& mangledName) const
     case EbtUint64:             mangledName += "u64";    break;
     case EbtBool:               mangledName += 'b';      break;
     case EbtAtomicUint:         mangledName += "au";     break;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case EbtAccStructNV:        mangledName += "asnv";   break;
 #endif
     case EbtSampler:
         switch (sampler.type) {
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         case EbtFloat16: mangledName += "f16"; break;
 #endif
         case EbtInt:   mangledName += "i"; break;
@@ -180,6 +180,8 @@ void TType::buildMangledName(TString& mangledName) const
     }
 }
 
+#ifndef GLSLANG_WEB
+
 //
 // Dump functions.
 //
@@ -257,6 +259,8 @@ void TSymbolTable::dump(TInfoSink& infoSink, bool complete) const
         table[level]->dump(infoSink, complete);
     }
 }
+
+#endif
 
 //
 // Functions have buried pointers to delete.

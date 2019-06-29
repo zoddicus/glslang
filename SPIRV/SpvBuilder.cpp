@@ -586,7 +586,7 @@ Id Builder::makeSampledImageType(Id imageType)
     return type->getResultId();
 }
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
 Id Builder::makeAccelerationStructureNVType()
 {
     Instruction *type;
@@ -602,6 +602,7 @@ Id Builder::makeAccelerationStructureNVType()
     return type->getResultId();
 }
 #endif
+
 Id Builder::getDerefTypeId(Id resultId) const
 {
     Id typeId = getTypeId(resultId);
@@ -999,23 +1000,23 @@ Id Builder::makeFloat16Constant(float f16, bool specConstant)
 
 Id Builder::makeFpConstant(Id type, double d, bool specConstant)
 {
-        assert(isFloatType(type));
+    assert(isFloatType(type));
 
-        switch (getScalarTypeWidth(type)) {
-        case 32:
-                return makeFloatConstant((float)d, specConstant);
+    switch (getScalarTypeWidth(type)) {
+    case 32:
+            return makeFloatConstant((float)d, specConstant);
 #ifndef GLSLANG_WEB
-        case 16:
-                return makeFloat16Constant((float)d, specConstant);
-        case 64:
-                return makeDoubleConstant(d, specConstant);
+    case 16:
+            return makeFloat16Constant((float)d, specConstant);
+    case 64:
+            return makeDoubleConstant(d, specConstant);
 #endif
-        default:
-                break;
-        }
+    default:
+            break;
+    }
 
-        assert(false);
-        return NoResult;
+    assert(false);
+    return NoResult;
 }
 
 Id Builder::findCompositeConstant(Op typeClass, Id typeId, const std::vector<Id>& comps)
@@ -1831,7 +1832,7 @@ Id Builder::createTextureCall(Decoration precision, Id resultType, bool sparse, 
     if (parameters.component != NoResult)
         texArgs[numArgs++] = parameters.component;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     if (parameters.granularity != NoResult)
         texArgs[numArgs++] = parameters.granularity;
     if (parameters.coarse != NoResult)
@@ -1878,6 +1879,7 @@ Id Builder::createTextureCall(Decoration precision, Id resultType, bool sparse, 
         mask = (ImageOperandsMask)(mask | ImageOperandsConstOffsetsMask);
         texArgs[numArgs++] = parameters.offsets;
     }
+#ifndef GLSLANG_WEB
     if (parameters.sample) {
         mask = (ImageOperandsMask)(mask | ImageOperandsSampleMask);
         texArgs[numArgs++] = parameters.sample;
@@ -1895,6 +1897,7 @@ Id Builder::createTextureCall(Decoration precision, Id resultType, bool sparse, 
     if (parameters.volatil) {
         mask = mask | ImageOperandsVolatileTexelKHRMask;
     }
+#endif
     mask = mask | signExtensionMask;
     if (mask == ImageOperandsMaskNone)
         --numArgs;  // undo speculative reservation for the mask argument
@@ -1905,15 +1908,14 @@ Id Builder::createTextureCall(Decoration precision, Id resultType, bool sparse, 
     // Set up the instruction
     //
     Op opCode = OpNop;  // All paths below need to set this
+#ifndef GLSLANG_WEB
     if (fetch) {
         if (sparse)
             opCode = OpImageSparseFetch;
         else
             opCode = OpImageFetch;
-#ifdef NV_EXTENSIONS
     } else if (parameters.granularity && parameters.coarse) {
         opCode = OpImageSampleFootprintNV;
-#endif
     } else if (gather) {
         if (parameters.Dref)
             if (sparse)
@@ -1925,7 +1927,9 @@ Id Builder::createTextureCall(Decoration precision, Id resultType, bool sparse, 
                 opCode = OpImageSparseGather;
             else
                 opCode = OpImageGather;
-    } else if (explicitLod) {
+    } else
+#endif
+    if (explicitLod) {
         if (parameters.Dref) {
             if (proj)
                 if (sparse)
@@ -2073,7 +2077,7 @@ Id Builder::createTextureQueryCall(Op opCode, const TextureParameters& parameter
         break;
     }
     case OpImageQueryLod:
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
         resultType = makeVectorType(getScalarTypeId(getTypeId(parameters.coords)), 2);
 #else
         resultType = makeVectorType(makeFloatType(32), 2);

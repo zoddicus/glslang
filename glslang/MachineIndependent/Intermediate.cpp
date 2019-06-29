@@ -544,7 +544,7 @@ bool TIntermediate::isConversionAllowed(TOperator op, TIntermTyped* node) const
         return false;
     case EbtAtomicUint:
     case EbtSampler:
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case EbtAccStructNV:
 #endif
         // opaque types can be passed to functions
@@ -585,7 +585,7 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     // Certain explicit conversions are allowed conditionally
     bool arithemeticInt8Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                   extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int8);
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                    extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16) ||
                                    extensionRequested(E_GL_AMD_gpu_shader_int16);
@@ -1734,14 +1734,14 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
                  return true;
             case EbtBool:
                  return (source == EShSourceHlsl);
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
 #endif
             case EbtFloat16:
                 return 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                     extensionRequested(E_GL_AMD_gpu_shader_half_float) ||
 #endif
                     (source == EShSourceHlsl);
@@ -1756,7 +1756,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
                 return true;
             case EbtBool:
                 return (source == EShSourceHlsl);
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
@@ -1770,7 +1770,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
                 return true;
             case EbtBool:
                 return (source == EShSourceHlsl);
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             case EbtInt16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
 #endif
@@ -1784,7 +1784,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt64:
             case EbtUint64:
                 return true;
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
@@ -1797,7 +1797,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt:
             case EbtInt64:
                 return true;
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             case EbtInt16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
 #endif
@@ -1805,7 +1805,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
                 return false;
             }
         case EbtFloat16:
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             switch (from) {
             case EbtInt16:
             case EbtUint16:
@@ -1818,7 +1818,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
 #endif
             return false;
         case EbtUint16:
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
             switch (from) {
             case EbtInt16:
             case EbtUint16:
@@ -2563,6 +2563,43 @@ TIntermConstantUnion* TIntermediate::addConstantUnion(const TConstUnionArray& un
 
     return node;
 }
+
+TIntermConstantUnion* TIntermediate::addConstantUnion(int i, const TSourceLoc& loc, bool literal) const
+{
+    TConstUnionArray unionArray(1);
+    unionArray[0].setIConst(i);
+
+    return addConstantUnion(unionArray, TType(EbtInt, EvqConst), loc, literal);
+}
+
+TIntermConstantUnion* TIntermediate::addConstantUnion(unsigned int u, const TSourceLoc& loc, bool literal) const
+{
+    TConstUnionArray unionArray(1);
+    unionArray[0].setUConst(u);
+
+    return addConstantUnion(unionArray, TType(EbtUint, EvqConst), loc, literal);
+}
+
+TIntermConstantUnion* TIntermediate::addConstantUnion(bool b, const TSourceLoc& loc, bool literal) const
+{
+    TConstUnionArray unionArray(1);
+    unionArray[0].setBConst(b);
+
+    return addConstantUnion(unionArray, TType(EbtBool, EvqConst), loc, literal);
+}
+
+TIntermConstantUnion* TIntermediate::addConstantUnion(double d, TBasicType baseType, const TSourceLoc& loc, bool literal) const
+{
+    assert(baseType == EbtFloat || baseType == EbtDouble || baseType == EbtFloat16);
+
+    TConstUnionArray unionArray(1);
+    unionArray[0].setDConst(d);
+
+    return addConstantUnion(unionArray, TType(baseType, EvqConst), loc, literal);
+}
+
+#ifndef GLSLANG_WEB
+
 TIntermConstantUnion* TIntermediate::addConstantUnion(signed char i8, const TSourceLoc& loc, bool literal) const
 {
     TConstUnionArray unionArray(1);
@@ -2595,22 +2632,6 @@ TIntermConstantUnion* TIntermediate::addConstantUnion(unsigned short u16, const 
     return addConstantUnion(unionArray, TType(EbtUint16, EvqConst), loc, literal);
 }
 
-TIntermConstantUnion* TIntermediate::addConstantUnion(int i, const TSourceLoc& loc, bool literal) const
-{
-    TConstUnionArray unionArray(1);
-    unionArray[0].setIConst(i);
-
-    return addConstantUnion(unionArray, TType(EbtInt, EvqConst), loc, literal);
-}
-
-TIntermConstantUnion* TIntermediate::addConstantUnion(unsigned int u, const TSourceLoc& loc, bool literal) const
-{
-    TConstUnionArray unionArray(1);
-    unionArray[0].setUConst(u);
-
-    return addConstantUnion(unionArray, TType(EbtUint, EvqConst), loc, literal);
-}
-
 TIntermConstantUnion* TIntermediate::addConstantUnion(long long i64, const TSourceLoc& loc, bool literal) const
 {
     TConstUnionArray unionArray(1);
@@ -2627,25 +2648,6 @@ TIntermConstantUnion* TIntermediate::addConstantUnion(unsigned long long u64, co
     return addConstantUnion(unionArray, TType(EbtUint64, EvqConst), loc, literal);
 }
 
-TIntermConstantUnion* TIntermediate::addConstantUnion(bool b, const TSourceLoc& loc, bool literal) const
-{
-    TConstUnionArray unionArray(1);
-    unionArray[0].setBConst(b);
-
-    return addConstantUnion(unionArray, TType(EbtBool, EvqConst), loc, literal);
-}
-
-TIntermConstantUnion* TIntermediate::addConstantUnion(double d, TBasicType baseType, const TSourceLoc& loc, bool literal) const
-{
-    assert(baseType == EbtFloat || baseType == EbtDouble || baseType == EbtFloat16);
-
-    TConstUnionArray unionArray(1);
-    unionArray[0].setDConst(d);
-
-    return addConstantUnion(unionArray, TType(baseType, EvqConst), loc, literal);
-}
-
-#ifndef GLSLANG_WEB
 TIntermConstantUnion* TIntermediate::addConstantUnion(const TString* s, const TSourceLoc& loc, bool literal) const
 {
     TConstUnionArray unionArray(1);

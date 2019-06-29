@@ -584,12 +584,14 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
         case EOpDPdx:
         case EOpDPdy:
         case EOpFwidth:
+#ifndef GLSLANG_WEB
         case EOpDPdxFine:
         case EOpDPdyFine:
         case EOpFwidthFine:
         case EOpDPdxCoarse:
         case EOpDPdyCoarse:
         case EOpFwidthCoarse:
+#endif
             // The derivatives are all mandated to create a constant 0.
             newConstArray[i].setDConst(0.0);
             break;

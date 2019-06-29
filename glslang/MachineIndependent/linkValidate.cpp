@@ -146,9 +146,7 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         vertices = unit.vertices;
     else if (vertices != unit.vertices) {
         if (language == EShLangGeometry
-#ifdef NV_EXTENSIONS
             || language == EShLangMeshNV
-#endif
             )
             error(infoSink, "Contradictory layout max_vertices values");
         else if (language == EShLangTessControl)
@@ -156,7 +154,6 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         else
             assert(0);
     }
-#ifdef NV_EXTENSIONS
     if (primitives == TQualifier::layoutNotSet)
         primitives = unit.primitives;
     else if (primitives != unit.primitives) {
@@ -165,7 +162,6 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         else
             assert(0);
     }
-#endif
 
     if (inputPrimitive == ElgNone)
         inputPrimitive = unit.inputPrimitive;
@@ -287,13 +283,8 @@ void TIntermediate::mergeTrees(TInfoSink& infoSink, TIntermediate& unit)
     }
 
     // Getting this far means we have two existing trees to merge...
-#ifdef NV_EXTENSIONS
     numShaderRecordNVBlocks += unit.numShaderRecordNVBlocks;
-#endif
-
-#ifdef NV_EXTENSIONS
     numTaskNVBlocks += unit.numTaskNVBlocks;
-#endif
 
     // Get the top-level globals of each unit
     TIntermSequence& globals = treeRoot->getAsAggregate()->getSequence();
@@ -646,12 +637,10 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     for (size_t b = 0; b < xfbBuffers.size(); ++b) {
         if (xfbBuffers[b].contains64BitType)
             RoundToPow2(xfbBuffers[b].implicitStride, 8);
-#ifdef AMD_EXTENSIONS
         else if (xfbBuffers[b].contains32BitType)
             RoundToPow2(xfbBuffers[b].implicitStride, 4);
         else if (xfbBuffers[b].contains16BitType)
             RoundToPow2(xfbBuffers[b].implicitStride, 2);
-#endif
 
         // "It is a compile-time or link-time error to have
         // any xfb_offset that overflows xfb_stride, whether stated on declarations before or after the xfb_stride, or
@@ -672,16 +661,11 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             error(infoSink, "xfb_stride must be multiple of 8 for buffer holding a double or 64-bit integer:");
             infoSink.info.prefix(EPrefixError);
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", xfb_stride " << xfbBuffers[b].stride << "\n";
-#ifdef AMD_EXTENSIONS
         } else if (xfbBuffers[b].contains32BitType && ! IsMultipleOfPow2(xfbBuffers[b].stride, 4)) {
-#else
-        } else if (! IsMultipleOfPow2(xfbBuffers[b].stride, 4)) {
-#endif
             error(infoSink, "xfb_stride must be multiple of 4:");
             infoSink.info.prefix(EPrefixError);
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", xfb_stride " << xfbBuffers[b].stride << "\n";
         }
-#ifdef AMD_EXTENSIONS
         // "If the buffer is capturing any
         // outputs with half-precision or 16-bit integer components, the stride must be a multiple of 2"
         else if (xfbBuffers[b].contains16BitType && ! IsMultipleOfPow2(xfbBuffers[b].stride, 2)) {
@@ -690,7 +674,6 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", xfb_stride " << xfbBuffers[b].stride << "\n";
         }
 
-#endif
         // "The resulting stride (implicit or explicit), when divided by 4, must be less than or equal to the
         // implementation-dependent constant gl_MaxTransformFeedbackInterleavedComponents."
         if (xfbBuffers[b].stride > (unsigned int)(4 * resources.maxTransformFeedbackInterleavedComponents)) {
@@ -1050,13 +1033,11 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
         else
             size = 1;
     } else {
-#ifndef GLSLANG_WEB
         // Strip off the outer array dimension for those having an extra one.
         if (type.isArray() && qualifier.isArrayedIo(language)) {
             TType elementType(type, 0);
             size = computeTypeLocationSize(elementType, language);
         } else
-#endif
             size = computeTypeLocationSize(type, language);
     }
 
@@ -1202,14 +1183,10 @@ int TIntermediate::computeTypeLocationSize(const TType& type, EShLanguage stage)
         // TODO: perf: this can be flattened by using getCumulativeArraySize(), and a deref that discards all arrayness
         // TODO: are there valid cases of having an unsized array with a location?  If so, running this code too early.
         TType elementType(type, 0);
-        if (type.isSizedArray()
-#ifdef NV_EXTENSIONS
-            && !type.getQualifier().isPerView()
-#endif
-            )
+        if (type.isSizedArray() && !type.getQualifier().isPerView())
             return type.getOuterArraySize() * computeTypeLocationSize(elementType, stage);
         else {
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
             // unset perViewNV attributes for arrayed per-view outputs: "perviewNV vec4 v[MAX_VIEWS][3];"
             elementType.getQualifier().perViewNV = false;
 #endif
@@ -1337,44 +1314,32 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
         // TODO: perf: this can be flattened by using getCumulativeArraySize(), and a deref that discards all arrayness
         assert(type.isSizedArray());
         TType elementType(type, 0);
-#ifdef AMD_EXTENSIONS
         return type.getOuterArraySize() * computeTypeXfbSize(elementType, contains64BitType, contains16BitType, contains16BitType);
-#else
-        return type.getOuterArraySize() * computeTypeXfbSize(elementType, contains64BitType);
-#endif
     }
 
     if (type.isStruct()) {
         unsigned int size = 0;
         bool structContains64BitType = false;
-#ifdef AMD_EXTENSIONS
         bool structContains32BitType = false;
         bool structContains16BitType = false;
-#endif
         for (int member = 0; member < (int)type.getStruct()->size(); ++member) {
             TType memberType(type, member);
             // "... if applied to
             // an aggregate containing a double or 64-bit integer, the offset must also be a multiple of 8,
             // and the space taken in the buffer will be a multiple of 8."
             bool memberContains64BitType = false;
-#ifdef AMD_EXTENSIONS
             bool memberContains32BitType = false;
             bool memberContains16BitType = false;
             int memberSize = computeTypeXfbSize(memberType, memberContains64BitType, memberContains32BitType, memberContains16BitType);
-#else
-            int memberSize = computeTypeXfbSize(memberType, memberContains64BitType);
-#endif
             if (memberContains64BitType) {
                 structContains64BitType = true;
                 RoundToPow2(size, 8);
-#ifdef AMD_EXTENSIONS
             } else if (memberContains32BitType) {
                 structContains32BitType = true;
                 RoundToPow2(size, 4);
             } else if (memberContains16BitType) {
                 structContains16BitType = true;
                 RoundToPow2(size, 2);
-#endif
             }
             size += memberSize;
         }
@@ -1382,14 +1347,12 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
         if (structContains64BitType) {
             contains64BitType = true;
             RoundToPow2(size, 8);
-#ifdef AMD_EXTENSIONS
         } else if (structContains32BitType) {
             contains32BitType = true;
             RoundToPow2(size, 4);
         } else if (structContains16BitType) {
             contains16BitType = true;
             RoundToPow2(size, 2);
-#endif
         }
         return size;
     }

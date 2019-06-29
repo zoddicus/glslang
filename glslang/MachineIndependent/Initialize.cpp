@@ -53,6 +53,10 @@
 #include "../Include/intermediate.h"
 #include "Initialize.h"
 
+#ifndef GLSLANG_WEB
+#define ES31
+#endif
+
 namespace glslang {
 
 #ifndef GLSLANG_WEB

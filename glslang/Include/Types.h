@@ -86,9 +86,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
     bool   external : 1;  // GL_OES_EGL_image_external
     bool        yuv : 1;  // GL_EXT_YUV_target
     unsigned int vectorSize : 3;  // vector return type size.
-#endif
 
-#ifndef GLSLANG_WEB
     // Some languages support structures as sample results.  Storing the whole structure in the
     // TSampler is too large, so there is an index to a separate table.
     static const unsigned structReturnIndexBits = 4;                        // number of index bits to use.
@@ -100,19 +98,17 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
 
     // Encapsulate getting members' vector sizes packed into the vectorSize bitfield.
     unsigned int getVectorSize() const { return vectorSize; }
-#endif
-
-#ifdef GLSLANG_WEB
-    bool isImage()       const { return image; }
-#else
     bool isImage()       const { return image && dim != EsdSubpass; }
+    bool isTexture()     const { return !sampler && !image; }
     bool isSubpass()     const { return dim == EsdSubpass; }
     bool isCombined()    const { return combined; }
     bool isPureSampler() const { return sampler; }
-    bool isTexture()     const { return !sampler && !image; }
     bool hasReturnStruct() const { return structReturnIndex != noReturnStruct; }
-#endif
+#else
+    bool isImage()       const { return image; }
     bool isTexture()     const { return !image; }
+#endif
+
     bool isShadow()      const { return shadow; }
     bool isArrayed()     const { return arrayed; }
     bool isMultiSample() const { return ms; }
@@ -202,8 +198,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
                    image == right.image &&
                 combined == right.combined
 #ifndef GLSLANG_WEB
-                &&
-                 sampler == right.sampler &&
+              && sampler == right.sampler &&
                 external == right.external &&
                      yuv == right.yuv &&
               vectorSize == right.vectorSize &&
@@ -229,18 +224,18 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
 #endif
         switch (type) {
         case EbtFloat:                   break;
+        case EbtInt:    s.append("i");   break;
+        case EbtUint:   s.append("u");   break;
 #ifndef GLSLANG_WEB
         case EbtFloat16: s.append("f16"); break;
-#endif
         case EbtInt8:   s.append("i8");  break;
         case EbtUint16: s.append("u8");  break;
         case EbtInt16:  s.append("i16"); break;
         case EbtUint8:  s.append("u16"); break;
-        case EbtInt:    s.append("i");   break;
-        case EbtUint:   s.append("u");   break;
         case EbtInt64:  s.append("i64"); break;
         case EbtUint64: s.append("u64"); break;
-        default:  break;  // some compilers want this
+#endif
+        default:  break;
         }
         if (image) {
 #ifndef GLSLANG_WEB
@@ -264,13 +259,11 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
         }
 #endif
         switch (dim) {
-#ifndef GLSLANG_WEB
-        case Esd1D:      s.append("1D");      break;
-#endif
         case Esd2D:      s.append("2D");      break;
         case Esd3D:      s.append("3D");      break;
         case EsdCube:    s.append("Cube");    break;
 #ifndef GLSLANG_WEB
+        case Esd1D:      s.append("1D");      break;
         case EsdRect:    s.append("2DRect");  break;
         case EsdBuffer:  s.append("Buffer");  break;
         case EsdSubpass: s.append("Input"); break;
@@ -551,13 +544,13 @@ public:
     static_assert(EbvLast < 256, "need to increase size of TBuiltInVariable bitfields!");
     TPrecisionQualifier precision : 3;
     bool invariant    : 1; // require canonical treatment for cross-shader invariance
-#ifndef GLSLANG_WEB
-    bool noContraction: 1; // prevent contraction and reassociation, e.g., for 'precise' keyword, and expressions it affects
-#endif
     bool centroid     : 1;
     bool smooth       : 1;
     bool flat         : 1;
+    bool specConstant : 1;  // having a constant_id is not sufficient: expressions have no id, but are still specConstant
+    bool nonUniform   : 1;
 #ifndef GLSLANG_WEB
+    bool noContraction: 1; // prevent contraction and reassociation, e.g., for 'precise' keyword, and expressions it affects
     bool nopersp      : 1;
     bool explicitInterp : 1;
     bool pervertexNV  : 1;
@@ -576,20 +569,7 @@ public:
     bool restrict     : 1;
     bool readonly     : 1;
     bool writeonly    : 1;
-#endif
-    bool specConstant : 1;  // having a constant_id is not sufficient: expressions have no id, but are still specConstant
-    bool nonUniform   : 1;
 
-#ifdef GLSLANG_WEB
-    bool isMemory() const
-    {
-        return false;
-    }
-#else
-    bool isMemory() const
-    {
-        return subgroupcoherent || workgroupcoherent || queuefamilycoherent || devicecoherent || coherent || volatil || restrict || readonly || writeonly || nonprivate;
-    }
     bool isMemoryQualifierImageAndSSBOOnly() const
     {
         return subgroupcoherent || workgroupcoherent || queuefamilycoherent || devicecoherent || coherent || volatil || restrict || readonly || writeonly;
@@ -599,7 +579,17 @@ public:
         // include qualifiers that map to load/store availability/visibility/nonprivate memory access operands
         return subgroupcoherent || workgroupcoherent || queuefamilycoherent || devicecoherent || coherent || nonprivate;
     }
+    bool isMemory() const
+    {
+        return subgroupcoherent || workgroupcoherent || queuefamilycoherent || devicecoherent || coherent || volatil || restrict || readonly || writeonly || nonprivate;
+    }
+#else
+    bool isMemory() const
+    {
+        return false;
+    }
 #endif
+
     bool isInterpolation() const
     {
 #ifndef GLSLANG_WEB
@@ -689,32 +679,36 @@ public:
         }
     }
 
-    bool isPerPrimitive() const
-    {
-#ifndef GLSLANG_WEB
-        return perPrimitiveNV;
+#ifdef GLSLANG_WEB
+    bool isPerView() const { return false; }
+    bool isTaskMemory() const { return false; }
+    bool isArrayedIo(EShLanguage language) const { return false; }
 #else
-        return false;
-#endif
-    }
+    bool isPerPrimitive() const { return perPrimitiveNV; }
+    bool isPerView() const { return perViewNV; }
+    bool isTaskMemory() const { return perTaskNV; }
 
-    bool isPerView() const
+    // True if this type of IO is supposed to be arrayed with extra level for per-vertex data
+    bool isArrayedIo(EShLanguage language) const
     {
-#ifndef GLSLANG_WEB
-        return perViewNV;
-#else
-        return false;
-#endif
-    }
+        switch (language) {
+        case EShLangGeometry:
+            return isPipeInput();
+        case EShLangTessControl:
+            return ! patch && (isPipeInput() || isPipeOutput());
+        case EShLangTessEvaluation:
+            return ! patch && isPipeInput();
+        case EShLangFragment:
+            return pervertexNV && isPipeInput();
+        case EShLangMeshNV:
+            return ! perTaskNV && isPipeOutput();
+        default:
+            break;
+        }
 
-    bool isTaskMemory() const
-    {
-#ifndef GLSLANG_WEB
-        return perTaskNV;
-#else
         return false;
-#endif
     }
+#endif
 
     bool isIo() const
     {
@@ -753,29 +747,6 @@ public:
         default:
             return false;
         }
-    }
-
-    // True if this type of IO is supposed to be arrayed with extra level for per-vertex data
-    bool isArrayedIo(EShLanguage language) const
-    {
-#ifndef GLSLANG_WEB
-        switch (language) {
-        case EShLangGeometry:
-            return isPipeInput();
-        case EShLangTessControl:
-            return ! patch && (isPipeInput() || isPipeOutput());
-        case EShLangTessEvaluation:
-            return ! patch && isPipeInput();
-        case EShLangFragment:
-            return pervertexNV && isPipeInput();
-        case EShLangMeshNV:
-            return ! perTaskNV && isPipeOutput();
-        default:
-            break;
-        }
-#endif
-
-        return false;
     }
 
     // Implementing an embedded layout-qualifier class here, since C++ can't have a real class bitfield
@@ -1810,11 +1781,9 @@ public:
     {
         if (isUnsizedArray() && !(skipNonvariablyIndexed || isArrayVariablyIndexed()))
             changeOuterArraySize(getImplicitArraySize());
-#ifndef GLSLANG_WEB
         // For multi-dim per-view arrays, set unsized inner dimension size to 1
         if (qualifier.isPerView() && arraySizes && arraySizes->isInnerUnsized())
             arraySizes->clearInnerUnsized();
-#endif
         if (isStruct() && structure->size() > 0) {
             int lastMember = (int)structure->size() - 1;
             for (int i = 0; i < lastMember; ++i)
@@ -1862,8 +1831,6 @@ public:
         }
     }
 
-
-
     const char* getBasicString() const
     {
         return TType::getBasicString(basicType);
@@ -1880,7 +1847,6 @@ public:
         case EbtSampler:           return "sampler/image";
         case EbtStruct:            return "structure";
         case EbtBlock:             return "block";
-#ifndef GLSLANG_WEB
         case EbtAtomicUint:        return "atomic_uint";
         case EbtDouble:            return "double";
         case EbtFloat16:           return "float16_t";
@@ -1892,10 +1858,11 @@ public:
         case EbtUint64:            return "uint64_t";
         case EbtAccStructNV:       return "accelerationStructureNV";
         case EbtReference:         return "reference";
-#endif
         default:                   return "unknown type";
         }
     }
+
+#ifndef GLSLANG_WEB
 
     TString getCompleteString() const
     {
@@ -1915,7 +1882,6 @@ public:
                 if (qualifier.hasAnyLocation()) {
                     appendStr(" location=");
                     appendUint(qualifier.layoutLocation);
-#ifndef GLSLANG_WEB
                     if (qualifier.hasComponent()) {
                         appendStr(" component=");
                         appendUint(qualifier.layoutComponent);
@@ -1924,7 +1890,6 @@ public:
                         appendStr(" index=");
                         appendUint(qualifier.layoutIndex);
                     }
-#endif
                 }
                 if (qualifier.hasSet()) {
                     appendStr(" set=");
@@ -1958,7 +1923,6 @@ public:
                     appendStr(" ");
                     appendStr(TQualifier::getLayoutFormatString(qualifier.layoutFormat));
                 }
-#ifndef GLSLANG_WEB
                 if (qualifier.hasXfbBuffer() && qualifier.hasXfbOffset()) {
                     appendStr(" xfb_buffer=");
                     appendUint(qualifier.layoutXfbBuffer);
@@ -1971,7 +1935,6 @@ public:
                     appendStr(" xfb_stride=");
                     appendUint(qualifier.layoutXfbStride);
                 }
-#endif
                 if (qualifier.hasAttachment()) {
                     appendStr(" input_attachment_index=");
                     appendUint(qualifier.layoutAttachment);
@@ -1982,7 +1945,6 @@ public:
                 }
                 if (qualifier.layoutPushConstant)
                     appendStr(" push_constant");
-#ifndef GLSLANG_WEB
                 if (qualifier.layoutBufferReference)
                     appendStr(" buffer_reference");
                 if (qualifier.hasBufferReferenceAlign()) {
@@ -1999,7 +1961,6 @@ public:
                 }
                 if (qualifier.layoutShaderRecordNV)
                     appendStr(" shaderRecordNV");
-#endif
 
                 appendStr(")");
             }
@@ -2013,7 +1974,6 @@ public:
             appendStr(" smooth");
         if (qualifier.flat)
             appendStr(" flat");
-#ifndef GLSLANG_WEB
         if (qualifier.noContraction)
             appendStr(" noContraction");
         if (qualifier.nopersp)
@@ -2052,7 +2012,6 @@ public:
             appendStr(" readonly");
         if (qualifier.writeonly)
             appendStr(" writeonly");
-#endif
         if (qualifier.specConstant)
             appendStr(" specialization-constant");
         if (qualifier.nonUniform)
@@ -2141,6 +2100,7 @@ public:
     const char* getStorageQualifierString() const { return GetStorageQualifierString(qualifier.storage); }
     const char* getBuiltInVariableString() const { return GetBuiltInVariableString(qualifier.builtIn); }
     const char* getPrecisionQualifierString() const { return GetPrecisionQualifierString(qualifier.precision); }
+#endif
     const TTypeList* getStruct() const { assert(isStruct()); return structure; }
     void setStruct(TTypeList* s) { assert(isStruct()); structure = s; }
     TTypeList* getWritableStruct() const { assert(isStruct()); return structure; }  // This should only be used when known to not be sharing with other threads

@@ -475,6 +475,7 @@ void SetupBuiltinSymbolTable(int version, EProfile profile, const SpvVersion& sp
     glslang::ReleaseGlobalLock();
 }
 
+#ifndef GLSLANG_WEB
 // Function to Print all builtins
 void DumpBuiltinSymbolTable(TInfoSink& infoSink, const TSymbolTable& symbolTable)
 {
@@ -484,6 +485,7 @@ void DumpBuiltinSymbolTable(TInfoSink& infoSink, const TSymbolTable& symbolTable
 
     infoSink.debug << "}\n";
 }
+#endif
 
 // Return true if the shader was correctly specified for version/profile/stage.
 bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNotFirst, int defaultVersion,
@@ -611,7 +613,7 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
             version = profile == EEsProfile ? 310 : 420;
         }
         break;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     case EShLangRayGenNV:
     case EShLangIntersectNV:
     case EShLangAnyHitNV:
@@ -918,8 +920,10 @@ bool ProcessDeferred(
         return false;
     }
 
+#ifndef GLSLANG_WEB
     if (messages & EShMsgBuiltinSymbolTable)
         DumpBuiltinSymbolTable(compiler->infoSink, *symbolTable);
+#endif
 
     //
     // Now we can process the full shader under proper symbols and rules.

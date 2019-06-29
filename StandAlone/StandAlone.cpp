@@ -255,7 +255,7 @@ const char* GetBinaryName(EShLanguage stage)
         case EShLangGeometry:        name = "geom.spv";    break;
         case EShLangFragment:        name = "frag.spv";    break;
         case EShLangCompute:         name = "comp.spv";    break;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         case EShLangRayGenNV:        name = "rgen.spv";    break;
         case EShLangIntersectNV:     name = "rint.spv";    break;
         case EShLangAnyHitNV:        name = "rahit.spv";   break;
@@ -1362,7 +1362,7 @@ EShLanguage FindLanguage(const std::string& name, bool parseStageName)
         return EShLangFragment;
     else if (stageName == "comp")
         return EShLangCompute;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     else if (stageName == "rgen")
         return EShLangRayGenNV;
     else if (stageName == "rint")
@@ -1449,7 +1449,7 @@ void usage()
            "    .geom   for a geometry shader\n"
            "    .frag   for a fragment shader\n"
            "    .comp   for a compute shader\n"
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
            "    .mesh   for a mesh shader\n"
            "    .task   for a task shader\n"
            "    .rgen    for a ray generation shader\n"

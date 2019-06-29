@@ -88,7 +88,7 @@ public:
     virtual void int8ScalarVectorCheck(const TSourceLoc&, const char* op, bool builtIn = false);
     virtual bool int8Arithmetic();
     virtual void requireInt8Arithmetic(const TSourceLoc& loc, const char* op, const char* featureDesc);
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
     virtual void float16OpaqueCheck(const TSourceLoc&, const char* op, bool builtIn = false);
 #endif
     virtual void int64Check(const TSourceLoc&, const char* op, bool builtIn = false);

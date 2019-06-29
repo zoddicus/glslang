@@ -234,7 +234,7 @@ std::string GetDefaultTBuiltInResourceString()
             << "MaxCullDistances "                          << DefaultTBuiltInResource.maxCullDistances << "\n"
             << "MaxCombinedClipAndCullDistances "           << DefaultTBuiltInResource.maxCombinedClipAndCullDistances << "\n"
             << "MaxSamples "                                << DefaultTBuiltInResource.maxSamples << "\n"
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
             << "MaxMeshOutputVerticesNV "                   << DefaultTBuiltInResource.maxMeshOutputVerticesNV << "\n"
             << "MaxMeshOutputPrimitivesNV "                 << DefaultTBuiltInResource.maxMeshOutputPrimitivesNV << "\n"
             << "MaxMeshWorkGroupSizeX_NV "                  << DefaultTBuiltInResource.maxMeshWorkGroupSizeX_NV << "\n"
@@ -451,7 +451,7 @@ void DecodeResourceLimits(TBuiltInResource* resources, char* config)
             resources->maxCombinedClipAndCullDistances = value;
         else if (tokenStr == "MaxSamples")
             resources->maxSamples = value;
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
         else if (tokenStr == "MaxMeshOutputVerticesNV")
             resources->maxMeshOutputVerticesNV = value;
         else if (tokenStr == "MaxMeshOutputPrimitivesNV")

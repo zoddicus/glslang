@@ -297,6 +297,7 @@ public:
     TIntermTyped* handleBracketDereference(const TSourceLoc&, TIntermTyped* base, TIntermTyped* index);
     void handleIndexLimits(const TSourceLoc&, TIntermTyped* base, TIntermTyped* index);
 
+#ifndef GLSLANG_WEB
     void makeEditable(TSymbol*&) override;
     bool isIoResizeArray(const TType&) const;
     void fixIoArraySize(const TSourceLoc&, TType&);
@@ -305,6 +306,8 @@ public:
     void checkIoArraysConsistency(const TSourceLoc&, bool tailOnly = false);
     int getIoArrayImplicitSize(const TQualifier&, TString* featureString = nullptr) const;
     void checkIoArrayConsistency(const TSourceLoc&, int requiredSize, const char* feature, TType&, const TString&);
+    TIntermTyped* handleLengthMethod(const TSourceLoc&, TFunction*, TIntermNode*);
+#endif
 
     TIntermTyped* handleBinaryMath(const TSourceLoc&, const char* str, TOperator op, TIntermTyped* left, TIntermTyped* right);
     TIntermTyped* handleUnaryMath(const TSourceLoc&, const char* str, TOperator op, TIntermTyped* childNode);
@@ -317,7 +320,6 @@ public:
     void computeBuiltinPrecisions(TIntermTyped&, const TFunction&);
     TIntermNode* handleReturnValue(const TSourceLoc&, TIntermTyped*);
     void checkLocation(const TSourceLoc&, TOperator);
-    TIntermTyped* handleLengthMethod(const TSourceLoc&, TFunction*, TIntermNode*);
     void addInputArgumentConversions(const TFunction&, TIntermNode*&) const;
     TIntermTyped* addOutputArgumentConversions(const TFunction&, TIntermAggregate&) const;
     void builtInOpCheck(const TSourceLoc&, const TFunction&, TIntermOperator&);
@@ -375,15 +377,15 @@ public:
     void opaqueCheck(const TSourceLoc&, const TType&, const char* op);
 #ifndef GLSLANG_WEB
     void referenceCheck(const TSourceLoc&, const TType&, const char* op);
+    void inductiveLoopCheck(const TSourceLoc&, TIntermNode* init, TIntermLoop* loop);
+    void inductiveLoopBodyCheck(TIntermNode*, int loopIndexId, TSymbolTable&);
 #endif
     void storage16BitAssignmentCheck(const TSourceLoc&, const TType&, const char* op);
     void specializationCheck(const TSourceLoc&, const TType&, const char* op);
     void structTypeCheck(const TSourceLoc&, TPublicType&);
-    void inductiveLoopCheck(const TSourceLoc&, TIntermNode* init, TIntermLoop* loop);
     void arrayLimitCheck(const TSourceLoc&, const TString&, int size);
     void limitCheck(const TSourceLoc&, int value, const char* limit, const char* feature);
 
-    void inductiveLoopBodyCheck(TIntermNode*, int loopIndexId, TSymbolTable&);
     void constantIndexExpressionCheck(TIntermNode*);
 
     void setLayoutQualifier(const TSourceLoc&, TPublicType&, TString&);
@@ -443,11 +445,11 @@ protected:
     void declareArray(const TSourceLoc&, const TString& identifier, const TType&, TSymbol*&);
 #ifndef GLSLANG_WEB
     void checkRuntimeSizable(const TSourceLoc&, const TIntermTyped&);
-#endif
+    void finish() override;
     bool isRuntimeLength(const TIntermTyped&) const;
+#endif
     TIntermNode* executeInitializer(const TSourceLoc&, TIntermTyped* initializer, TVariable* variable);
     TIntermTyped* convertInitializerList(const TSourceLoc&, const TType&, TIntermTyped* initializer);
-    void finish() override;
 
 public:
     //
