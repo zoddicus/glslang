@@ -376,8 +376,6 @@ bool InitializeSymbolTables(TInfoSink& infoSink, TSymbolTable** commonTable,  TS
                                    infoSink, commonTable, symbolTables);
 #endif
 
-
-
     return true;
 }
 
@@ -582,6 +580,7 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
         break;
     }
 
+#ifndef GLSLANG_WEB
     // Correct for stage type...
     switch (stage) {
     case EShLangGeometry:
@@ -613,7 +612,6 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
             version = profile == EEsProfile ? 310 : 420;
         }
         break;
-#ifndef GLSLANG_WEB
     case EShLangRayGenNV:
     case EShLangIntersectNV:
     case EShLangAnyHitNV:
@@ -634,16 +632,17 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
             infoSink.info.message(EPrefixError, "#version: mesh/task shaders require es profile with version 320 or above, or non-es profile with version 450 or above");
             version = profile == EEsProfile ? 320 : 450;
         }
-#endif
     default:
         break;
     }
+#endif
 
     if (profile == EEsProfile && version >= 300 && versionNotFirst) {
         correct = false;
         infoSink.info.message(EPrefixError, "#version: statement must appear first in es-profile shader; before comments or newlines");
     }
 
+#ifndef GLSLANG_WEB
     // Check for SPIR-V compatibility
     if (spvVersion.spv != 0) {
         switch (profile) {
@@ -676,6 +675,7 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
             break;
         }
     }
+#endif
 
     return correct;
 }
@@ -1941,13 +1941,11 @@ bool TProgram::linkStage(EShLanguage stage, EShMessages messages)
                                                 firstIntermediate->getVersion(),
                                                 firstIntermediate->getProfile());
 
-#ifndef GLSLANG_WEB
         // The new TIntermediate must use the same origin as the original TIntermediates.
         // Otherwise linking will fail due to different coordinate systems.
         if (firstIntermediate->getOriginUpperLeft()) {
             intermediate[stage]->setOriginUpperLeft();
         }
-#endif
 
         intermediate[stage]->setSpv(firstIntermediate->getSpv());
 

@@ -61,19 +61,19 @@ void TType::buildMangledName(TString& mangledName) const
 
     switch (basicType) {
     case EbtFloat:              mangledName += 'f';      break;
-    case EbtDouble:             mangledName += 'd';      break;
-    case EbtFloat16:            mangledName += "f16";    break;
     case EbtInt:                mangledName += 'i';      break;
     case EbtUint:               mangledName += 'u';      break;
+    case EbtBool:               mangledName += 'b';      break;
+#ifndef GLSLANG_WEB
     case EbtInt8:               mangledName += "i8";     break;
     case EbtUint8:              mangledName += "u8";     break;
     case EbtInt16:              mangledName += "i16";    break;
     case EbtUint16:             mangledName += "u16";    break;
     case EbtInt64:              mangledName += "i64";    break;
     case EbtUint64:             mangledName += "u64";    break;
-    case EbtBool:               mangledName += 'b';      break;
+    case EbtDouble:             mangledName += 'd';      break;
+    case EbtFloat16:            mangledName += "f16";    break;
     case EbtAtomicUint:         mangledName += "au";     break;
-#ifndef GLSLANG_WEB
     case EbtAccStructNV:        mangledName += "asnv";   break;
 #endif
     case EbtSampler:
@@ -106,13 +106,11 @@ void TType::buildMangledName(TString& mangledName) const
             mangledName += "Y";
 #endif
         switch (sampler.dim) {
-#ifndef GLSLANG_WEB
-        case Esd1D:       mangledName += "1";  break;
-#endif
         case Esd2D:       mangledName += "2";  break;
         case Esd3D:       mangledName += "3";  break;
         case EsdCube:     mangledName += "C";  break;
 #ifndef GLSLANG_WEB
+        case Esd1D:       mangledName += "1";  break;
         case EsdRect:     mangledName += "R2"; break;
         case EsdBuffer:   mangledName += "B";  break;
         case EsdSubpass:  mangledName += "P";  break;
@@ -135,9 +133,9 @@ void TType::buildMangledName(TString& mangledName) const
             case 4: break; // default to prior name mangle behavior
             }
         }
-#endif
         if (sampler.ms)
             mangledName += "M";
+#endif
         break;
     case EbtStruct:
     case EbtBlock:

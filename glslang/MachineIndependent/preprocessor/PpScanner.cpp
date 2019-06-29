@@ -257,6 +257,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
     // Suffix:
     bool isDouble = false;
     bool isFloat16 = false;
+#ifndef GLSLANG_WEB
     if (ch == 'l' || ch == 'L') {
         if (ifdepth == 0 && parseContext.intermediate.getSource() == EShSourceGlsl)
             parseContext.doubleCheck(ppToken->loc, "double floating-point suffix");
@@ -295,7 +296,9 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
             saveName(ch);
             isFloat16 = true;
         }
-    } else if (ch == 'f' || ch == 'F') {
+    } else
+#endif
+    if (ch == 'f' || ch == 'F') {
         if (ifdepth == 0)
             parseContext.profileRequires(ppToken->loc,  EEsProfile, 300, nullptr, "floating-point suffix");
         if (ifdepth == 0 && !parseContext.relaxedErrors())

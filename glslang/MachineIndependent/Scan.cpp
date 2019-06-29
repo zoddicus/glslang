@@ -712,9 +712,8 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["perprimitiveNV"] =          PERPRIMITIVENV;
     (*KeywordMap)["perviewNV"] =               PERVIEWNV;
     (*KeywordMap)["taskNV"] =                  PERTASKNV;
-#endif
-
     (*KeywordMap)["fcoopmatNV"] =              FCOOPMATNV;
+#endif
 
     ReservedSet = new std::unordered_set<const char*, str_hash, str_eq>;
 

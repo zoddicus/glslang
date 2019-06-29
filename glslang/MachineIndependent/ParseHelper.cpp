@@ -2884,6 +2884,7 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
 #endif
     }
 
+#ifndef GLSLANG_WEB
     switch (op) {
     case EOpConstructFloat16:
     case EOpConstructF16Vec2:
@@ -2923,6 +2924,7 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
     default:
         break;
     }
+#endif
 
     // inherit constness from children
     if (constType) {

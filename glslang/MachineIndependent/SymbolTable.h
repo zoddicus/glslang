@@ -117,7 +117,7 @@ public:
     virtual int getNumExtensions() const { return extensions == nullptr ? 0 : (int)extensions->size(); }
     virtual const char** getExtensions() const { return extensions->data(); }
 #ifndef GLSLANG_WEB
-    virtual void dump(TInfoSink& infoSink, bool complete = false) const = 0;#ifndef GLSLANG_WEB
+    virtual void dump(TInfoSink& infoSink, bool complete = false) const = 0;
     void dumpExtensions(TInfoSink& infoSink) const;
 #endif
 
