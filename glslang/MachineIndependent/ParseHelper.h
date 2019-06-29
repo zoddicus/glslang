@@ -477,9 +477,11 @@ protected:
     TQualifier globalOutputDefaults;
     int* atomicUintOffsets;       // to become an array of the right size to hold an offset per binding point
     TString currentCaller;        // name of last function body entered (not valid when at global scope)
-    TIdSetType inductiveLoopIds;
     bool anyIndexLimits;
+#ifndef GLSLANG_WEB
+    TIdSetType inductiveLoopIds;
     TVector<TIntermTyped*> needsIndexLimitationChecking;
+#endif
 
     //
     // Geometry shader input arrays:

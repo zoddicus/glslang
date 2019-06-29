@@ -147,6 +147,7 @@ const TBuiltInResource DefaultTBuiltInResource = {
         /* .generalConstantMatrixVectorIndexing = */ 1,
     }};
 
+#ifndef GLSLANG_WEB
 std::string GetDefaultTBuiltInResourceString()
 {
     std::ostringstream ostream;
@@ -234,7 +235,6 @@ std::string GetDefaultTBuiltInResourceString()
             << "MaxCullDistances "                          << DefaultTBuiltInResource.maxCullDistances << "\n"
             << "MaxCombinedClipAndCullDistances "           << DefaultTBuiltInResource.maxCombinedClipAndCullDistances << "\n"
             << "MaxSamples "                                << DefaultTBuiltInResource.maxSamples << "\n"
-#ifndef GLSLANG_WEB
             << "MaxMeshOutputVerticesNV "                   << DefaultTBuiltInResource.maxMeshOutputVerticesNV << "\n"
             << "MaxMeshOutputPrimitivesNV "                 << DefaultTBuiltInResource.maxMeshOutputPrimitivesNV << "\n"
             << "MaxMeshWorkGroupSizeX_NV "                  << DefaultTBuiltInResource.maxMeshWorkGroupSizeX_NV << "\n"
@@ -244,7 +244,6 @@ std::string GetDefaultTBuiltInResourceString()
             << "MaxTaskWorkGroupSizeY_NV "                  << DefaultTBuiltInResource.maxTaskWorkGroupSizeY_NV << "\n"
             << "MaxTaskWorkGroupSizeZ_NV "                  << DefaultTBuiltInResource.maxTaskWorkGroupSizeZ_NV << "\n"
             << "MaxMeshViewCountNV "                        << DefaultTBuiltInResource.maxMeshViewCountNV << "\n"
-#endif
             << "nonInductiveForLoops "                      << DefaultTBuiltInResource.limits.nonInductiveForLoops << "\n"
             << "whileLoops "                                << DefaultTBuiltInResource.limits.whileLoops << "\n"
             << "doWhileLoops "                              << DefaultTBuiltInResource.limits.doWhileLoops << "\n"
@@ -258,6 +257,7 @@ std::string GetDefaultTBuiltInResourceString()
 
     return ostream.str();
 }
+#endif
 
 void DecodeResourceLimits(TBuiltInResource* resources, char* config)
 {

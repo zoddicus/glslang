@@ -166,12 +166,14 @@ void TParseContext::setLimits(const TBuiltInResource& r)
 {
     resources = r;
 
+#ifndef GLSLANG_WEB
     anyIndexLimits = ! limits.generalAttributeMatrixVectorIndexing ||
                      ! limits.generalConstantMatrixVectorIndexing ||
                      ! limits.generalSamplerIndexing ||
                      ! limits.generalUniformIndexing ||
                      ! limits.generalVariableIndexing ||
                      ! limits.generalVaryingIndexing;
+#endif
 
     intermediate.setLimits(resources);
 
@@ -512,12 +514,15 @@ TIntermTyped* TParseContext::handleBracketDereference(const TSourceLoc& loc, TIn
     if (base->getQualifier().isNonUniform() || index->getQualifier().isNonUniform())
         result->getWritableType().getQualifier().nonUniform = true;
 
+#ifndef GLSLANG_WEB
     if (anyIndexLimits)
         handleIndexLimits(loc, base, index);
+#endif
 
     return result;
 }
 
+#ifndef GLSLANG_WEB
 // for ES 2.0 (version 100) limitations for almost all index operations except vertex-shader uniforms
 void TParseContext::handleIndexLimits(const TSourceLoc& /*loc*/, TIntermTyped* base, TIntermTyped* index)
 {
@@ -536,7 +541,6 @@ void TParseContext::handleIndexLimits(const TSourceLoc& /*loc*/, TIntermTyped* b
     }
 }
 
-#ifndef GLSLANG_WEB
 // Make a shared symbol have a non-shared version that can be edited by the current
 // compile, such that editing its type will not change the shared version and will
 // effect all nodes sharing it.
