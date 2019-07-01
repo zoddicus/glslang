@@ -558,11 +558,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["samplerCubeArrayShadow"] =  SAMPLERCUBEARRAYSHADOW;
     (*KeywordMap)["isamplerCubeArray"] =       ISAMPLERCUBEARRAY;
     (*KeywordMap)["usamplerCubeArray"] =       USAMPLERCUBEARRAY;
-    (*KeywordMap)["sampler1DArrayShadow"] =    SAMPLER1DARRAYSHADOW;
-    (*KeywordMap)["isampler1DArray"] =         ISAMPLER1DARRAY;
-    (*KeywordMap)["usampler1D"] =              USAMPLER1D;
-    (*KeywordMap)["isampler1D"] =              ISAMPLER1D;
-    (*KeywordMap)["usampler1DArray"] =         USAMPLER1DARRAY;
     (*KeywordMap)["samplerBuffer"] =           SAMPLERBUFFER;
     (*KeywordMap)["samplerCubeShadow"] =       SAMPLERCUBESHADOW;
     (*KeywordMap)["sampler2DArray"] =          SAMPLER2DARRAY;
@@ -583,13 +578,18 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["sampler2DMSArray"] =        SAMPLER2DMSARRAY;
     (*KeywordMap)["isampler2DMSArray"] =       ISAMPLER2DMSARRAY;
     (*KeywordMap)["usampler2DMSArray"] =       USAMPLER2DMSARRAY;
-    (*KeywordMap)["sampler1D"] =               SAMPLER1D;
-    (*KeywordMap)["sampler1DShadow"] =         SAMPLER1DSHADOW;
     (*KeywordMap)["sampler3D"] =               SAMPLER3D;
     (*KeywordMap)["sampler2DShadow"] =         SAMPLER2DSHADOW;
-    (*KeywordMap)["sampler1DArray"] =          SAMPLER1DARRAY;
 
 #ifndef GLSLANG_WEB
+    (*KeywordMap)["sampler1DArrayShadow"] =    SAMPLER1DARRAYSHADOW;
+    (*KeywordMap)["isampler1DArray"] =         ISAMPLER1DARRAY;
+    (*KeywordMap)["usampler1D"] =              USAMPLER1D;
+    (*KeywordMap)["isampler1D"] =              ISAMPLER1D;
+    (*KeywordMap)["usampler1DArray"] =         USAMPLER1DARRAY;
+    (*KeywordMap)["sampler1D"] =               SAMPLER1D;
+    (*KeywordMap)["sampler1DShadow"] =         SAMPLER1DSHADOW;
+    (*KeywordMap)["sampler1DArray"] =          SAMPLER1DARRAY;
     (*KeywordMap)["isampler2DRect"] =          ISAMPLER2DRECT;
     (*KeywordMap)["usampler2DRect"] =          USAMPLER2DRECT;
     (*KeywordMap)["sampler2DRect"] =           SAMPLER2DRECT;
@@ -606,10 +606,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["textureCubeArray"] =        TEXTURECUBEARRAY;
     (*KeywordMap)["itextureCubeArray"] =       ITEXTURECUBEARRAY;
     (*KeywordMap)["utextureCubeArray"] =       UTEXTURECUBEARRAY;
-    (*KeywordMap)["itexture1DArray"] =         ITEXTURE1DARRAY;
-    (*KeywordMap)["utexture1D"] =              UTEXTURE1D;
-    (*KeywordMap)["itexture1D"] =              ITEXTURE1D;
-    (*KeywordMap)["utexture1DArray"] =         UTEXTURE1DARRAY;
     (*KeywordMap)["textureBuffer"] =           TEXTUREBUFFER;
     (*KeywordMap)["texture2DArray"] =          TEXTURE2DARRAY;
     (*KeywordMap)["itexture2D"] =              ITEXTURE2D;
@@ -630,10 +626,8 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["texture2DMSArray"] =        TEXTURE2DMSARRAY;
     (*KeywordMap)["itexture2DMSArray"] =       ITEXTURE2DMSARRAY;
     (*KeywordMap)["utexture2DMSArray"] =       UTEXTURE2DMSARRAY;
-    (*KeywordMap)["texture1D"] =               TEXTURE1D;
     (*KeywordMap)["texture3D"] =               TEXTURE3D;
     (*KeywordMap)["texture2DRect"] =           TEXTURE2DRECT;
-    (*KeywordMap)["texture1DArray"] =          TEXTURE1DARRAY;
 
     (*KeywordMap)["subpassInput"] =            SUBPASSINPUT;
     (*KeywordMap)["subpassInputMS"] =          SUBPASSINPUTMS;
@@ -643,6 +637,12 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["usubpassInputMS"] =         USUBPASSINPUTMS;
 
 #ifndef GLSLANG_WEB
+    (*KeywordMap)["itexture1DArray"] =         ITEXTURE1DARRAY;
+    (*KeywordMap)["utexture1D"] =              UTEXTURE1D;
+    (*KeywordMap)["itexture1D"] =              ITEXTURE1D;
+    (*KeywordMap)["utexture1DArray"] =         UTEXTURE1DARRAY;
+    (*KeywordMap)["texture1D"] =               TEXTURE1D;
+    (*KeywordMap)["texture1DArray"] =          TEXTURE1DARRAY;
     (*KeywordMap)["f16sampler1D"] =                 F16SAMPLER1D;
     (*KeywordMap)["f16sampler2D"] =                 F16SAMPLER2D;
     (*KeywordMap)["f16sampler3D"] =                 F16SAMPLER3D;
@@ -717,6 +717,7 @@ void TScanContext::fillInKeywordMap()
 
     ReservedSet = new std::unordered_set<const char*, str_hash, str_eq>;
 
+#ifndef GLSLANG_WEB
     ReservedSet->insert("common");
     ReservedSet->insert("partition");
     ReservedSet->insert("active");
@@ -754,6 +755,7 @@ void TScanContext::fillInKeywordMap()
     ReservedSet->insert("cast");
     ReservedSet->insert("namespace");
     ReservedSet->insert("using");
+#endif
 }
 
 void TScanContext::deleteKeywordMap()
@@ -1295,14 +1297,6 @@ int TScanContext::tokenizeIdentifier()
             reservedWord();
         return keyword;
 
-    case ISAMPLER1D:
-    case ISAMPLER1DARRAY:
-    case SAMPLER1DARRAYSHADOW:
-    case USAMPLER1D:
-    case USAMPLER1DARRAY:
-        afterType = true;
-        return es30ReservedFromGLSL(130);
-
     case UINT:
     case UVEC2:
     case UVEC3:
@@ -1322,6 +1316,14 @@ int TScanContext::tokenizeIdentifier()
         return nonreservedKeyword(300, 130);
 
 #ifndef GLSLANG_WEB
+    case ISAMPLER1D:
+    case ISAMPLER1DARRAY:
+    case SAMPLER1DARRAYSHADOW:
+    case USAMPLER1D:
+    case USAMPLER1DARRAY:
+        afterType = true;
+        return es30ReservedFromGLSL(130);
+
     case ISAMPLER2DRECT:
     case USAMPLER2DRECT:
         afterType = true;
@@ -1360,13 +1362,6 @@ int TScanContext::tokenizeIdentifier()
             return keyword;
         return es30ReservedFromGLSL(150);
 
-    case SAMPLER1D:
-    case SAMPLER1DSHADOW:
-        afterType = true;
-        if (parseContext.profile == EEsProfile)
-            reservedWord();
-        return keyword;
-
     case SAMPLER3D:
         afterType = true;
         if (parseContext.profile == EEsProfile && parseContext.version < 300) {
@@ -1395,6 +1390,13 @@ int TScanContext::tokenizeIdentifier()
             else
                 reservedWord();
         }
+        return keyword;
+
+    case SAMPLER1D:
+    case SAMPLER1DSHADOW:
+        afterType = true;
+        if (parseContext.profile == EEsProfile)
+            reservedWord();
         return keyword;
 
     case SAMPLER1DARRAY:
@@ -1427,10 +1429,6 @@ int TScanContext::tokenizeIdentifier()
     case TEXTURECUBEARRAY:
     case ITEXTURECUBEARRAY:
     case UTEXTURECUBEARRAY:
-    case ITEXTURE1DARRAY:
-    case UTEXTURE1D:
-    case ITEXTURE1D:
-    case UTEXTURE1DARRAY:
     case TEXTUREBUFFER:
     case TEXTURE2DARRAY:
     case ITEXTURE2D:
@@ -1451,10 +1449,8 @@ int TScanContext::tokenizeIdentifier()
     case TEXTURE2DMSARRAY:
     case ITEXTURE2DMSARRAY:
     case UTEXTURE2DMSARRAY:
-    case TEXTURE1D:
     case TEXTURE3D:
     case TEXTURE2DRECT:
-    case TEXTURE1DARRAY:
     case SAMPLER:
     case SAMPLERSHADOW:
         if (parseContext.spvVersion.vulkan > 0)
@@ -1474,6 +1470,12 @@ int TScanContext::tokenizeIdentifier()
             return identifierOrType();
 
 #ifndef GLSLANG_WEB
+    case ITEXTURE1DARRAY:
+    case UTEXTURE1D:
+    case ITEXTURE1D:
+    case UTEXTURE1DARRAY:
+    case TEXTURE1D:
+    case TEXTURE1DARRAY:
     case F16SAMPLER1D:
     case F16SAMPLER2D:
     case F16SAMPLER3D:

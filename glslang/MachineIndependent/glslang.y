@@ -124,7 +124,8 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %expect 1     // One shift reduce conflict because of if | else
 
 %token <lex> ATTRIBUTE VARYING
-%token <lex> CONST BOOL INT UINT FLOAT
+%token <lex> FLOAT16_T FLOAT FLOAT32_T DOUBLE FLOAT64_T
+%token <lex> CONST BOOL INT UINT INT64_T UINT64_T INT32_T UINT32_T INT16_T UINT16_T INT8_T UINT8_T
 %token <lex> BREAK CONTINUE DO ELSE FOR IF DISCARD RETURN SWITCH CASE DEFAULT SUBROUTINE
 %token <lex> BVEC2 BVEC3 BVEC4
 %token <lex> IVEC2 IVEC3 IVEC4
@@ -141,11 +142,11 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %token <lex> MAT4X2 MAT4X3 MAT4X4
 
 // combined image/sampler
-%token <lex> SAMPLER1D SAMPLER2D SAMPLER3D SAMPLERCUBE SAMPLER1DSHADOW SAMPLER2DSHADOW
-%token <lex> SAMPLERCUBESHADOW SAMPLER1DARRAY SAMPLER2DARRAY SAMPLER1DARRAYSHADOW
-%token <lex> SAMPLER2DARRAYSHADOW ISAMPLER1D ISAMPLER2D ISAMPLER3D ISAMPLERCUBE
-%token <lex> ISAMPLER1DARRAY ISAMPLER2DARRAY USAMPLER1D USAMPLER2D USAMPLER3D
-%token <lex> USAMPLERCUBE USAMPLER1DARRAY USAMPLER2DARRAY
+%token <lex> SAMPLER2D SAMPLER3D SAMPLERCUBE SAMPLER2DSHADOW
+%token <lex> SAMPLERCUBESHADOW SAMPLER2DARRAY
+%token <lex> SAMPLER2DARRAYSHADOW ISAMPLER2D ISAMPLER3D ISAMPLERCUBE
+%token <lex> ISAMPLER2DARRAY USAMPLER2D USAMPLER3D
+%token <lex> USAMPLERCUBE USAMPLER2DARRAY
 %token <lex> SAMPLERBUFFER ISAMPLERBUFFER USAMPLERBUFFER
 %token <lex> SAMPLERCUBEARRAY SAMPLERCUBEARRAYSHADOW
 %token <lex> ISAMPLERCUBEARRAY USAMPLERCUBEARRAY
@@ -158,11 +159,11 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %token <lex> SAMPLER SAMPLERSHADOW
 
 // texture without sampler
-%token <lex> TEXTURE1D TEXTURE2D TEXTURE3D TEXTURECUBE
-%token <lex> TEXTURE1DARRAY TEXTURE2DARRAY
-%token <lex> ITEXTURE1D ITEXTURE2D ITEXTURE3D ITEXTURECUBE
-%token <lex> ITEXTURE1DARRAY ITEXTURE2DARRAY UTEXTURE1D UTEXTURE2D UTEXTURE3D
-%token <lex> UTEXTURECUBE UTEXTURE1DARRAY UTEXTURE2DARRAY
+%token <lex> TEXTURE2D TEXTURE3D TEXTURECUBE
+%token <lex> TEXTURE2DARRAY
+%token <lex> ITEXTURE2D ITEXTURE3D ITEXTURECUBE
+%token <lex> ITEXTURE2DARRAY UTEXTURE2D UTEXTURE3D
+%token <lex> UTEXTURECUBE UTEXTURE2DARRAY
 %token <lex> TEXTURE2DRECT ITEXTURE2DRECT UTEXTURE2DRECT
 %token <lex> TEXTUREBUFFER ITEXTUREBUFFER UTEXTUREBUFFER
 %token <lex> TEXTURECUBEARRAY ITEXTURECUBEARRAY UTEXTURECUBEARRAY
@@ -1443,11 +1444,6 @@ type_specifier_nonarray
         $$.basicType = EbtSampler;
         $$.sampler.set(EbtFloat, EsdCube);
     }
-    | SAMPLER1DSHADOW {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtFloat, Esd1D, false, true);
-    }
     | SAMPLER2DSHADOW {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
@@ -1478,11 +1474,6 @@ type_specifier_nonarray
         $$.basicType = EbtSampler;
         $$.sampler.set(EbtFloat, EsdCube, true, true);
     }
-    | ISAMPLER1D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtInt, Esd1D);
-    }
     | ISAMPLER2D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
@@ -1507,11 +1498,6 @@ type_specifier_nonarray
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.set(EbtInt, EsdCube, true);
-    }
-    | USAMPLER1D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtUint, Esd1D);
     }
     | USAMPLER2D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
@@ -1597,11 +1583,6 @@ type_specifier_nonarray
         $$.basicType = EbtSampler;
         $$.sampler.setTexture(EbtFloat, EsdCube);
     }
-    | TEXTURE1DARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, Esd1D, true);
-    }
     | TEXTURE2DARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
@@ -1611,11 +1592,6 @@ type_specifier_nonarray
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setTexture(EbtFloat, EsdCube, true);
-    }
-    | ITEXTURE1D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, Esd1D);
     }
     | ITEXTURE2D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
@@ -1632,11 +1608,6 @@ type_specifier_nonarray
         $$.basicType = EbtSampler;
         $$.sampler.setTexture(EbtInt, EsdCube);
     }
-    | ITEXTURE1DARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, Esd1D, true);
-    }
     | ITEXTURE2DARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
@@ -1646,11 +1617,6 @@ type_specifier_nonarray
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setTexture(EbtInt, EsdCube, true);
-    }
-    | UTEXTURE1D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, Esd1D);
     }
     | UTEXTURE2D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
@@ -1666,11 +1632,6 @@ type_specifier_nonarray
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setTexture(EbtUint, EsdCube);
-    }
-    | UTEXTURE1DARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, Esd1D, true);
     }
     | UTEXTURE2DARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
