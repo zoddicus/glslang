@@ -1864,8 +1864,13 @@ public:
         }
     }
 
-#ifndef GLSLANG_WEB
-
+#ifdef GLSLANG_WEB
+    TString getCompleteString() const { return ""; }
+    const char* getStorageQualifierString() const { return ""; }
+    const char* getBuiltInVariableString() const { return ""; }
+    const char* getPrecisionQualifierString() const { return ""; }
+    TString getBasicTypeString() const { return ""; }
+#else
     TString getCompleteString() const
     {
         TString typeString;
