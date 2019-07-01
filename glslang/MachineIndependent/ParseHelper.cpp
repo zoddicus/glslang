@@ -207,15 +207,15 @@ bool TParseContext::parseShaderStrings(TPpContext& ppContext, TInputScanner& inp
     return numErrors == 0;
 }
 
-#ifdef GLSLANG_WEB
-#define error(A, B, C, D) 
-#define error5(A, B, C, D, E) 
-#define error6(A, B, C, D, E, F) 
-#define warn(A, B, C, D)
-#else
+//#ifdef GLSLANG_WEB
+//#define error(A, B, C, D)
+//#define error5(A, B, C, D, E)
+//#define error6(A, B, C, D, E, F)
+//#define warn(A, B, C, D)
+//#else
 #define error5(A, B, C, D, E) error(A, B, C, D, E)
 #define error6(A, B, C, D, E, F)  error(A, B, C, D, E, F)
-#endif
+//#endif
 
 // This is called from bison when it has a parse (syntax) error
 // Note though that to stop cascading errors, we set EOF, which
