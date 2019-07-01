@@ -188,21 +188,17 @@ protected:
     spv::Id createInvocationsOperation(glslang::TOperator op, spv::Id typeId, std::vector<spv::Id>& operands, glslang::TBasicType typeProxy);
     spv::Id CreateInvocationsVectorOperation(spv::Op op, spv::GroupOperation groupOperation, spv::Id typeId, std::vector<spv::Id>& operands);
     spv::Id createNoArgOperation(glslang::TOperator op, spv::Decoration precision, spv::Id typeId);
+    void addMeshNVDecoration(spv::Id id, int member, const glslang::TQualifier & qualifier);
+    spv::Id getExtBuiltins(const char* name);
 #endif
     spv::Id makeSmearedConstant(spv::Id constant, int vectorSize);
     spv::Id createMiscOperation(glslang::TOperator op, spv::Decoration precision, spv::Id typeId, std::vector<spv::Id>& operands, glslang::TBasicType typeProxy);
     spv::Id getSymbolId(const glslang::TIntermSymbol* node);
-#ifndef GLSLANG_WEB
-    void addMeshNVDecoration(spv::Id id, int member, const glslang::TQualifier & qualifier);
-#endif
     spv::Id createSpvConstant(const glslang::TIntermTyped&);
     spv::Id createSpvConstantFromConstUnionArray(const glslang::TType& type, const glslang::TConstUnionArray&, int& nextConst, bool specConstant);
     bool isTrivialLeaf(const glslang::TIntermTyped* node);
     bool isTrivial(const glslang::TIntermTyped* node);
     spv::Id createShortCircuit(glslang::TOperator, glslang::TIntermTyped& left, glslang::TIntermTyped& right);
-#ifndef GLSLANG_WEB
-    spv::Id getExtBuiltins(const char* name);
-#endif
     void addPre13Extension(const char* ext)
     {
         if (builder.getSpvVersion() < glslang::EShTargetSpv_1_3)
@@ -302,10 +298,10 @@ spv::ExecutionModel TranslateExecutionModel(EShLanguage stage)
 spv::Dim TranslateDimensionality(const glslang::TSampler& sampler)
 {
     switch (sampler.dim) {
-    case glslang::Esd1D:      return spv::Dim1D;
     case glslang::Esd2D:      return spv::Dim2D;
     case glslang::Esd3D:      return spv::Dim3D;
     case glslang::EsdCube:    return spv::DimCube;
+    case glslang::Esd1D:      return spv::Dim1D;
     case glslang::EsdRect:    return spv::DimRect;
     case glslang::EsdBuffer:  return spv::DimBuffer;
     case glslang::EsdSubpass: return spv::DimSubpassData;

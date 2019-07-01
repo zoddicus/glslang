@@ -575,8 +575,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["usampler3D"] =              USAMPLER3D;
     (*KeywordMap)["usamplerCube"] =            USAMPLERCUBE;
     (*KeywordMap)["usampler2DArray"] =         USAMPLER2DARRAY;
-    (*KeywordMap)["isampler2DRect"] =          ISAMPLER2DRECT;
-    (*KeywordMap)["usampler2DRect"] =          USAMPLER2DRECT;
     (*KeywordMap)["isamplerBuffer"] =          ISAMPLERBUFFER;
     (*KeywordMap)["usamplerBuffer"] =          USAMPLERBUFFER;
     (*KeywordMap)["sampler2DMS"] =             SAMPLER2DMS;
@@ -589,11 +587,13 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["sampler1DShadow"] =         SAMPLER1DSHADOW;
     (*KeywordMap)["sampler3D"] =               SAMPLER3D;
     (*KeywordMap)["sampler2DShadow"] =         SAMPLER2DSHADOW;
-    (*KeywordMap)["sampler2DRect"] =           SAMPLER2DRECT;
-    (*KeywordMap)["sampler2DRectShadow"] =     SAMPLER2DRECTSHADOW;
     (*KeywordMap)["sampler1DArray"] =          SAMPLER1DARRAY;
 
 #ifndef GLSLANG_WEB
+    (*KeywordMap)["isampler2DRect"] =          ISAMPLER2DRECT;
+    (*KeywordMap)["usampler2DRect"] =          USAMPLER2DRECT;
+    (*KeywordMap)["sampler2DRect"] =           SAMPLER2DRECT;
+    (*KeywordMap)["sampler2DRectShadow"] =     SAMPLER2DRECTSHADOW;
     (*KeywordMap)["samplerExternalOES"] =      SAMPLEREXTERNALOES; // GL_OES_EGL_image_external
     (*KeywordMap)["__samplerExternal2DY2YEXT"] = SAMPLEREXTERNAL2DY2YEXT; // GL_EXT_YUV_target
 #endif
@@ -840,13 +840,15 @@ int TScanContext::tokenize(TPpContext* pp, TParserToken& token)
 
         case PpAtomConstInt:           parserToken->sType.lex.i    = ppToken.ival;       return INTCONSTANT;
         case PpAtomConstUint:          parserToken->sType.lex.i    = ppToken.ival;       return UINTCONSTANT;
+        case PpAtomConstFloat:         parserToken->sType.lex.d    = ppToken.dval;       return FLOATCONSTANT;
+#ifndef GLSLANG_WEB
         case PpAtomConstInt16:         parserToken->sType.lex.i    = ppToken.ival;       return INT16CONSTANT;
         case PpAtomConstUint16:        parserToken->sType.lex.i    = ppToken.ival;       return UINT16CONSTANT;
         case PpAtomConstInt64:         parserToken->sType.lex.i64  = ppToken.i64val;     return INT64CONSTANT;
         case PpAtomConstUint64:        parserToken->sType.lex.i64  = ppToken.i64val;     return UINT64CONSTANT;
-        case PpAtomConstFloat:         parserToken->sType.lex.d    = ppToken.dval;       return FLOATCONSTANT;
         case PpAtomConstDouble:        parserToken->sType.lex.d    = ppToken.dval;       return DOUBLECONSTANT;
         case PpAtomConstFloat16:       parserToken->sType.lex.d    = ppToken.dval;       return FLOAT16CONSTANT;
+#endif
         case PpAtomIdentifier:
         {
             int token = tokenizeIdentifier();
@@ -1319,10 +1321,12 @@ int TScanContext::tokenizeIdentifier()
         afterType = true;
         return nonreservedKeyword(300, 130);
 
+#ifndef GLSLANG_WEB
     case ISAMPLER2DRECT:
     case USAMPLER2DRECT:
         afterType = true;
         return es30ReservedFromGLSL(140);
+#endif
 
     case SAMPLERBUFFER:
         afterType = true;
@@ -1379,6 +1383,7 @@ int TScanContext::tokenizeIdentifier()
         }
         return keyword;
 
+#ifndef GLSLANG_WEB
     case SAMPLER2DRECT:
     case SAMPLER2DRECTSHADOW:
         afterType = true;
@@ -1400,6 +1405,7 @@ int TScanContext::tokenizeIdentifier()
                  (parseContext.profile != EEsProfile && parseContext.version < 130))
             return identifierOrType();
         return keyword;
+#endif
 
     case SAMPLEREXTERNALOES:
         afterType = true;

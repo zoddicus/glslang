@@ -760,13 +760,12 @@ void TParseVersions::updateExtensionBehavior(int line, const char* extension, co
         return;
     }
 
-    // check if extension is used with correct shader stage
-    checkExtensionStage(getCurrentLoc(), extension);
-
     // update the requested extension
     updateExtensionBehavior(extension, behavior);
 
 #ifndef GLSLANG_WEB
+    // check if extension is used with correct shader stage
+    checkExtensionStage(getCurrentLoc(), extension);
     // see if need to propagate to implicitly modified things
     if (strcmp(extension, "GL_ANDROID_extension_pack_es31a") == 0) {
         // to everything in AEP
@@ -857,20 +856,6 @@ void TParseVersions::updateExtensionBehavior(const char* extension, TExtensionBe
     }
 }
 
-// Check if extension is used with correct shader stage.
-void TParseVersions::checkExtensionStage(const TSourceLoc& loc, const char * const extension)
-{
-#ifndef GLSLANG_WEB
-    // GL_NV_mesh_shader extension is only allowed in task/mesh shaders
-    if (strcmp(extension, "GL_NV_mesh_shader") == 0) {
-        requireStage(loc, (EShLanguageMask)(EShLangTaskNVMask | EShLangMeshNVMask | EShLangFragmentMask),
-                     "#extension GL_NV_mesh_shader");
-        profileRequires(loc, ECoreProfile, 450, 0, "#extension GL_NV_mesh_shader");
-        profileRequires(loc, EEsProfile, 320, 0, "#extension GL_NV_mesh_shader");
-    }
-#endif
-}
-
 // Call for any operation needing full GLSL integer data-type support.
 void TParseVersions::fullIntegerCheck(const TSourceLoc& loc, const char* op)
 {
@@ -879,6 +864,18 @@ void TParseVersions::fullIntegerCheck(const TSourceLoc& loc, const char* op)
 }
 
 #ifndef GLSLANG_WEB
+// Check if extension is used with correct shader stage.
+void TParseVersions::checkExtensionStage(const TSourceLoc& loc, const char * const extension)
+{
+    // GL_NV_mesh_shader extension is only allowed in task/mesh shaders
+    if (strcmp(extension, "GL_NV_mesh_shader") == 0) {
+        requireStage(loc, (EShLanguageMask)(EShLangTaskNVMask | EShLangMeshNVMask | EShLangFragmentMask),
+                     "#extension GL_NV_mesh_shader");
+        profileRequires(loc, ECoreProfile, 450, 0, "#extension GL_NV_mesh_shader");
+        profileRequires(loc, EEsProfile, 320, 0, "#extension GL_NV_mesh_shader");
+    }
+}
+
 // Call for any operation needing GLSL double data-type support.
 void TParseVersions::doubleCheck(const TSourceLoc& loc, const char* op)
 {
