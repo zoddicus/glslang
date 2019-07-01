@@ -616,8 +616,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["utexture3D"] =              UTEXTURE3D;
     (*KeywordMap)["utextureCube"] =            UTEXTURECUBE;
     (*KeywordMap)["utexture2DArray"] =         UTEXTURE2DARRAY;
-    (*KeywordMap)["itexture2DRect"] =          ITEXTURE2DRECT;
-    (*KeywordMap)["utexture2DRect"] =          UTEXTURE2DRECT;
     (*KeywordMap)["itextureBuffer"] =          ITEXTUREBUFFER;
     (*KeywordMap)["utextureBuffer"] =          UTEXTUREBUFFER;
     (*KeywordMap)["texture2DMS"] =             TEXTURE2DMS;
@@ -627,7 +625,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["itexture2DMSArray"] =       ITEXTURE2DMSARRAY;
     (*KeywordMap)["utexture2DMSArray"] =       UTEXTURE2DMSARRAY;
     (*KeywordMap)["texture3D"] =               TEXTURE3D;
-    (*KeywordMap)["texture2DRect"] =           TEXTURE2DRECT;
 
     (*KeywordMap)["subpassInput"] =            SUBPASSINPUT;
     (*KeywordMap)["subpassInputMS"] =          SUBPASSINPUTMS;
@@ -637,6 +634,9 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["usubpassInputMS"] =         USUBPASSINPUTMS;
 
 #ifndef GLSLANG_WEB
+    (*KeywordMap)["itexture2DRect"] =          ITEXTURE2DRECT;
+    (*KeywordMap)["utexture2DRect"] =          UTEXTURE2DRECT;
+    (*KeywordMap)["texture2DRect"] =           TEXTURE2DRECT;
     (*KeywordMap)["itexture1DArray"] =         ITEXTURE1DARRAY;
     (*KeywordMap)["utexture1D"] =              UTEXTURE1D;
     (*KeywordMap)["itexture1D"] =              ITEXTURE1D;
@@ -1407,7 +1407,6 @@ int TScanContext::tokenizeIdentifier()
                  (parseContext.profile != EEsProfile && parseContext.version < 130))
             return identifierOrType();
         return keyword;
-#endif
 
     case SAMPLEREXTERNALOES:
         afterType = true;
@@ -1423,6 +1422,7 @@ int TScanContext::tokenizeIdentifier()
             parseContext.extensionTurnedOn(E_GL_EXT_YUV_target))
             return keyword;
         return identifierOrType();
+#endif
 
     case TEXTURE2D:
     case TEXTURECUBE:
@@ -1439,8 +1439,6 @@ int TScanContext::tokenizeIdentifier()
     case UTEXTURE3D:
     case UTEXTURECUBE:
     case UTEXTURE2DARRAY:
-    case ITEXTURE2DRECT:
-    case UTEXTURE2DRECT:
     case ITEXTUREBUFFER:
     case UTEXTUREBUFFER:
     case TEXTURE2DMS:
@@ -1450,7 +1448,6 @@ int TScanContext::tokenizeIdentifier()
     case ITEXTURE2DMSARRAY:
     case UTEXTURE2DMSARRAY:
     case TEXTURE3D:
-    case TEXTURE2DRECT:
     case SAMPLER:
     case SAMPLERSHADOW:
         if (parseContext.spvVersion.vulkan > 0)
@@ -1470,6 +1467,9 @@ int TScanContext::tokenizeIdentifier()
             return identifierOrType();
 
 #ifndef GLSLANG_WEB
+    case ITEXTURE2DRECT:
+    case UTEXTURE2DRECT:
+    case TEXTURE2DRECT:
     case ITEXTURE1DARRAY:
     case UTEXTURE1D:
     case ITEXTURE1D:

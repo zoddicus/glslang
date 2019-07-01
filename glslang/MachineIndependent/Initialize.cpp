@@ -54,7 +54,7 @@
 #include "Initialize.h"
 
 #ifndef GLSLANG_WEB
-#define ES31
+#define ES310
 #endif
 
 namespace glslang {
@@ -213,7 +213,7 @@ const CommonBuiltInFunctions V130Functions[] = {
     { EOpNull, "", 0, TacV }
 };
 
-#ifdef ES31
+#ifdef ES310
 
 const CommonBuiltInFunctions V310Functions[] = {
     { EOpMix,              "mix",              3,   TacIULB   },
@@ -331,7 +331,7 @@ void TBuiltIns::addTabledBuiltins(int version, EProfile profile, const SpvVersio
     if (version >= 130)
         AddTabledBuiltins(commonBuiltins, V130Functions);
 
-#ifdef ES31
+#ifdef ES310
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 450))
         AddTabledBuiltins(commonBuiltins, V310Functions);
@@ -347,7 +347,7 @@ void TBuiltIns::relateTabledBuiltins(int version, EProfile profile, const SpvVer
     if (version >= 130)
         RelateTabledBuiltins(V130Functions, symbolTable);
 
-#ifdef ES31
+#ifdef ES310
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 450))
         RelateTabledBuiltins(V310Functions, symbolTable);
@@ -1164,7 +1164,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "\n");
     }
 
-#ifdef ES31
+#ifdef ES310
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
         commonBuiltins.append(
@@ -1247,7 +1247,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "\n");
     }
 
-#ifdef ES31
+#ifdef ES310
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
         commonBuiltins.append(
@@ -1456,7 +1456,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 #endif
 
     if (spvVersion.vulkan == 0) {
-#ifdef ES31
+#ifdef ES310
         //
         // Atomic counter functions.
         //
@@ -1489,7 +1489,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 #endif
     }
 
-#ifdef ES31
+#ifdef ES310
     // Bitfield
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
@@ -1518,7 +1518,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 #endif
 
-#ifdef ES31
+#ifdef ES310
     if (profile != EEsProfile && version >= 400) {
 #ifndef GLSLANG_WEB
         commonBuiltins.append(
@@ -1577,7 +1577,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 #endif
 
-#ifdef ES31
+#ifdef ES310
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 400)) {
         commonBuiltins.append(
@@ -4685,7 +4685,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
 #endif
 
-#ifdef ES31
+#ifdef ES310
     //============================================================================
     //
     // Prototypes for all control functions.
@@ -5109,7 +5109,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
 
 #endif
 
-#ifdef ES31
+#ifdef ES310
     //============================================================================
     //
     // Define the interface to the compute shader.
@@ -5408,7 +5408,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 #endif
 
-#ifdef ES31
+#ifdef ES310
     if ((profile != EEsProfile && version >= 140) ||
         (profile == EEsProfile && version >= 310)) {
         stageBuiltins[EShLangVertex].append(
@@ -5848,7 +5848,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
                 "highp   float gl_FragDepth;"    // needs qualifier fixed later
                 );
         }
-#ifdef ES31
+#ifdef ES310
         if (version >= 310) {
             stageBuiltins[EShLangFragment].append(
                 "bool gl_HelperInvocation;"          // needs qualifier fixed later
@@ -5931,7 +5931,7 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
     }
 #endif
 
-#ifdef ES31
+#ifdef ES310
 
     if ((profile != EEsProfile && version >= 140) ||
         (profile == EEsProfile && version >= 310)) {
@@ -6251,14 +6251,14 @@ void TBuiltIns::add2ndGenerationSamplingImaging(int version, EProfile profile, c
 
                             addQueryFunctions(sampler, typeName, version, profile);
 
-#ifdef ES31
+#ifdef ES310
                             if (image)
                                 addImageFunctions(sampler, typeName, version, profile);
                             else
 #endif
                             {
                                 addSamplingFunctions(sampler, typeName, version, profile);
-#ifdef ES31
+#ifdef ES310
                                 addGatherFunctions(sampler, typeName, version, profile);
 #endif
 
@@ -6418,7 +6418,7 @@ void TBuiltIns::addQueryFunctions(TSampler sampler, const TString& typeName, int
 //
 void TBuiltIns::addImageFunctions(TSampler sampler, const TString& typeName, int version, EProfile profile)
 {
-#ifdef ES31
+#ifdef ES310
     int dims = dimMap[sampler.dim];
     // most things with an array add a dimension, except for cubemaps
     if (sampler.arrayed && sampler.dim != EsdCube)
@@ -6910,7 +6910,7 @@ void TBuiltIns::addSamplingFunctions(TSampler sampler, const TString& typeName, 
 //
 void TBuiltIns::addGatherFunctions(TSampler sampler, const TString& typeName, int version, EProfile profile)
 {
-#ifdef ES31
+#ifdef ES310
     switch (sampler.dim) {
     case Esd2D:
     case EsdRect:
@@ -7507,7 +7507,7 @@ void TBuiltIns::initialize(const TBuiltInResource &resources, int version, EProf
 #endif
     }
 
-#ifdef ES31
+#ifdef ES310
     // images (some in compute below)
     if ((profile == EEsProfile && version >= 310) ||
         (profile != EEsProfile && version >= 130)) {
@@ -7564,7 +7564,7 @@ void TBuiltIns::initialize(const TBuiltInResource &resources, int version, EProf
     }
 #endif
 
-#ifdef ES31
+#ifdef ES310
     // compute
     if ((profile == EEsProfile && version >= 310) || (profile != EEsProfile && version >= 420)) {
         snprintf(builtInConstant, maxSize, "const ivec3 gl_MaxComputeWorkGroupCount = ivec3(%d,%d,%d);", resources.maxComputeWorkGroupCountX,
@@ -7997,7 +7997,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
 
 #endif
 
-#ifdef ES31
+#ifdef ES310
         if ((profile != EEsProfile && version >= 140) ||
             (profile == EEsProfile && version >= 310)) {
             symbolTable.setVariableExtensions("gl_DeviceIndex",  1, &E_GL_EXT_device_group);
@@ -8503,7 +8503,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
         break;
 
     case EShLangCompute:
-#ifdef ES31
+#ifdef ES310
         BuiltInVariable("gl_NumWorkGroups",         EbvNumWorkGroups,        symbolTable);
         BuiltInVariable("gl_WorkGroupSize",         EbvWorkGroupSize,        symbolTable);
         BuiltInVariable("gl_WorkGroupID",           EbvWorkGroupId,          symbolTable);
@@ -8992,7 +8992,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("floatBitsToUint", EOpFloatBitsToUint);
     symbolTable.relateToOperator("intBitsToFloat",  EOpIntBitsToFloat);
     symbolTable.relateToOperator("uintBitsToFloat", EOpUintBitsToFloat);
-#ifdef ES31
+#ifdef ES310
     symbolTable.relateToOperator("doubleBitsToInt64",  EOpDoubleBitsToInt64);
     symbolTable.relateToOperator("doubleBitsToUint64", EOpDoubleBitsToUint64);
     symbolTable.relateToOperator("int64BitsToDouble",  EOpInt64BitsToDouble);
@@ -9012,7 +9012,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("packUnorm2x16",   EOpPackUnorm2x16);
     symbolTable.relateToOperator("unpackUnorm2x16", EOpUnpackUnorm2x16);
 
-#ifdef ES31
+#ifdef ES310
     symbolTable.relateToOperator("packSnorm4x8",    EOpPackSnorm4x8);
     symbolTable.relateToOperator("unpackSnorm4x8",  EOpUnpackSnorm4x8);
     symbolTable.relateToOperator("packUnorm4x8",    EOpPackUnorm4x8);
@@ -9030,7 +9030,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("packUint2x32",    EOpPackUint2x32);
     symbolTable.relateToOperator("unpackUint2x32",  EOpUnpackUint2x32);
 
-#ifdef ES31
+#ifdef ES310
     symbolTable.relateToOperator("packInt2x16",     EOpPackInt2x16);
     symbolTable.relateToOperator("unpackInt2x16",   EOpUnpackInt2x16);
     symbolTable.relateToOperator("packUint2x16",    EOpPackUint2x16);
@@ -9058,7 +9058,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("controlBarrier",             EOpBarrier);
 #endif
 
-#ifdef ES31
+#ifdef ES310
     symbolTable.relateToOperator("barrier",                    EOpBarrier);
     symbolTable.relateToOperator("memoryBarrier",              EOpMemoryBarrier);
     symbolTable.relateToOperator("memoryBarrierAtomicCounter", EOpMemoryBarrierAtomicCounter);
@@ -9086,7 +9086,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
         symbolTable.relateToOperator("atomicCounterCompSwap", EOpAtomicCounterCompSwap);
     }
 #endif
-#ifdef ES31
+#ifdef ES310
     symbolTable.relateToOperator("fma",               EOpFma);
     symbolTable.relateToOperator("frexp",             EOpFrexp);
     symbolTable.relateToOperator("ldexp",             EOpLdexp);
@@ -9102,7 +9102,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
     symbolTable.relateToOperator("findMSB",           EOpFindMSB);
 #endif
     if (PureOperatorBuiltins) {
-#ifdef ES31
+#ifdef ES310
         symbolTable.relateToOperator("imageSize",               EOpImageQuerySize);
         symbolTable.relateToOperator("imageLoad",               EOpImageLoad);
         symbolTable.relateToOperator("imageStore",              EOpImageStore);
@@ -9426,7 +9426,7 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
 
 
     case EShLangCompute:
-#ifdef ES31
+#ifdef ES310
         symbolTable.relateToOperator("memoryBarrierShared",         EOpMemoryBarrierShared);
         symbolTable.relateToOperator("groupMemoryBarrier",          EOpGroupMemoryBarrier);
 #endif
