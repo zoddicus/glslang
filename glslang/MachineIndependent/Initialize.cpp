@@ -6159,13 +6159,18 @@ void TBuiltIns::add2ndGenerationSamplingImaging(int version, EProfile profile, c
 #endif
 
     // enumerate all the types
-    for (int image = 0; image <= 1; ++image) { // loop over "bool" image vs sampler
+#ifdef ES310
+    for (int image = 0; image <= 1; ++image) // loop over "bool" image vs sampler
+#else
+    const int image = 0;
+#endif
+    {
 
         for (int shadow = 0; shadow <= 1; ++shadow) { // loop over "bool" shadow or not
 #ifdef ES310
             for (int ms = 0; ms <= 1; ++ms)
 #else
-                const int ms = 0;
+            const int ms = 0;
 #endif
             {
 
@@ -6319,9 +6324,11 @@ void TBuiltIns::addQueryFunctions(TSampler sampler, const TString& typeName, int
         commonBuiltins.append("ivec");
         commonBuiltins.append(postfixes[sizeDims]);
     }
+#ifndef GLSLANG_WEB
     if (sampler.image)
         commonBuiltins.append(" imageSize(readonly writeonly volatile coherent ");
     else
+#endif
         commonBuiltins.append(" textureSize(");
     commonBuiltins.append(typeName);
     if (! sampler.image && sampler.dim != EsdRect && sampler.dim != EsdBuffer && ! sampler.ms)
