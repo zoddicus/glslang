@@ -80,13 +80,21 @@ public:
 #ifndef GLSLANG_WEB
     virtual void doubleCheck(const TSourceLoc&, const char* op);
     virtual void float16Check(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual void float16ScalarVectorCheck(const TSourceLoc&, const char* op, bool builtIn = false);
     virtual bool float16Arithmetic();
-    virtual bool int8Arithmetic();
+    virtual void int16ScalarVectorCheck(const TSourceLoc&, const char* op, bool builtIn = false);
     virtual bool int16Arithmetic();
     virtual void checkExtensionStage(const TSourceLoc&, const char* const extension);
     virtual void requireFloat16Arithmetic(const TSourceLoc& loc, const char* op, const char* featureDesc);
     virtual void requireInt16Arithmetic(const TSourceLoc& loc, const char* op, const char* featureDesc);
     virtual void float16OpaqueCheck(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual void explicitInt16Check(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual void explicitInt32Check(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual void explicitFloat32Check(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual void explicitFloat64Check(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual void int64Check(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual void int8ScalarVectorCheck(const TSourceLoc&, const char* op, bool builtIn = false);
+    virtual bool int8Arithmetic();
     virtual void requireInt8Arithmetic(const TSourceLoc& loc, const char* op, const char* featureDesc);
     virtual void fcoopmatCheck(const TSourceLoc&, const char* op, bool builtIn = false);
 #endif

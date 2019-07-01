@@ -964,6 +964,108 @@ void TParseVersions::requireInt8Arithmetic(const TSourceLoc& loc, const char* op
 
 }
 
+// Call for any operation needing GLSL float16 opaque-type support
+void TParseVersions::float16OpaqueCheck(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (! builtIn) {
+        requireExtensions(loc, 1, &E_GL_AMD_gpu_shader_half_float_fetch, op);
+        requireProfile(loc, ECoreProfile | ECompatibilityProfile, op);
+        profileRequires(loc, ECoreProfile | ECompatibilityProfile, 400, nullptr, op);
+    }
+}
+
+// Call for any operation needing GLSL explicit int16 data-type support.
+void TParseVersions::explicitInt16Check(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (! builtIn) {
+        const char* const extensions[] = {
+                                           E_GL_AMD_gpu_shader_int16,
+                                           E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_int16};
+        requireExtensions(loc, sizeof(extensions)/sizeof(extensions[0]), extensions, op);
+    }
+}
+
+void TParseVersions::int16ScalarVectorCheck(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (! builtIn) {
+    	const char* const extensions[] = {
+                                           E_GL_AMD_gpu_shader_int16,
+                                           E_GL_EXT_shader_16bit_storage,
+                                           E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_int16};
+        requireExtensions(loc, sizeof(extensions)/sizeof(extensions[0]), extensions, op);
+    }
+}
+
+void TParseVersions::int8ScalarVectorCheck(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (! builtIn) {
+    	const char* const extensions[] = {
+                                           E_GL_EXT_shader_8bit_storage,
+                                           E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_int8};
+        requireExtensions(loc, sizeof(extensions)/sizeof(extensions[0]), extensions, op);
+    }
+}
+
+// Call for any operation needing GLSL float32 data-type support.
+void TParseVersions::explicitFloat32Check(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (!builtIn) {
+        const char* const extensions[2] = {E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_float32};
+        requireExtensions(loc, 2, extensions, op);
+    }
+}
+
+// Call for any operation needing GLSL float64 data-type support.
+void TParseVersions::explicitFloat64Check(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (!builtIn) {
+        const char* const extensions[2] = {E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_float64};
+        requireExtensions(loc, 2, extensions, op);
+        requireProfile(loc, ECoreProfile | ECompatibilityProfile, op);
+        profileRequires(loc, ECoreProfile | ECompatibilityProfile, 400, nullptr, op);
+    }
+}
+
+void TParseVersions::float16ScalarVectorCheck(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (!builtIn) {
+        const char* const extensions[] = {
+                                           E_GL_AMD_gpu_shader_half_float,
+                                           E_GL_EXT_shader_16bit_storage,
+                                           E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_float16};
+        requireExtensions(loc, sizeof(extensions)/sizeof(extensions[0]), extensions, op);
+    }
+}
+
+// Call for any operation needing GLSL explicit int32 data-type support.
+void TParseVersions::explicitInt32Check(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (! builtIn) {
+        const char* const extensions[2] = {E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_int32};
+        requireExtensions(loc, 2, extensions, op);
+    }
+}
+
+// Call for any operation needing GLSL 64-bit integer data-type support.
+void TParseVersions::int64Check(const TSourceLoc& loc, const char* op, bool builtIn)
+{
+    if (! builtIn) {
+        const char* const extensions[3] = {E_GL_ARB_gpu_shader_int64,
+                                           E_GL_EXT_shader_explicit_arithmetic_types,
+                                           E_GL_EXT_shader_explicit_arithmetic_types_int64};
+        requireExtensions(loc, 3, extensions, op);
+        requireProfile(loc, ECoreProfile | ECompatibilityProfile, op);
+        profileRequires(loc, ECoreProfile | ECompatibilityProfile, 400, nullptr, op);
+    }
+}
+
 void TParseVersions::fcoopmatCheck(const TSourceLoc& loc, const char* op, bool builtIn)
 {
     if (!builtIn) {
