@@ -63,7 +63,6 @@
 
 #define SH_EXPORTING
 #include "../Public/ShaderLang.h"
-#include "reflection.h"
 #include "iomapper.h"
 #include "Initialize.h"
 
@@ -326,6 +325,7 @@ bool InitializeSymbolTables(TInfoSink& infoSink, TSymbolTable** commonTable,  TS
     InitializeStageSymbolTable(*builtInParseables, version, profile, spvVersion, EShLangFragment, source,
                                infoSink, commonTable, symbolTables);
 
+#ifndef GLSLANG_WEB
     // check for tessellation
     if ((profile != EEsProfile && version >= 150) ||
         (profile == EEsProfile && version >= 310)) {
@@ -347,7 +347,6 @@ bool InitializeSymbolTables(TInfoSink& infoSink, TSymbolTable** commonTable,  TS
         InitializeStageSymbolTable(*builtInParseables, version, profile, spvVersion, EShLangCompute, source,
                                    infoSink, commonTable, symbolTables);
 
-#ifdef NV_EXTENSIONS
     // check for ray tracing stages
     if (profile != EEsProfile && version >= 450) {
         InitializeStageSymbolTable(*builtInParseables, version, profile, spvVersion, EShLangRayGenNV, source,
@@ -376,8 +375,6 @@ bool InitializeSymbolTables(TInfoSink& infoSink, TSymbolTable** commonTable,  TS
         InitializeStageSymbolTable(*builtInParseables, version, profile, spvVersion, EShLangTaskNV, source,
                                    infoSink, commonTable, symbolTables);
 #endif
-
-
 
     return true;
 }
@@ -476,6 +473,7 @@ void SetupBuiltinSymbolTable(int version, EProfile profile, const SpvVersion& sp
     glslang::ReleaseGlobalLock();
 }
 
+#ifndef GLSLANG_WEB
 // Function to Print all builtins
 void DumpBuiltinSymbolTable(TInfoSink& infoSink, const TSymbolTable& symbolTable)
 {
@@ -485,6 +483,7 @@ void DumpBuiltinSymbolTable(TInfoSink& infoSink, const TSymbolTable& symbolTable
 
     infoSink.debug << "}\n";
 }
+#endif
 
 // Return true if the shader was correctly specified for version/profile/stage.
 bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNotFirst, int defaultVersion,
@@ -581,6 +580,7 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
         break;
     }
 
+#ifndef GLSLANG_WEB
     // Correct for stage type...
     switch (stage) {
     case EShLangGeometry:
@@ -612,7 +612,6 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
             version = profile == EEsProfile ? 310 : 420;
         }
         break;
-#ifdef NV_EXTENSIONS
     case EShLangRayGenNV:
     case EShLangIntersectNV:
     case EShLangAnyHitNV:
@@ -633,16 +632,17 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
             infoSink.info.message(EPrefixError, "#version: mesh/task shaders require es profile with version 320 or above, or non-es profile with version 450 or above");
             version = profile == EEsProfile ? 320 : 450;
         }
-#endif
     default:
         break;
     }
+#endif
 
     if (profile == EEsProfile && version >= 300 && versionNotFirst) {
         correct = false;
         infoSink.info.message(EPrefixError, "#version: statement must appear first in es-profile shader; before comments or newlines");
     }
 
+#ifndef GLSLANG_WEB
     // Check for SPIR-V compatibility
     if (spvVersion.spv != 0) {
         switch (profile) {
@@ -675,6 +675,7 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
             break;
         }
     }
+#endif
 
     return correct;
 }
@@ -837,8 +838,10 @@ bool ProcessDeferred(
     SpvVersion spvVersion;
     EShLanguage stage = compiler->getLanguage();
     TranslateEnvironment(environment, messages, source, stage, spvVersion);
+#ifndef GLSLANG_WEB
     if (environment != nullptr && environment->target.hlslFunctionality1)
         intermediate.setHlslFunctionality1();
+#endif
 
     // First, without using the preprocessor or parser, find the #version, so we know what
     // symbol tables, processing rules, etc. to set up.  This does not need the extra strings
@@ -917,8 +920,10 @@ bool ProcessDeferred(
         return false;
     }
 
+#ifndef GLSLANG_WEB
     if (messages & EShMsgBuiltinSymbolTable)
         DumpBuiltinSymbolTable(compiler->infoSink, *symbolTable);
+#endif
 
     //
     // Now we can process the full shader under proper symbols and rules.
@@ -1191,9 +1196,6 @@ struct DoFullParse{
             parseContext.infoSink.info.prefix(EPrefixError);
             parseContext.infoSink.info << parseContext.getNumErrors() << " compilation errors.  No code generated.\n\n";
         }
-
-        if (messages & EShMsgAST)
-            intermediate.output(parseContext.infoSink, true);
 
         return success;
     }
@@ -1852,7 +1854,7 @@ const char* TShader::getInfoDebugLog()
     return infoSink->debug.c_str();
 }
 
-TProgram::TProgram() : reflection(0), ioMapper(nullptr), linked(false)
+TProgram::TProgram() : ioMapper(nullptr), linked(false)
 {
     pool = new TPoolAllocator;
     infoSink = new TInfoSink;
@@ -1866,7 +1868,6 @@ TProgram::~TProgram()
 {
     delete ioMapper;
     delete infoSink;
-    delete reflection;
 
     for (int s = 0; s < EShLangCount; ++s)
         if (newedIntermediate[s])
@@ -1940,12 +1941,12 @@ bool TProgram::linkStage(EShLanguage stage, EShMessages messages)
                                                 firstIntermediate->getVersion(),
                                                 firstIntermediate->getProfile());
 
-
         // The new TIntermediate must use the same origin as the original TIntermediates.
         // Otherwise linking will fail due to different coordinate systems.
         if (firstIntermediate->getOriginUpperLeft()) {
             intermediate[stage]->setOriginUpperLeft();
         }
+
         intermediate[stage]->setSpv(firstIntermediate->getSpv());
 
         newedIntermediate[stage] = true;
@@ -1962,9 +1963,6 @@ bool TProgram::linkStage(EShLanguage stage, EShMessages messages)
 
     intermediate[stage]->finalCheck(*infoSink, (messages & EShMsgKeepUncalled) != 0);
 
-    if (messages & EShMsgAST)
-        intermediate[stage]->output(*infoSink, true);
-
     return intermediate[stage]->getNumErrors() == 0;
 }
 
@@ -1977,62 +1975,6 @@ const char* TProgram::getInfoDebugLog()
 {
     return infoSink->debug.c_str();
 }
-
-//
-// Reflection implementation.
-//
-
-bool TProgram::buildReflection(int opts)
-{
-    if (! linked || reflection)
-        return false;
-
-    int firstStage = EShLangVertex, lastStage = EShLangFragment;
-
-    if (opts & EShReflectionIntermediateIO) {
-        // if we're reflecting intermediate I/O, determine the first and last stage linked and use those as the
-        // boundaries for which stages generate pipeline inputs/outputs
-        firstStage = EShLangCount;
-        lastStage = 0;
-        for (int s = 0; s < EShLangCount; ++s) {
-            if (intermediate[s]) {
-                firstStage = std::min(firstStage, s);
-                lastStage = std::max(lastStage, s);
-            }
-        }
-    }
-
-    reflection = new TReflection((EShReflectionOptions)opts, (EShLanguage)firstStage, (EShLanguage)lastStage);
-
-    for (int s = 0; s < EShLangCount; ++s) {
-        if (intermediate[s]) {
-            if (! reflection->addStage((EShLanguage)s, *intermediate[s]))
-                return false;
-        }
-    }
-
-    return true;
-}
-
-unsigned TProgram::getLocalSize(int dim) const                      { return reflection->getLocalSize(dim); }
-int TProgram::getReflectionIndex(const char* name) const            { return reflection->getIndex(name); }
-
-int TProgram::getNumUniformVariables() const                          { return reflection->getNumUniforms(); }
-const TObjectReflection& TProgram::getUniform(int index) const        { return reflection->getUniform(index); }
-int TProgram::getNumUniformBlocks() const                             { return reflection->getNumUniformBlocks(); }
-const TObjectReflection& TProgram::getUniformBlock(int index) const   { return reflection->getUniformBlock(index); }
-int TProgram::getNumPipeInputs() const                                { return reflection->getNumPipeInputs(); }
-const TObjectReflection& TProgram::getPipeInput(int index) const      { return reflection->getPipeInput(index); }
-int TProgram::getNumPipeOutputs() const                               { return reflection->getNumPipeOutputs(); }
-const TObjectReflection& TProgram::getPipeOutput(int index) const     { return reflection->getPipeOutput(index); }
-int TProgram::getNumBufferVariables() const                           { return reflection->getNumBufferVariables(); }
-const TObjectReflection& TProgram::getBufferVariable(int index) const { return reflection->getBufferVariable(index); }
-int TProgram::getNumBufferBlocks() const                              { return reflection->getNumStorageBuffers(); }
-const TObjectReflection& TProgram::getBufferBlock(int index) const    { return reflection->getStorageBufferBlock(index); }
-int TProgram::getNumAtomicCounters() const                            { return reflection->getNumAtomicCounters(); }
-const TObjectReflection& TProgram::getAtomicCounter(int index) const  { return reflection->getAtomicCounter(index); }
-
-void TProgram::dumpReflection()                      { reflection->dump(); }
 
 //
 // I/O mapping implementation.

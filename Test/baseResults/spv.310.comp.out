@@ -4,8 +4,6 @@ spv.310.comp
 // Id's are bound by 72
 
                               Capability Shader
-                              Capability DeviceGroup
-                              Extension  "SPV_KHR_device_group"
                1:             ExtInstImport  "GLSL.std.450"
                               MemoryModel Logical GLSL450
                               EntryPoint GLCompute 4  "main" 53 65
@@ -51,7 +49,6 @@ spv.310.comp
                               Decorate 50(outnames) DescriptorSet 0
                               Decorate 50(outnames) Binding 0
                               Decorate 53(gl_LocalInvocationID) BuiltIn LocalInvocationId
-                              Decorate 65(gl_DeviceIndex) BuiltIn DeviceIndex
                               Decorate 71 BuiltIn WorkgroupSize
                2:             TypeVoid
                3:             TypeFunction 2

@@ -55,6 +55,7 @@
 
 namespace glslang {
 
+#ifndef GLSLANG_WEB
 //
 // The inductive loop-body traverser.
 //
@@ -194,5 +195,7 @@ void TParseContext::constantIndexExpressionCheck(TIntermNode* index)
     if (it.bad)
         error(it.badLoc, "Non-constant-index-expression", "limitations", "");
 }
+
+#endif
 
 } // end namespace glslang

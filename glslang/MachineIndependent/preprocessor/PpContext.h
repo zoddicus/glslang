@@ -461,7 +461,9 @@ protected:
     int evalToToken(int token, bool shortCircuit, int& res, bool& err, TPpToken * ppToken);
     int CPPif (TPpToken * ppToken);
     int CPPifdef(int defined, TPpToken * ppToken);
+#ifndef GLSLANG_WEB
     int CPPinclude(TPpToken * ppToken);
+#endif
     int CPPline(TPpToken * ppToken);
     int CPPerror(TPpToken * ppToken);
     int CPPpragma(TPpToken * ppToken);
