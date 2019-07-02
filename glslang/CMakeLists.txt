@@ -122,3 +122,13 @@ if(ENABLE_GLSLANG_INSTALL)
         install(FILES ${file} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/glslang/${dir})
     endforeach()
 endif(ENABLE_GLSLANG_INSTALL)
+
+if(EMSCRIPTEN)
+    add_executable(glslang.js glslang.js.cpp)
+    glslang_set_link_args(glslang.js)
+    target_link_libraries(glslang.js glslang SPIRV)
+    set_target_properties(glslang.js PROPERTIES
+      OUTPUT_NAME "glslang"
+      SUFFIX ".js"
+      LINK_FLAGS "--bind")
+endif()
