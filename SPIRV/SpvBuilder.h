@@ -42,6 +42,8 @@
 // A Builder has a 1:1 relationship with a SPIR-V module.
 //
 
+#define GLSLANG_WEB
+
 #pragma once
 #ifndef SpvBuilder_H
 #define SpvBuilder_H
@@ -262,12 +264,15 @@ public:
     Id makeUint16Constant(unsigned u, bool specConstant = false) { return makeIntConstant(makeUintType(16),           u, specConstant); }
     Id makeIntConstant(int i, bool specConstant = false)         { return makeIntConstant(makeIntType(32),  (unsigned)i, specConstant); }
     Id makeUintConstant(unsigned u, bool specConstant = false)   { return makeIntConstant(makeUintType(32),           u, specConstant); }
+
+    Id makeFloatConstant(float f, bool specConstant = false);
+    Id makeFpConstant(Id type, double d, bool specConstant = false);
+#ifndef GLSLANG_WEB
     Id makeInt64Constant(long long i, bool specConstant = false)            { return makeInt64Constant(makeIntType(64),  (unsigned long long)i, specConstant); }
     Id makeUint64Constant(unsigned long long u, bool specConstant = false)  { return makeInt64Constant(makeUintType(64),                     u, specConstant); }
-    Id makeFloatConstant(float f, bool specConstant = false);
     Id makeDoubleConstant(double d, bool specConstant = false);
     Id makeFloat16Constant(float f16, bool specConstant = false);
-    Id makeFpConstant(Id type, double d, bool specConstant = false);
+#endif
 
     // Turn the array of constants into a proper spv constant of the requested type.
     Id makeCompositeConstant(Id type, const std::vector<Id>& comps, bool specConst = false);
@@ -656,16 +661,17 @@ public:
     // based on the type of the base and the chain of dereferences.
     Id accessChainGetInferredType();
 
+#ifndef GLSLANG_WEB
     // Add capabilities, extensions, remove unneeded decorations, etc., 
     // based on the resulting SPIR-V.
     void postProcess();
-
     // Hook to visit each instruction in a block in a function
     void postProcess(Instruction&);
     // Hook to visit each instruction in a reachable block in a function.
     void postProcessReachable(const Instruction&);
     // Hook to visit each non-32-bit sized float/int operation in a block.
     void postProcessType(const Instruction&, spv::Id typeId);
+#endif
 
     void dump(std::vector<unsigned int>&) const;
 
@@ -682,7 +688,9 @@ public:
 
  protected:
     Id makeIntConstant(Id typeId, unsigned value, bool specConstant);
+#ifndef GLSLANG_WEB
     Id makeInt64Constant(Id typeId, unsigned long long value, bool specConstant);
+#endif
     Id findScalarConstant(Op typeClass, Op opcode, Id typeId, unsigned value);
     Id findScalarConstant(Op typeClass, Op opcode, Id typeId, unsigned v1, unsigned v2);
     Id findCompositeConstant(Op typeClass, Id typeId, const std::vector<Id>& comps);

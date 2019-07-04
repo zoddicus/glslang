@@ -615,6 +615,8 @@ int TPpContext::CPPifdef(int defined, TPpToken* ppToken)
     return token;
 }
 
+#ifndef GLSLANG_WEB
+
 // Handle #include ...
 // TODO: Handle macro expansions for the header name
 int TPpContext::CPPinclude(TPpToken* ppToken)
@@ -689,6 +691,8 @@ int TPpContext::CPPinclude(TPpToken* ppToken)
 
     return token;
 }
+
+#endif
 
 // Handle #line
 int TPpContext::CPPline(TPpToken* ppToken)
@@ -792,10 +796,8 @@ int TPpContext::CPPpragma(TPpToken* ppToken)
         case PpAtomConstUint:
         case PpAtomConstInt64:
         case PpAtomConstUint64:
-#ifdef AMD_EXTENSIONS
         case PpAtomConstInt16:
         case PpAtomConstUint16:
-#endif
         case PpAtomConstFloat:
         case PpAtomConstDouble:
         case PpAtomConstFloat16:
@@ -955,10 +957,12 @@ int TPpContext::readCPPline(TPpToken* ppToken)
             token = CPPifdef(0, ppToken);
             break;
         case PpAtomInclude:
+#ifndef GLSLANG_WEB
             if(!parseContext.isReadingHLSL()) {
                 parseContext.ppRequireExtensions(ppToken->loc, 1, &E_GL_GOOGLE_include_directive, "#include");
             }
             token = CPPinclude(ppToken);
+#endif
             break;
         case PpAtomLine:
             token = CPPline(ppToken);

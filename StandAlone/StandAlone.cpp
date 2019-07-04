@@ -255,7 +255,6 @@ const char* GetBinaryName(EShLanguage stage)
         case EShLangGeometry:        name = "geom.spv";    break;
         case EShLangFragment:        name = "frag.spv";    break;
         case EShLangCompute:         name = "comp.spv";    break;
-#ifdef NV_EXTENSIONS
         case EShLangRayGenNV:        name = "rgen.spv";    break;
         case EShLangIntersectNV:     name = "rint.spv";    break;
         case EShLangAnyHitNV:        name = "rahit.spv";   break;
@@ -264,7 +263,6 @@ const char* GetBinaryName(EShLanguage stage)
         case EShLangCallableNV:      name = "rcall.spv";   break;
         case EShLangMeshNV:          name = "mesh.spv";    break;
         case EShLangTaskNV:          name = "task.spv";    break;
-#endif
         default:                     name = "unknown";     break;
         }
     } else
@@ -1071,12 +1069,6 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
         PutsIfNonEmpty(program.getInfoDebugLog());
     }
 
-    // Reflect
-    if (Options & EOptionDumpReflection) {
-        program.buildReflection(ReflectOptions);
-        program.dumpReflection();
-    }
-
     // Dump SPIR-V
     if (Options & EOptionSpv) {
         if (CompileFailed || LinkFailed)
@@ -1105,8 +1097,6 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
                         } else {
                             glslang::OutputSpvBin(spirv, GetBinaryName((EShLanguage)stage));
                         }
-                        if (!SpvToolsDisassembler && (Options & EOptionHumanReadableSpv))
-                            spv::Disassemble(std::cout, spirv);
                     }
                 }
             }
@@ -1194,11 +1184,13 @@ int singleMain()
         workList.add(item.get());
     });
 
+#ifndef GLSLANG_WEB
     if (Options & EOptionDumpConfig) {
         printf("%s", glslang::GetDefaultTBuiltInResourceString().c_str());
         if (workList.empty())
             return ESuccess;
     }
+#endif
 
     if (Options & EOptionDumpBareVersion) {
         printf("%d.%d.%d\n",
@@ -1360,17 +1352,16 @@ EShLanguage FindLanguage(const std::string& name, bool parseStageName)
 
     if (stageName == "vert")
         return EShLangVertex;
+    else if (stageName == "frag")
+        return EShLangFragment;
     else if (stageName == "tesc")
         return EShLangTessControl;
     else if (stageName == "tese")
         return EShLangTessEvaluation;
     else if (stageName == "geom")
         return EShLangGeometry;
-    else if (stageName == "frag")
-        return EShLangFragment;
     else if (stageName == "comp")
         return EShLangCompute;
-#ifdef NV_EXTENSIONS
     else if (stageName == "rgen")
         return EShLangRayGenNV;
     else if (stageName == "rint")
@@ -1387,7 +1378,6 @@ EShLanguage FindLanguage(const std::string& name, bool parseStageName)
         return EShLangMeshNV;
     else if (stageName == "task")
         return EShLangTaskNV;
-#endif
 
     usage();
     return EShLangVertex;
@@ -1457,7 +1447,6 @@ void usage()
            "    .geom   for a geometry shader\n"
            "    .frag   for a fragment shader\n"
            "    .comp   for a compute shader\n"
-#ifdef NV_EXTENSIONS
            "    .mesh   for a mesh shader\n"
            "    .task   for a task shader\n"
            "    .rgen    for a ray generation shader\n"
@@ -1466,7 +1455,6 @@ void usage()
            "    .rchit   for a ray closest hit shader\n"
            "    .rmiss   for a ray miss shader\n"
            "    .rcall   for a ray callable shader\n"
-#endif
            "    .glsl   for .vert.glsl, .tesc.glsl, ..., .comp.glsl compound suffixes\n"
            "    .hlsl   for .vert.hlsl, .tesc.hlsl, ..., .comp.hlsl compound suffixes\n"
            "\n"

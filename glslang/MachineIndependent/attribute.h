@@ -34,6 +34,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#ifndef GLSLANG_WEB
+
 #ifndef _ATTRIBUTE_INCLUDED_
 #define _ATTRIBUTE_INCLUDED_
 
@@ -105,3 +107,5 @@ namespace glslang {
 } // end namespace glslang
 
 #endif // _ATTRIBUTE_INCLUDED_
+
+#endif
