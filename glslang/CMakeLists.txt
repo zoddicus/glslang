@@ -123,10 +123,10 @@ if(ENABLE_GLSLANG_INSTALL)
     endforeach()
 endif(ENABLE_GLSLANG_INSTALL)
 
+add_executable(glslang.js glslang.js.cpp)
+glslang_set_link_args(glslang.js)
+target_link_libraries(glslang.js glslang SPIRV)
 if(EMSCRIPTEN)
-    add_executable(glslang.js glslang.js.cpp)
-    glslang_set_link_args(glslang.js)
-    target_link_libraries(glslang.js glslang SPIRV)
     set_target_properties(glslang.js PROPERTIES
       OUTPUT_NAME "glslang"
       SUFFIX ".js"

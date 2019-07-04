@@ -13,7 +13,9 @@
 // limitations under the License.
 
 #include <cstdio>
+#ifdef __EMSCRIPTEN__
 #include <emscripten.h>
+#endif  // __EMSCRIPTEN__
 #include <memory>
 
 #include "../SPIRV/GlslangToSpv.h"
@@ -146,7 +148,9 @@ const TBuiltInResource DefaultTBuiltInResource = {
  *
  * Return 0 on success, non-0 on failure.
  */
+#ifdef __EMSCRIPTEN__
 EMSCRIPTEN_KEEPALIVE
+#endif  // __EMSCRIPTEN__
 int convert_glsl_to_spirv(const char* glsl, int shader_type, unsigned int** spirv, size_t* spirv_len, bool gen_debug)
 {
     int ret_val = 0;
@@ -202,13 +206,17 @@ int convert_glsl_to_spirv(const char* glsl, int shader_type, unsigned int** spir
  *
  * Must be destroyed later using destroy_input_buffer.
  */
+#ifdef __EMSCRIPTEN__
 EMSCRIPTEN_KEEPALIVE
+#endif  // __EMSCRIPTEN__
 char* create_input_buffer(int count) { return static_cast<char*>(malloc(count * sizeof(char))); }
 
 /*
  * Destroys a buffer created by create_input_buffer
  */
+#ifdef __EMSCRIPTEN__
 EMSCRIPTEN_KEEPALIVE
+#endif  // __EMSCRIPTEN__
 void destroy_input_buffer(char* p)
 {
     if (p != nullptr)
@@ -218,9 +226,35 @@ void destroy_input_buffer(char* p)
 /*
  * Destroys a buffer created by convert_glsl_to_spirv
  */
+#ifdef __EMSCRIPTEN__
 EMSCRIPTEN_KEEPALIVE
+#endif  // __EMSCRIPTEN__
 void destroy_ouput_buffer(unsigned int* p)
 {
     if (p != nullptr)
         free(p);
 }
+
+#ifndef __EMSCRIPTEN__
+int main() {
+    const char* input_text = R"(#version 330
+
+void main()
+{
+    gl_FragColor = vec4(0.4, 0.4, 0.8, 1.0);
+})";
+
+    char* input;
+    unsigned int* output;
+    size_t output_len;
+
+    input = create_input_buffer(sizeof(input_text));
+    assert(input != nullptr);
+    memcpy(input, input_text, sizeof(input_text));
+
+    convert_glsl_to_spirv(input, 4, &output, &output_len, false);
+    destroy_ouput_buffer(output);
+    destroy_input_buffer(input);
+    return 0;
+}
+#endif  // !__EMSCRIPTEN__
