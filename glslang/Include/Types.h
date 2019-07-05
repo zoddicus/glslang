@@ -1594,18 +1594,26 @@ public:
     virtual void setArrayVariablyIndexed() { assert(isArray()); arraySizes->setVariablyIndexed(); }
     virtual void updateImplicitArraySize(int size) { assert(isArray()); arraySizes->updateImplicitSize(size); }
     virtual bool isStruct() const { return basicType == EbtStruct || basicType == EbtBlock; }
+#ifndef GLSLANG_WEB
     virtual bool isFloatingDomain() const { return basicType == EbtFloat || basicType == EbtDouble || basicType == EbtFloat16; }
+#else
+    virtual bool isFloatingDomain() const { return basicType == EbtFloat || basicType == EbtDouble; }
+#endif
     virtual bool isIntegerDomain() const
     {
         switch (basicType) {
+#ifndef GLSLANG_WEB
         case EbtInt8:
         case EbtUint8:
         case EbtInt16:
         case EbtUint16:
+#endif
         case EbtInt:
         case EbtUint:
+#ifndef GLSLANG_WEB
         case EbtInt64:
         case EbtUint64:
+#endif
         case EbtAtomicUint:
             return true;
         default:
@@ -1710,6 +1718,7 @@ public:
         return contains([](const TType* t) { return t->isArray() && t->arraySizes->isOuterSpecialization(); } );
     }
 
+#ifndef GLSLANG_WEB
     virtual bool contains16BitInt() const
     {
         return containsBasicType(EbtInt16) || containsBasicType(EbtUint16);
@@ -1719,7 +1728,7 @@ public:
     {
         return containsBasicType(EbtInt8) || containsBasicType(EbtUint8);
     }
-
+#endif
     virtual bool containsCoopMat() const
     {
         return contains([](const TType* t) { return t->coopmat; } );
@@ -1851,6 +1860,7 @@ public:
         case EbtBlock:             return "block";
         case EbtAtomicUint:        return "atomic_uint";
         case EbtDouble:            return "double";
+#ifndef GLSLANG_WEB
         case EbtFloat16:           return "float16_t";
         case EbtInt8:              return "int8_t";
         case EbtUint8:             return "uint8_t";
@@ -1858,6 +1868,7 @@ public:
         case EbtUint16:            return "uint16_t";
         case EbtInt64:             return "int64_t";
         case EbtUint64:            return "uint64_t";
+#endif
         case EbtAccStructNV:       return "accelerationStructureNV";
         case EbtReference:         return "reference";
         default:                   return "unknown type";

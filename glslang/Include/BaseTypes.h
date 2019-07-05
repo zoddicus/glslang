@@ -47,15 +47,19 @@ enum TBasicType {
     EbtVoid,
     EbtFloat,
     EbtDouble,
+#ifndef GLSLANG_WEB
     EbtFloat16,
     EbtInt8,
     EbtUint8,
     EbtInt16,
     EbtUint16,
+#endif  // !GLSLANG_WEB
     EbtInt,
     EbtUint,
+#ifndef GLSLANG_WEB
     EbtInt64,
     EbtUint64,
+#endif  // !GLSLANG_WEB
     EbtBool,
     EbtAtomicUint,
     EbtSampler,
@@ -488,10 +492,14 @@ __inline const char* GetBuiltInVariableString(TBuiltInVariable v)
 __inline bool isTypeSignedInt(TBasicType type)
 {
     switch (type) {
+#ifndef GLSLANG_WEB
     case EbtInt8:
     case EbtInt16:
+#endif
     case EbtInt:
+#ifndef GLSLANG_WEB
     case EbtInt64:
+#endif
         return true;
     default:
         return false;
@@ -501,10 +509,14 @@ __inline bool isTypeSignedInt(TBasicType type)
 __inline bool isTypeUnsignedInt(TBasicType type)
 {
     switch (type) {
+#ifndef GLSLANG_WEB
     case EbtUint8:
     case EbtUint16:
+#endif
     case EbtUint:
+#ifndef GLSLANG_WEB
     case EbtUint64:
+#endif
         return true;
     default:
         return false;
@@ -521,7 +533,9 @@ __inline bool isTypeFloat(TBasicType type)
     switch (type) {
     case EbtFloat:
     case EbtDouble:
+#ifndef GLSLANG_WEB
     case EbtFloat16:
+#endif
         return true;
     default:
         return false;
@@ -531,6 +545,7 @@ __inline bool isTypeFloat(TBasicType type)
 __inline int getTypeRank(TBasicType type) {
     int res = -1;
     switch(type) {
+#ifndef GLSLANG_WEB
     case EbtInt8:
     case EbtUint8:
         res = 0;
@@ -539,14 +554,17 @@ __inline int getTypeRank(TBasicType type) {
     case EbtUint16:
         res = 1;
         break;
+#endif
     case EbtInt:
     case EbtUint:
         res = 2;
         break;
+#ifndef GLSLANG_WEB
     case EbtInt64:
     case EbtUint64:
         res = 3;
         break;
+#endif
     default:
         assert(false);
         break;

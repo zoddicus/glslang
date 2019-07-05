@@ -257,13 +257,19 @@ const char* const E_GL_OES_texture_cube_map_array               = "GL_OES_textur
 
 // KHX
 const char* const E_GL_EXT_shader_explicit_arithmetic_types          = "GL_EXT_shader_explicit_arithmetic_types";
+#ifndef GLSLANG_WEB
 const char* const E_GL_EXT_shader_explicit_arithmetic_types_int8     = "GL_EXT_shader_explicit_arithmetic_types_int8";
 const char* const E_GL_EXT_shader_explicit_arithmetic_types_int16    = "GL_EXT_shader_explicit_arithmetic_types_int16";
+#endif  // !GLSLANG_WEB
 const char* const E_GL_EXT_shader_explicit_arithmetic_types_int32    = "GL_EXT_shader_explicit_arithmetic_types_int32";
+#ifndef GLSLANG_WEB
 const char* const E_GL_EXT_shader_explicit_arithmetic_types_int64    = "GL_EXT_shader_explicit_arithmetic_types_int64";
 const char* const E_GL_EXT_shader_explicit_arithmetic_types_float16  = "GL_EXT_shader_explicit_arithmetic_types_float16";
+#endif  // !GLSLANG_WEB
 const char* const E_GL_EXT_shader_explicit_arithmetic_types_float32  = "GL_EXT_shader_explicit_arithmetic_types_float32";
+#ifndef GLSLANG_WEB
 const char* const E_GL_EXT_shader_explicit_arithmetic_types_float64  = "GL_EXT_shader_explicit_arithmetic_types_float64";
+#endif  // !GLSLANG_WEB
 
 // Arrays of extensions for the above AEP duplications
 

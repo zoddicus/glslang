@@ -179,6 +179,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
             switch (getType().getBasicType()) {
             case EbtDouble:
             case EbtFloat:
+#ifndef GLSLANG_WEB
             case EbtFloat16:
                 if (rightUnionArray[i].getDConst() != 0.0)
                     newConstArray[i].setDConst(leftUnionArray[i].getDConst() / rightUnionArray[i].getDConst());
@@ -189,6 +190,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TIntermTyped* right
                 else
                     newConstArray[i].setDConst((double)NAN);
                 break;
+#endif
             case EbtInt:
                 if (rightUnionArray[i] == 0)
                     newConstArray[i].setIConst(0x7FFFFFFF);
@@ -526,7 +528,9 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
         case EOpNegative:
             switch (getType().getBasicType()) {
             case EbtDouble:
+#ifndef GLSLANG_WEB
             case EbtFloat16:
+#endif
             case EbtFloat: newConstArray[i].setDConst(-unionArray[i].getDConst()); break;
             case EbtInt:   newConstArray[i].setIConst(-unionArray[i].getIConst()); break;
             case EbtUint:  newConstArray[i].setUConst(static_cast<unsigned int>(-static_cast<int>(unionArray[i].getUConst())));  break;
@@ -964,6 +968,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
         case EOpFloatBitsToUint:
         case EOpIntBitsToFloat:
         case EOpUintBitsToFloat:
+#ifndef GLSLANG_WEB
         case EOpDoubleBitsToInt64:
         case EOpDoubleBitsToUint64:
         case EOpInt64BitsToDouble:
@@ -972,6 +977,7 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
         case EOpFloat16BitsToUint16:
         case EOpInt16BitsToFloat16:
         case EOpUint16BitsToFloat16:
+#endif
         default:
             return 0;
         }
@@ -1076,7 +1082,9 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                 break;
             case EOpMin:
                 switch(children[0]->getAsTyped()->getBasicType()) {
+#ifndef GLSLANG_WEB
                 case EbtFloat16:
+#endif
                 case EbtFloat:
                 case EbtDouble:
                     newConstArray[comp].setDConst(std::min(childConstUnions[0][arg0comp].getDConst(), childConstUnions[1][arg1comp].getDConst()));
@@ -1112,7 +1120,9 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                 break;
             case EOpMax:
                 switch(children[0]->getAsTyped()->getBasicType()) {
+#ifndef GLSLANG_WEB
                 case EbtFloat16:
+#endif
                 case EbtFloat:
                 case EbtDouble:
                     newConstArray[comp].setDConst(std::max(childConstUnions[0][arg0comp].getDConst(), childConstUnions[1][arg1comp].getDConst()));
@@ -1148,7 +1158,9 @@ TIntermTyped* TIntermediate::fold(TIntermAggregate* aggrNode)
                 break;
             case EOpClamp:
                 switch(children[0]->getAsTyped()->getBasicType()) {
+#ifndef GLSLANG_WEB
                 case EbtFloat16:
+#endif
                 case EbtFloat:
                 case EbtDouble:
                     newConstArray[comp].setDConst(std::min(std::max(childConstUnions[0][arg0comp].getDConst(), childConstUnions[1][arg1comp].getDConst()),

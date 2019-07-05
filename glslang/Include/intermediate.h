@@ -88,35 +88,48 @@ enum TOperator {
     EOpCopyObject,
 
     // (u)int* -> bool
+#ifndef GLSLANG_WEB
     EOpConvInt8ToBool,
     EOpConvUint8ToBool,
     EOpConvInt16ToBool,
     EOpConvUint16ToBool,
+#endif
     EOpConvIntToBool,
     EOpConvUintToBool,
+#ifndef GLSLANG_WEB
     EOpConvInt64ToBool,
     EOpConvUint64ToBool,
+#endif
 
     // float* -> bool
+#ifndef GLSLANG_WEB
     EOpConvFloat16ToBool,
+#endif
     EOpConvFloatToBool,
     EOpConvDoubleToBool,
 
     // bool -> (u)int*
+#ifndef GLSLANG_WEB
     EOpConvBoolToInt8,
     EOpConvBoolToUint8,
     EOpConvBoolToInt16,
     EOpConvBoolToUint16,
+#endif
     EOpConvBoolToInt,
     EOpConvBoolToUint,
+#ifndef GLSLANG_WEB
     EOpConvBoolToInt64,
     EOpConvBoolToUint64,
+#endif
 
     // bool -> float*
+#ifndef GLSLANG_WEB
     EOpConvBoolToFloat16,
+#endif
     EOpConvBoolToFloat,
     EOpConvBoolToDouble,
 
+#ifndef GLSLANG_WEB
     // int8_t -> (u)int*
     EOpConvInt8ToInt16,
     EOpConvInt8ToInt,
@@ -172,35 +185,49 @@ enum TOperator {
     EOpConvUint16ToFloat16,
     EOpConvUint16ToFloat,
     EOpConvUint16ToDouble,
+#endif
 
     // int32_t -> (u)int*
+#ifndef GLSLANG_WEB
     EOpConvIntToInt8,
     EOpConvIntToInt16,
     EOpConvIntToInt64,
     EOpConvIntToUint8,
     EOpConvIntToUint16,
+#endif
     EOpConvIntToUint,
+#ifndef GLSLANG_WEB
     EOpConvIntToUint64,
+#endif
 
     // uint32_t -> (u)int*
+#ifndef GLSLANG_WEB
     EOpConvUintToInt8,
     EOpConvUintToInt16,
+#endif
     EOpConvUintToInt,
+#ifndef GLSLANG_WEB
     EOpConvUintToInt64,
     EOpConvUintToUint8,
     EOpConvUintToUint16,
     EOpConvUintToUint64,
+#endif
 
     // int32_t -> float*
+#ifndef GLSLANG_WEB
     EOpConvIntToFloat16,
+#endif
     EOpConvIntToFloat,
     EOpConvIntToDouble,
 
     // uint32_t -> float*
+#ifndef GLSLANG_WEB
     EOpConvUintToFloat16,
+#endif
     EOpConvUintToFloat,
     EOpConvUintToDouble,
 
+#ifndef GLSLANG_WEB
     // int64_t -> (u)int*
     EOpConvInt64ToInt8,
     EOpConvInt64ToInt16,
@@ -242,38 +269,57 @@ enum TOperator {
     // float16_t -> float*
     EOpConvFloat16ToFloat,
     EOpConvFloat16ToDouble,
+#endif
 
     // float -> (u)int*
+#ifndef GLSLANG_WEB
     EOpConvFloatToInt8,
     EOpConvFloatToInt16,
+#endif
     EOpConvFloatToInt,
+#ifndef GLSLANG_WEB
     EOpConvFloatToInt64,
     EOpConvFloatToUint8,
     EOpConvFloatToUint16,
-    EOpConvFloatToUint,
+#endif
+  EOpConvFloatToUint,
+#ifndef GLSLANG_WEB
     EOpConvFloatToUint64,
+#endif
 
     // float -> float*
+#ifndef GLSLANG_WEB
     EOpConvFloatToFloat16,
+#endif
     EOpConvFloatToDouble,
 
     // float64 _t-> (u)int*
+#ifndef GLSLANG_WEB
     EOpConvDoubleToInt8,
     EOpConvDoubleToInt16,
+#endif
     EOpConvDoubleToInt,
+#ifndef GLSLANG_WEB
     EOpConvDoubleToInt64,
     EOpConvDoubleToUint8,
     EOpConvDoubleToUint16,
+#endif
     EOpConvDoubleToUint,
+#ifndef GLSLANG_WEB
     EOpConvDoubleToUint64,
+#endif
 
     // float64_t -> float*
+#ifndef GLSLANG_WEB
     EOpConvDoubleToFloat16,
+#endif
     EOpConvDoubleToFloat,
 
+#ifndef GLSLANG_WEB
     // uint64_t <-> pointer
     EOpConvUint64ToPtr,
     EOpConvPtrToUint64,
+#endif
 
     //
     // binary operations
@@ -372,6 +418,7 @@ enum TOperator {
     EOpFloatBitsToUint,
     EOpIntBitsToFloat,
     EOpUintBitsToFloat,
+#ifndef GLSLANG_WEB
     EOpDoubleBitsToInt64,
     EOpDoubleBitsToUint64,
     EOpInt64BitsToDouble,
@@ -380,6 +427,7 @@ enum TOperator {
     EOpFloat16BitsToUint16,
     EOpInt16BitsToFloat16,
     EOpUint16BitsToFloat16,
+#endif
     EOpPackSnorm2x16,
     EOpUnpackSnorm2x16,
     EOpPackUnorm2x16,
@@ -635,12 +683,14 @@ enum TOperator {
     EOpConstructGuardStart,
     EOpConstructInt,          // these first scalar forms also identify what implicit conversion is needed
     EOpConstructUint,
+#ifndef GLSLANG_WEB
     EOpConstructInt8,
     EOpConstructUint8,
     EOpConstructInt16,
     EOpConstructUint16,
     EOpConstructInt64,
     EOpConstructUint64,
+#endif  // !GLSLANG_WEB
     EOpConstructBool,
     EOpConstructFloat,
     EOpConstructDouble,
@@ -653,6 +703,7 @@ enum TOperator {
     EOpConstructBVec2,
     EOpConstructBVec3,
     EOpConstructBVec4,
+#ifndef GLSLANG_WEB
     EOpConstructI8Vec2,
     EOpConstructI8Vec3,
     EOpConstructI8Vec4,
@@ -665,18 +716,21 @@ enum TOperator {
     EOpConstructU16Vec2,
     EOpConstructU16Vec3,
     EOpConstructU16Vec4,
+#endif  // !GLSLANG_WEB
     EOpConstructIVec2,
     EOpConstructIVec3,
     EOpConstructIVec4,
     EOpConstructUVec2,
     EOpConstructUVec3,
     EOpConstructUVec4,
+#ifndef GLSLANG_WEB
     EOpConstructI64Vec2,
     EOpConstructI64Vec3,
     EOpConstructI64Vec4,
     EOpConstructU64Vec2,
     EOpConstructU64Vec3,
     EOpConstructU64Vec4,
+#endif  // !GLSLANG_WEB
     EOpConstructMat2x2,
     EOpConstructMat2x3,
     EOpConstructMat2x4,
@@ -722,6 +776,7 @@ enum TOperator {
     EOpConstructBMat4x2,
     EOpConstructBMat4x3,
     EOpConstructBMat4x4,
+#ifndef GLSLANG_WEB
     EOpConstructFloat16,
     EOpConstructF16Vec2,
     EOpConstructF16Vec3,
@@ -735,6 +790,7 @@ enum TOperator {
     EOpConstructF16Mat4x2,
     EOpConstructF16Mat4x3,
     EOpConstructF16Mat4x4,
+#endif  // !GLSLANG_WEB
     EOpConstructStruct,
     EOpConstructTextureSampler,
     EOpConstructNonuniform,     // expected to be transformed away, not present in final AST
@@ -924,8 +980,10 @@ enum TOperator {
     EOpWorkgroupMemoryBarrier,           // ...
     EOpWorkgroupMemoryBarrierWithGroupSync, // ...
     EOpEvaluateAttributeSnapped,         // InterpolateAtOffset with int position on 16x16 grid
+#ifndef GLSLANG_WEB
     EOpF32tof16,                         // HLSL conversion: half of a PackHalf2x16
     EOpF16tof32,                         // HLSL conversion: half of an UnpackHalf2x16
+#endif
     EOpLit,                              // HLSL lighting coefficient vector
     EOpTextureBias,                      // HLSL texture bias: will be lowered to EOpTexture
     EOpAsDouble,                         // slightly different from EOpUint64BitsToDouble

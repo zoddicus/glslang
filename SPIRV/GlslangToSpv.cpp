@@ -2349,6 +2349,7 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     case glslang::EOpConstructBMat4x2:
     case glslang::EOpConstructBMat4x3:
     case glslang::EOpConstructBMat4x4:
+#ifndef GLSLANG_WEB
     case glslang::EOpConstructF16Mat2x2:
     case glslang::EOpConstructF16Mat2x3:
     case glslang::EOpConstructF16Mat2x4:
@@ -2358,7 +2359,8 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     case glslang::EOpConstructF16Mat4x2:
     case glslang::EOpConstructF16Mat4x3:
     case glslang::EOpConstructF16Mat4x4:
-        isMatrix = true;
+#endif
+      isMatrix = true;
         // fall through
     case glslang::EOpConstructFloat:
     case glslang::EOpConstructVec2:
@@ -2368,14 +2370,17 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     case glslang::EOpConstructDVec2:
     case glslang::EOpConstructDVec3:
     case glslang::EOpConstructDVec4:
+#ifndef GLSLANG_WEB
     case glslang::EOpConstructFloat16:
     case glslang::EOpConstructF16Vec2:
     case glslang::EOpConstructF16Vec3:
     case glslang::EOpConstructF16Vec4:
+#endif
     case glslang::EOpConstructBool:
     case glslang::EOpConstructBVec2:
     case glslang::EOpConstructBVec3:
     case glslang::EOpConstructBVec4:
+#ifndef GLSLANG_WEB
     case glslang::EOpConstructInt8:
     case glslang::EOpConstructI8Vec2:
     case glslang::EOpConstructI8Vec3:
@@ -2392,6 +2397,7 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     case glslang::EOpConstructU16Vec2:
     case glslang::EOpConstructU16Vec3:
     case glslang::EOpConstructU16Vec4:
+#endif
     case glslang::EOpConstructInt:
     case glslang::EOpConstructIVec2:
     case glslang::EOpConstructIVec3:
@@ -2400,6 +2406,7 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     case glslang::EOpConstructUVec2:
     case glslang::EOpConstructUVec3:
     case glslang::EOpConstructUVec4:
+#ifndef GLSLANG_WEB
     case glslang::EOpConstructInt64:
     case glslang::EOpConstructI64Vec2:
     case glslang::EOpConstructI64Vec3:
@@ -2408,6 +2415,7 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     case glslang::EOpConstructU64Vec2:
     case glslang::EOpConstructU64Vec3:
     case glslang::EOpConstructU64Vec4:
+#endif
     case glslang::EOpConstructStruct:
     case glslang::EOpConstructTextureSampler:
     case glslang::EOpConstructReference:
@@ -3152,6 +3160,7 @@ spv::Id TGlslangToSpvTraverser::createSpvVariable(const glslang::TIntermSymbol* 
     spv::Id spvType = forcedType == spv::NoType ? convertGlslangToSpvType(node->getType())
                                                 : forcedType;
 
+#ifndef GLSLANG_WEB
     const bool contains16BitType = node->getType().containsBasicType(glslang::EbtFloat16) ||
                                    node->getType().containsBasicType(glslang::EbtInt16)   ||
                                    node->getType().containsBasicType(glslang::EbtUint16);
@@ -3204,7 +3213,7 @@ spv::Id TGlslangToSpvTraverser::createSpvVariable(const glslang::TIntermSymbol* 
             builder.addCapability(spv::CapabilityInt8);
         }
     }
-
+#endif
     const char* name = node->getName().c_str();
     if (glslang::IsAnonymous(name))
         name = "";
@@ -5510,6 +5519,7 @@ spv::Id TGlslangToSpvTraverser::createUnaryOperation(glslang::TOperator op, OpDe
     case glslang::EOpFloatBitsToUint:
     case glslang::EOpIntBitsToFloat:
     case glslang::EOpUintBitsToFloat:
+#ifndef GLSLANG_WEB
     case glslang::EOpDoubleBitsToInt64:
     case glslang::EOpDoubleBitsToUint64:
     case glslang::EOpInt64BitsToDouble:
@@ -5518,6 +5528,7 @@ spv::Id TGlslangToSpvTraverser::createUnaryOperation(glslang::TOperator op, OpDe
     case glslang::EOpFloat16BitsToUint16:
     case glslang::EOpInt16BitsToFloat16:
     case glslang::EOpUint16BitsToFloat16:
+#endif
         unaryOp = spv::OpBitcast;
         break;
 
@@ -5986,8 +5997,8 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
 #endif
 
     case glslang::EOpConvBoolToInt:
-    case glslang::EOpConvBoolToInt64:
 #ifndef GLSLANG_WEB
+    case glslang::EOpConvBoolToInt64:
         if (op == glslang::EOpConvBoolToInt64) {
             zero = builder.makeInt64Constant(0);
             one = builder.makeInt64Constant(1);
@@ -6002,8 +6013,8 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         break;
 
     case glslang::EOpConvBoolToUint:
-    case glslang::EOpConvBoolToUint64:
 #ifndef GLSLANG_WEB
+    case glslang::EOpConvBoolToUint64:
         if (op == glslang::EOpConvBoolToUint64) {
             zero = builder.makeUint64Constant(0);
             one = builder.makeUint64Constant(1);
@@ -6017,6 +6028,7 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         convOp = spv::OpSelect;
         break;
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvInt8ToFloat16:
     case glslang::EOpConvInt8ToFloat:
     case glslang::EOpConvInt8ToDouble:
@@ -6024,14 +6036,18 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvInt16ToFloat:
     case glslang::EOpConvInt16ToDouble:
     case glslang::EOpConvIntToFloat16:
+#endif
     case glslang::EOpConvIntToFloat:
     case glslang::EOpConvIntToDouble:
+#ifndef GLSLANG_WEB
     case glslang::EOpConvInt64ToFloat:
     case glslang::EOpConvInt64ToDouble:
     case glslang::EOpConvInt64ToFloat16:
+#endif
         convOp = spv::OpConvertSToF;
         break;
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvUint8ToFloat16:
     case glslang::EOpConvUint8ToFloat:
     case glslang::EOpConvUint8ToDouble:
@@ -6039,11 +6055,14 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvUint16ToFloat:
     case glslang::EOpConvUint16ToDouble:
     case glslang::EOpConvUintToFloat16:
+#endif
     case glslang::EOpConvUintToFloat:
     case glslang::EOpConvUintToDouble:
+#ifndef GLSLANG_WEB
     case glslang::EOpConvUint64ToFloat:
     case glslang::EOpConvUint64ToDouble:
     case glslang::EOpConvUint64ToFloat16:
+#endif
         convOp = spv::OpConvertUToF;
         break;
 
@@ -6060,6 +6079,7 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         break;
 #endif
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvFloat16ToInt8:
     case glslang::EOpConvFloatToInt8:
     case glslang::EOpConvDoubleToInt8:
@@ -6067,22 +6087,29 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvFloatToInt16:
     case glslang::EOpConvDoubleToInt16:
     case glslang::EOpConvFloat16ToInt:
+#endif
     case glslang::EOpConvFloatToInt:
     case glslang::EOpConvDoubleToInt:
+#ifndef GLSLANG_WEB
     case glslang::EOpConvFloat16ToInt64:
     case glslang::EOpConvFloatToInt64:
     case glslang::EOpConvDoubleToInt64:
+#endif
         convOp = spv::OpConvertFToS;
         break;
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvUint8ToInt8:
     case glslang::EOpConvInt8ToUint8:
     case glslang::EOpConvUint16ToInt16:
     case glslang::EOpConvInt16ToUint16:
+#endif
     case glslang::EOpConvUintToInt:
     case glslang::EOpConvIntToUint:
+#ifndef GLSLANG_WEB
     case glslang::EOpConvUint64ToInt64:
     case glslang::EOpConvInt64ToUint64:
+#endif
         if (builder.isInSpecConstCodeGenMode()) {
             // Build zero scalar or vector for OpIAdd.
 #ifndef GLSLANG_WEB
@@ -6106,6 +6133,7 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
         convOp = spv::OpBitcast;
         break;
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvFloat16ToUint8:
     case glslang::EOpConvFloatToUint8:
     case glslang::EOpConvDoubleToUint8:
@@ -6113,14 +6141,18 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvFloatToUint16:
     case glslang::EOpConvDoubleToUint16:
     case glslang::EOpConvFloat16ToUint:
+#endif
     case glslang::EOpConvFloatToUint:
     case glslang::EOpConvDoubleToUint:
+#ifndef GLSLANG_WEB
     case glslang::EOpConvFloatToUint64:
     case glslang::EOpConvDoubleToUint64:
     case glslang::EOpConvFloat16ToUint64:
+#endif
         convOp = spv::OpConvertFToU;
         break;
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvInt8ToInt16:
     case glslang::EOpConvInt8ToInt:
     case glslang::EOpConvInt8ToInt64:
@@ -6135,7 +6167,9 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvInt64ToInt:
         convOp = spv::OpSConvert;
         break;
+#endif
 
+#ifndef GLSLANG_WEB
     case glslang::EOpConvUint8ToUint16:
     case glslang::EOpConvUint8ToUint:
     case glslang::EOpConvUint8ToUint64:
@@ -6150,6 +6184,7 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvUint64ToUint:
         convOp = spv::OpUConvert;
         break;
+#endif
 
 #ifndef GLSLANG_WEB
     case glslang::EOpConvInt8ToUint16:

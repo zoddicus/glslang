@@ -2810,6 +2810,7 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
     case EOpConstructDMat4x2:
     case EOpConstructDMat4x3:
     case EOpConstructDMat4x4:
+#ifndef GLSLANG_WEB
     case EOpConstructF16Mat2x2:
     case EOpConstructF16Mat2x3:
     case EOpConstructF16Mat2x4:
@@ -2819,6 +2820,7 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
     case EOpConstructF16Mat4x2:
     case EOpConstructF16Mat4x3:
     case EOpConstructF16Mat4x4:
+#endif
         constructingMatrix = true;
         break;
     default:
@@ -2932,18 +2934,23 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
         // Finish pinning down spec-const semantics
         if (specConstType) {
             switch (op) {
+#ifndef GLSLANG_WEB
             case EOpConstructInt8:
             case EOpConstructUint8:
             case EOpConstructInt16:
             case EOpConstructUint16:
+#endif
             case EOpConstructInt:
             case EOpConstructUint:
+#ifndef GLSLANG_WEB
             case EOpConstructInt64:
             case EOpConstructUint64:
+#endif
             case EOpConstructBool:
             case EOpConstructBVec2:
             case EOpConstructBVec3:
             case EOpConstructBVec4:
+#ifndef GLSLANG_WEB
             case EOpConstructI8Vec2:
             case EOpConstructI8Vec3:
             case EOpConstructI8Vec4:
@@ -2956,18 +2963,21 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
             case EOpConstructU16Vec2:
             case EOpConstructU16Vec3:
             case EOpConstructU16Vec4:
+#endif
             case EOpConstructIVec2:
             case EOpConstructIVec3:
             case EOpConstructIVec4:
             case EOpConstructUVec2:
             case EOpConstructUVec3:
             case EOpConstructUVec4:
+#ifndef GLSLANG_WEB
             case EOpConstructI64Vec2:
             case EOpConstructI64Vec3:
             case EOpConstructI64Vec4:
             case EOpConstructU64Vec2:
             case EOpConstructU64Vec3:
             case EOpConstructU64Vec4:
+#endif
                 // This was the list of valid ones, if they aren't converting from float
                 // and aren't making an array.
                 makeSpecConst = ! floatArgument && ! type.isArray();
@@ -3349,6 +3359,7 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
         && !qualifier.explicitInterp && !qualifier.pervertexNV
 #endif
         ) {
+#ifndef GLSLANG_WEB
         if (isTypeInt(publicType.basicType) ||
             publicType.basicType == EbtDouble ||
             (publicType.userDef && (publicType.userDef->containsBasicType(EbtInt8)   ||
@@ -3360,6 +3371,13 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
                                     publicType.userDef->containsBasicType(EbtInt64)  ||
                                     publicType.userDef->containsBasicType(EbtUint64) ||
                                     publicType.userDef->containsBasicType(EbtDouble)))) {
+#else
+      if (isTypeInt(publicType.basicType) ||
+          publicType.basicType == EbtDouble ||
+          (publicType.userDef && (publicType.userDef->containsBasicType(EbtInt)    ||
+                                  publicType.userDef->containsBasicType(EbtUint)   ||
+                                  publicType.userDef->containsBasicType(EbtDouble)))) {
+#endif
             if (qualifier.storage == EvqVaryingIn && language == EShLangFragment)
                 error(loc, "must be qualified as flat", TType::getBasicString(publicType.basicType), GetStorageQualifierString(qualifier.storage));
             else if (qualifier.storage == EvqVaryingOut && language == EShLangVertex && version == 300)
@@ -3466,7 +3484,11 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
                 error(loc, "can't use auxiliary qualifier on a fragment output", "centroid/sample/patch", "");
             if (qualifier.isInterpolation())
                 error(loc, "can't use interpolation qualifier on a fragment output", "flat/smooth/noperspective", "");
+#ifndef GLSLANG_WEB
             if (publicType.basicType == EbtDouble || publicType.basicType == EbtInt64 || publicType.basicType == EbtUint64)
+#else
+            if (publicType.basicType == EbtDouble)
+#endif
                 error(loc, "cannot contain a double, int64, or uint64", GetStorageQualifierString(qualifier.storage), "");
         break;
 
@@ -5882,18 +5904,24 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
             error(loc, "can only be applied to a scalar", "constant_id", "");
         switch (type.getBasicType())
         {
+#ifndef GLSLANG_WEB
         case EbtInt8:
         case EbtUint8:
         case EbtInt16:
         case EbtUint16:
+#endif
         case EbtInt:
         case EbtUint:
+#ifndef GLSLANG_WEB
         case EbtInt64:
         case EbtUint64:
+#endif
         case EbtBool:
         case EbtFloat:
         case EbtDouble:
+#ifndef GLSLANG_WEB
         case EbtFloat16:
+#endif
             break;
         default:
             error(loc, "cannot be applied to this type", "constant_id", "");

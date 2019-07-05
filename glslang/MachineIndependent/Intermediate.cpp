@@ -421,18 +421,20 @@ TIntermTyped* TIntermediate::addUnaryMath(TOperator op, TIntermTyped* child, TSo
     // TODO: but, did this bypass constant folding?
     //
     switch (op) {
-    case EOpConstructInt8:
-    case EOpConstructUint8:
-    case EOpConstructInt16:
-    case EOpConstructUint16:
     case EOpConstructInt:
     case EOpConstructUint:
-    case EOpConstructInt64:
-    case EOpConstructUint64:
     case EOpConstructBool:
     case EOpConstructFloat:
     case EOpConstructDouble:
+#ifndef GLSLANG_WEB
+    case EOpConstructInt8:
+    case EOpConstructUint8:
     case EOpConstructFloat16:
+    case EOpConstructInt16:
+    case EOpConstructUint16:
+    case EOpConstructInt64:
+    case EOpConstructUint64:
+#endif // !GLSLANG_WEB
         return child;
     default: break; // some compilers want this
     }
@@ -583,9 +585,9 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     TOperator newOp = EOpNull;
 
     // Certain explicit conversions are allowed conditionally
+#ifndef GLSLANG_WEB
     bool arithemeticInt8Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                   extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int8);
-#ifndef GLSLANG_WEB
     bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                    extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16) ||
                                    extensionRequested(E_GL_AMD_gpu_shader_int16);
@@ -593,13 +595,9 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     bool arithemeticFloat16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                      extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_float16) ||
                                      extensionRequested(E_GL_AMD_gpu_shader_half_float);
-#else
-    bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
-                                   extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16);
-
-    bool arithemeticFloat16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
-                                     extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_float16);
 #endif
+
+#ifndef GLSLANG_WEB
     bool convertToIntTypes = (convertTo == EbtInt8  || convertTo == EbtUint8  ||
                               convertTo == EbtInt16 || convertTo == EbtUint16 ||
                               convertTo == EbtInt   || convertTo == EbtUint   ||
@@ -615,7 +613,9 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     bool convertFromFloatTypes = (node->getBasicType() == EbtFloat16 ||
                                   node->getBasicType() == EbtFloat ||
                                   node->getBasicType() == EbtDouble);
+#endif // !GLSLANG_WEB
 
+#ifndef GLSLANG_WEB
     if (! arithemeticInt8Enabled) {
         if (((convertTo == EbtInt8 || convertTo == EbtUint8) && ! convertFromIntTypes) ||
             ((node->getBasicType() == EbtInt8 || node->getBasicType() == EbtUint8) && ! convertToIntTypes))
@@ -633,6 +633,7 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
             (node->getBasicType() == EbtFloat16 && ! convertToFloatTypes))
             return nullptr;
     }
+#endif // !GLSLANG_WEB
 
     switch (convertTo) {
 #ifndef GLSLANG_WEB
@@ -1458,6 +1459,7 @@ TIntermTyped* TIntermediate::addShapeConversion(const TType& type, TIntermTyped*
 bool TIntermediate::isIntegralPromotion(TBasicType from, TBasicType to) const
 {
     // integral promotions
+#ifndef GLSLANG_WEB
     if (to == EbtInt) {
         switch(from) {
         case EbtInt8:
@@ -1469,6 +1471,7 @@ bool TIntermediate::isIntegralPromotion(TBasicType from, TBasicType to) const
             break;
         }
     }
+#endif
     return false;
 }
 
@@ -1477,7 +1480,9 @@ bool TIntermediate::isFPPromotion(TBasicType from, TBasicType to) const
     // floating-point promotions
     if (to == EbtDouble) {
         switch(from) {
+#ifndef GLSLANG_WEB
         case EbtFloat16:
+#endif
         case EbtFloat:
             return true;
         default:
@@ -1547,18 +1552,22 @@ bool TIntermediate::isIntegralConversion(TBasicType from, TBasicType to) const
         switch(to) {
         case EbtUint:
             return version >= 400 || (source == EShSourceHlsl);
+#ifndef GLSLANG_WEB
         case EbtInt64:
         case EbtUint64:
             return true;
+#endif
         default:
             break;
         }
         break;
     case EbtUint:
         switch(to) {
+#ifndef GLSLANG_WEB
         case EbtInt64:
         case EbtUint64:
             return true;
+#endif
         default:
             break;
         }
@@ -1571,7 +1580,11 @@ bool TIntermediate::isIntegralConversion(TBasicType from, TBasicType to) const
 
 bool TIntermediate::isFPConversion(TBasicType from, TBasicType to) const
 {
+#ifndef GLSLANG_WEB
     if (to == EbtFloat && from == EbtFloat16) {
+#else
+  if (to == EbtFloat) {
+#endif
         return true;
     } else {
         return false;
@@ -1581,6 +1594,7 @@ bool TIntermediate::isFPConversion(TBasicType from, TBasicType to) const
 bool TIntermediate::isFPIntegralConversion(TBasicType from, TBasicType to) const
 {
     switch (from) {
+#ifndef GLSLANG_WEB
     case EbtInt8:
     case EbtUint8:
     case EbtInt16:
@@ -1594,6 +1608,7 @@ bool TIntermediate::isFPIntegralConversion(TBasicType from, TBasicType to) const
             break;
         }
         break;
+#endif
     case EbtInt:
     case EbtUint:
         switch(to) {
@@ -1740,13 +1755,11 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
-#endif
             case EbtFloat16:
                 return 
-#ifndef GLSLANG_WEB
                     extensionRequested(E_GL_AMD_gpu_shader_half_float) ||
-#endif
                     (source == EShSourceHlsl);
+#endif
             default:
                  return false;
             }
@@ -1779,6 +1792,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             default:
                 return false;
             }
+#ifndef GLSLANG_WEB
         case EbtUint64:
             switch (from) {
             case EbtInt:
@@ -1786,11 +1800,9 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt64:
             case EbtUint64:
                 return true;
-#ifndef GLSLANG_WEB
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
-#endif
             default:
                 return false;
             }
@@ -1799,15 +1811,12 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt:
             case EbtInt64:
                 return true;
-#ifndef GLSLANG_WEB
             case EbtInt16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
-#endif
             default:
                 return false;
             }
         case EbtFloat16:
-#ifndef GLSLANG_WEB
             switch (from) {
             case EbtInt16:
             case EbtUint16:
@@ -1817,10 +1826,8 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             default:
                 break;
             }
-#endif
             return false;
         case EbtUint16:
-#ifndef GLSLANG_WEB
             switch (from) {
             case EbtInt16:
             case EbtUint16:
@@ -1840,6 +1847,7 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
 
 static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBasicType uintType) {
     switch(sintType) {
+#ifndef GLSLANG_WEB
     case EbtInt8:
         switch(uintType) {
         case EbtUint8:
@@ -1865,11 +1873,14 @@ static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBas
             return false;
         }
         break;
+#endif
     case EbtInt:
         switch(uintType) {
+#ifndef GLSLANG_WEB
         case EbtUint8:
         case EbtUint16:
             return true;
+#endif
         case EbtUint:
             return false;
         default:
@@ -1877,6 +1888,7 @@ static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBas
             return false;
         }
         break;
+#ifndef GLSLANG_WEB
     case EbtInt64:
         switch(uintType) {
         case EbtUint8:
@@ -1890,6 +1902,7 @@ static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBas
             return false;
         }
         break;
+#endif
     default:
         assert(false);
         return false;
@@ -1899,14 +1912,18 @@ static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBas
 
 static TBasicType getCorrespondingUnsignedType(TBasicType type) {
     switch(type) {
+#ifndef GLSLANG_WEB
     case EbtInt8:
         return EbtUint8;
     case EbtInt16:
         return EbtUint16;
+#endif
     case EbtInt:
         return EbtUint;
+#ifndef GLSLANG_WEB
     case EbtInt64:
         return EbtUint64;
+#endif
     default:
         assert(false);
         return EbtNumTypes;
@@ -2594,8 +2611,11 @@ TIntermConstantUnion* TIntermediate::addConstantUnion(bool b, const TSourceLoc& 
 
 TIntermConstantUnion* TIntermediate::addConstantUnion(double d, TBasicType baseType, const TSourceLoc& loc, bool literal) const
 {
+#ifndef GLSLANG_WEB
     assert(baseType == EbtFloat || baseType == EbtDouble || baseType == EbtFloat16);
-
+#else
+  assert(baseType == EbtFloat || baseType == EbtDouble);
+#endif
     TConstUnionArray unionArray(1);
     unionArray[0].setDConst(d);
 
@@ -2942,10 +2962,12 @@ bool TIntermediate::isSpecializationOperation(const TIntermOperator& node) const
         case EOpVectorSwizzle:
         case EOpConvFloatToDouble:
         case EOpConvDoubleToFloat:
+#ifndef GLSLANG_WEB
         case EOpConvFloat16ToFloat:
         case EOpConvFloatToFloat16:
         case EOpConvFloat16ToDouble:
         case EOpConvDoubleToFloat16:
+#endif
             return true;
         default:
             return false;
@@ -2970,25 +2992,38 @@ bool TIntermediate::isSpecializationOperation(const TIntermOperator& node) const
     case EOpVectorSwizzle:
 
     // (u)int* -> bool
+#ifndef GLSLANG_WEB
     case EOpConvInt8ToBool:
     case EOpConvInt16ToBool:
+#endif
     case EOpConvIntToBool:
+#ifndef GLSLANG_WEB
     case EOpConvInt64ToBool:
     case EOpConvUint8ToBool:
     case EOpConvUint16ToBool:
+#endif
     case EOpConvUintToBool:
+#ifndef GLSLANG_WEB
     case EOpConvUint64ToBool:
+#endif
 
     // bool -> (u)int*
+#ifndef GLSLANG_WEB
     case EOpConvBoolToInt8:
     case EOpConvBoolToInt16:
+#endif
     case EOpConvBoolToInt:
+#ifndef GLSLANG_WEB
     case EOpConvBoolToInt64:
     case EOpConvBoolToUint8:
     case EOpConvBoolToUint16:
+#endif
     case EOpConvBoolToUint:
+#ifndef GLSLANG_WEB
     case EOpConvBoolToUint64:
+#endif
 
+#ifndef GLSLANG_WEB
     // int8_t -> (u)int*
     case EOpConvInt8ToInt16:
     case EOpConvInt8ToInt:
@@ -3006,16 +3041,22 @@ bool TIntermediate::isSpecializationOperation(const TIntermOperator& node) const
     case EOpConvInt16ToUint16:
     case EOpConvInt16ToUint:
     case EOpConvInt16ToUint64:
+#endif
 
     // int32_t -> (u)int*
+#ifndef GLSLANG_WEB
     case EOpConvIntToInt8:
     case EOpConvIntToInt16:
     case EOpConvIntToInt64:
     case EOpConvIntToUint8:
     case EOpConvIntToUint16:
+#endif
     case EOpConvIntToUint:
+#ifndef GLSLANG_WEB
     case EOpConvIntToUint64:
+#endif
 
+#ifndef GLSLANG_WEB
     // int64_t -> (u)int*
     case EOpConvInt64ToInt8:
     case EOpConvInt64ToInt16:
@@ -3042,16 +3083,22 @@ bool TIntermediate::isSpecializationOperation(const TIntermOperator& node) const
     case EOpConvUint16ToUint8:
     case EOpConvUint16ToUint:
     case EOpConvUint16ToUint64:
+#endif
 
     // uint32_t -> (u)int*
+#ifndef GLSLANG_WEB
     case EOpConvUintToInt8:
     case EOpConvUintToInt16:
+#endif
     case EOpConvUintToInt:
+#ifndef GLSLANG_WEB
     case EOpConvUintToInt64:
     case EOpConvUintToUint8:
     case EOpConvUintToUint16:
     case EOpConvUintToUint64:
+#endif
 
+#ifndef GLSLANG_WEB
     // uint64_t -> (u)int*
     case EOpConvUint64ToInt8:
     case EOpConvUint64ToInt16:
@@ -3060,6 +3107,7 @@ bool TIntermediate::isSpecializationOperation(const TIntermOperator& node) const
     case EOpConvUint64ToUint8:
     case EOpConvUint64ToUint16:
     case EOpConvUint64ToUint:
+#endif
 
     // unary operations
     case EOpNegative:
@@ -3252,11 +3300,16 @@ bool TIntermediate::promoteUnary(TIntermUnary& node)
     case EOpPostDecrement:
     case EOpPreIncrement:
     case EOpPreDecrement:
+#ifndef GLSLANG_WEB
         if (!isTypeInt(operand->getBasicType()) &&
             operand->getBasicType() != EbtFloat &&
             operand->getBasicType() != EbtFloat16 &&
             operand->getBasicType() != EbtDouble)
-
+#else
+      if (!isTypeInt(operand->getBasicType()) &&
+          operand->getBasicType() != EbtFloat &&
+          operand->getBasicType() != EbtDouble)
+#endif
             return false;
         break;
 
@@ -3274,7 +3327,11 @@ bool TIntermediate::promoteUnary(TIntermUnary& node)
 
 void TIntermUnary::updatePrecision()
 {
+#ifndef GLSLANG_WEB
     if (getBasicType() == EbtInt || getBasicType() == EbtUint || getBasicType() == EbtFloat || getBasicType() == EbtFloat16) {
+#else
+  if (getBasicType() == EbtInt || getBasicType() == EbtUint || getBasicType() == EbtFloat) {
+#endif
         if (operand->getQualifier().precision > getQualifier().precision)
             getQualifier().precision = operand->getQualifier().precision;
     }
@@ -3774,7 +3831,11 @@ bool TIntermediate::promoteAggregate(TIntermAggregate& node)
 
 void TIntermBinary::updatePrecision()
 {
+#ifndef GLSLANG_WEB
     if (getBasicType() == EbtInt || getBasicType() == EbtUint || getBasicType() == EbtFloat || getBasicType() == EbtFloat16) {
+#else
+  if (getBasicType() == EbtInt || getBasicType() == EbtUint || getBasicType() == EbtFloat) {
+#endif
         getQualifier().precision = std::max(right->getQualifier().precision, left->getQualifier().precision);
         if (getQualifier().precision != EpqNone) {
             left->propagatePrecision(getQualifier().precision);
@@ -3785,7 +3846,11 @@ void TIntermBinary::updatePrecision()
 
 void TIntermTyped::propagatePrecision(TPrecisionQualifier newPrecision)
 {
+#ifndef GLSLANG_WEB
     if (getQualifier().precision != EpqNone || (getBasicType() != EbtInt && getBasicType() != EbtUint && getBasicType() != EbtFloat && getBasicType() != EbtFloat16))
+#else
+  if (getQualifier().precision != EpqNone || (getBasicType() != EbtInt && getBasicType() != EbtUint && getBasicType() != EbtFloat))
+#endif
         return;
 
     getQualifier().precision = newPrecision;
@@ -3928,8 +3993,8 @@ struct TextureUpgradeAndSamplerRemovalTransform : public TIntermTraverser {
 
         size_t write = 0;
         for (size_t i = 0; i < seq.size(); ++i) {
-            TIntermSymbol* symbol = seq[i]->getAsSymbolNode();
 #ifndef GLSLANG_WEB
+            TIntermSymbol* symbol = seq[i]->getAsSymbolNode();
             if (symbol && symbol->getBasicType() == EbtSampler && symbol->getType().getSampler().isPureSampler()) {
                 // remove pure sampler variables
                 continue;

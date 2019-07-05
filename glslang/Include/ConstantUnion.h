@@ -130,11 +130,11 @@ public:
     unsigned int       getUConst() const   { return uConst; }
     bool               getBConst() const   { return bConst; }
 
+#ifndef GLSLANG_WEB
     bool operator==(const signed char i) const
     {
         if (i == i8Const)
             return true;
-
         return false;
     }
 
@@ -142,7 +142,6 @@ public:
     {
         if (u == u8Const)
             return true;
-
         return false;
     }
 
@@ -161,7 +160,7 @@ public:
 
         return false;
     }
-
+#endif
     bool operator==(const int i) const
     {
         if (i == iConst)
@@ -177,7 +176,7 @@ public:
 
         return false;
     }
-
+#ifndef GLSLANG_WEB
     bool operator==(const long long i64) const
     {
         if (i64 == i64Const)
@@ -193,7 +192,7 @@ public:
 
         return false;
     }
-
+#endif
     bool operator==(const double d) const
     {
         if (d == dConst)
@@ -216,12 +215,13 @@ public:
             return false;
 
         switch (type) {
+#ifndef GLSLANG_WEB
         case EbtInt16:
             if (constant.i16Const == i16Const)
                 return true;
 
             break;
-         case EbtUint16:
+        case EbtUint16:
             if (constant.u16Const == u16Const)
                 return true;
 
@@ -231,11 +231,12 @@ public:
                 return true;
 
             break;
-         case EbtUint8:
+        case EbtUint8:
             if (constant.u8Const == u8Const)
                 return true;
 
             break;
+#endif
         case EbtInt:
             if (constant.iConst == iConst)
                 return true;
@@ -246,6 +247,7 @@ public:
                 return true;
 
             break;
+#ifndef GLSLANG_WEB
         case EbtInt64:
             if (constant.i64Const == i64Const)
                 return true;
@@ -256,6 +258,7 @@ public:
                 return true;
 
             break;
+#endif
         case EbtDouble:
             if (constant.dConst == dConst)
                 return true;
@@ -303,6 +306,7 @@ public:
         return !operator==(u);
     }
 
+#ifndef GLSLANG_WEB
     bool operator!=(const long long i) const
     {
         return !operator==(i);
@@ -312,7 +316,7 @@ public:
     {
         return !operator==(u);
     }
-
+#endif
     bool operator!=(const float f) const
     {
         return !operator==(f);
@@ -332,6 +336,7 @@ public:
     {
         assert(type == constant.type);
         switch (type) {
+#ifndef GLSLANG_WEB
         case EbtInt8:
             if (i8Const > constant.i8Const)
                 return true;
@@ -352,6 +357,7 @@ public:
                 return true;
 
             return false;
+#endif
         case EbtInt:
             if (iConst > constant.iConst)
                 return true;
@@ -362,6 +368,7 @@ public:
                 return true;
 
             return false;
+#ifndef GLSLANG_WEB
         case EbtInt64:
             if (i64Const > constant.i64Const)
                 return true;
@@ -377,6 +384,7 @@ public:
                 return true;
 
             return false;
+#endif
         default:
             assert(false && "Default missing");
             return false;
@@ -387,6 +395,7 @@ public:
     {
         assert(type == constant.type);
         switch (type) {
+#ifndef GLSLANG_WEB
         case EbtInt8:
             if (i8Const < constant.i8Const)
                 return true;
@@ -407,6 +416,7 @@ public:
                 return true;
 
             return false;
+#endif
         case EbtInt:
             if (iConst < constant.iConst)
                 return true;
@@ -417,6 +427,7 @@ public:
                 return true;
 
             return false;
+#ifndef GLSLANG_WEB
         case EbtInt64:
             if (i64Const < constant.i64Const)
                 return true;
@@ -427,6 +438,7 @@ public:
                 return true;
 
             return false;
+#endif
         case EbtDouble:
             if (dConst < constant.dConst)
                 return true;
@@ -880,14 +892,18 @@ public:
 
 private:
     union  {
+#ifndef GLSLANG_WEB
         signed char        i8Const;     // used for i8vec, scalar int8s
         unsigned char      u8Const;     // used for u8vec, scalar uint8s
         signed short       i16Const;    // used for i16vec, scalar int16s
         unsigned short     u16Const;    // used for u16vec, scalar uint16s
+#endif
         int                iConst;      // used for ivec, scalar ints
         unsigned int       uConst;      // used for uvec, scalar uints
+#ifndef GLSLANG_WEB
         long long          i64Const;    // used for i64vec, scalar int64s
         unsigned long long u64Const;    // used for u64vec, scalar uint64s
+#endif
         bool               bConst;      // used for bvec, scalar bools
         double             dConst;      // used for vec, dvec, mat, dmat, scalar floats and doubles
         const TString*     sConst;      // string constant
