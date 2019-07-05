@@ -130,7 +130,7 @@ const TArgumentClass TacBRS    = (TArgumentClass)(TacB | TacRS);
 
 EShLanguageMask StageAll = (EShLanguageMask)(~(EShLanguageMask)0);
 
-const struct CommonBuiltInFunctions {
+struct CommonBuiltInFunctions {
     TOperator op;
     const char* name;
     int numArguments;
