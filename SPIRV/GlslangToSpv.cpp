@@ -3984,6 +3984,7 @@ void TGlslangToSpvTraverser::updateMemberOffset(const glslang::TType& structType
     int dummyStride;
     int memberAlignment = glslangIntermediate->getMemberAlignment(memberType, memberSize, dummyStride, explicitLayout, matrixLayout == glslang::ElmRowMajor);
 
+#ifndef GLSLANG_WEB
     // Adjust alignment for HLSL rules
     // TODO: make this consistent in early phases of code:
     //       adjusting this late means inconsistencies with earlier code, which for reflection is an issue
@@ -3996,6 +3997,7 @@ void TGlslangToSpvTraverser::updateMemberOffset(const glslang::TType& structType
         if (componentAlignment <= 4)
             memberAlignment = componentAlignment;
     }
+#endif
 
     // Bump up to member alignment
     glslang::RoundToPow2(currentOffset, memberAlignment);

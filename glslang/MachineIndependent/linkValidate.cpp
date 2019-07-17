@@ -54,6 +54,10 @@ namespace glslang {
 //
 // Link-time error emitter.
 //
+#ifdef GLSLANG_WEB
+#define error(A, B) ++numErrors
+#define warn(A, B) ++numErrors
+#else
 void TIntermediate::error(TInfoSink& infoSink, const char* message)
 {
     infoSink.info.prefix(EPrefixError);
@@ -68,6 +72,7 @@ void TIntermediate::warn(TInfoSink& infoSink, const char* message)
     infoSink.info.prefix(EPrefixWarning);
     infoSink.info << "Linking " << StageName(language) << " stage: " << message << "\n";
 }
+#endif
 
 // TODO: 4.4 offset/align:  "Two blocks linked together in the same program with the same block
 // name must have the exact same set of members qualified with offset and their integral-constant
@@ -762,6 +767,7 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
         break;
     }
 
+#ifndef GLSLANG_WEB
     // Process the tree for any node-specific work.
     class TFinalLinkTraverser : public TIntermTraverser {
     public:
@@ -778,6 +784,7 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     } finalLinkTraverser;
 
     treeRoot->traverse(&finalLinkTraverser);
+#endif
 }
 
 //
