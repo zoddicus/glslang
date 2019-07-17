@@ -531,6 +531,11 @@ __inline bool isTypeFloat(TBasicType type)
 __inline int getTypeRank(TBasicType type) {
     int res = -1;
     switch(type) {
+    case EbtInt:
+    case EbtUint:
+        res = 2;
+        break;
+#ifndef GLSLANG_WEB
     case EbtInt8:
     case EbtUint8:
         res = 0;
@@ -539,14 +544,11 @@ __inline int getTypeRank(TBasicType type) {
     case EbtUint16:
         res = 1;
         break;
-    case EbtInt:
-    case EbtUint:
-        res = 2;
-        break;
     case EbtInt64:
     case EbtUint64:
         res = 3;
         break;
+#endif
     default:
         assert(false);
         break;

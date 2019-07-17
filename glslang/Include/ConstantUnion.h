@@ -216,6 +216,22 @@ public:
             return false;
 
         switch (type) {
+        case EbtInt:
+            if (constant.iConst == iConst)
+                return true;
+
+            break;
+        case EbtUint:
+            if (constant.uConst == uConst)
+                return true;
+
+            break;
+        case EbtBool:
+            if (constant.bConst == bConst)
+                return true;
+
+            break;
+#ifndef GLSLANG_WEB
         case EbtInt16:
             if (constant.i16Const == i16Const)
                 return true;
@@ -236,16 +252,6 @@ public:
                 return true;
 
             break;
-        case EbtInt:
-            if (constant.iConst == iConst)
-                return true;
-
-            break;
-        case EbtUint:
-            if (constant.uConst == uConst)
-                return true;
-
-            break;
         case EbtInt64:
             if (constant.i64Const == i64Const)
                 return true;
@@ -261,11 +267,7 @@ public:
                 return true;
 
             break;
-        case EbtBool:
-            if (constant.bConst == bConst)
-                return true;
-
-            break;
+#endif
         default:
             assert(false && "Default missing");
         }
@@ -332,6 +334,17 @@ public:
     {
         assert(type == constant.type);
         switch (type) {
+        case EbtInt:
+            if (iConst > constant.iConst)
+                return true;
+
+            return false;
+        case EbtUint:
+            if (uConst > constant.uConst)
+                return true;
+
+            return false;
+#ifndef GLSLANG_WEB
         case EbtInt8:
             if (i8Const > constant.i8Const)
                 return true;
@@ -352,16 +365,6 @@ public:
                 return true;
 
             return false;
-        case EbtInt:
-            if (iConst > constant.iConst)
-                return true;
-
-            return false;
-        case EbtUint:
-            if (uConst > constant.uConst)
-                return true;
-
-            return false;
         case EbtInt64:
             if (i64Const > constant.i64Const)
                 return true;
@@ -377,6 +380,7 @@ public:
                 return true;
 
             return false;
+#endif
         default:
             assert(false && "Default missing");
             return false;
@@ -387,6 +391,7 @@ public:
     {
         assert(type == constant.type);
         switch (type) {
+#ifndef GLSLANG_WEB
         case EbtInt8:
             if (i8Const < constant.i8Const)
                 return true;
@@ -397,7 +402,7 @@ public:
                 return true;
 
             return false;
-       case EbtInt16:
+        case EbtInt16:
             if (i16Const < constant.i16Const)
                 return true;
 
@@ -405,17 +410,6 @@ public:
         case EbtUint16:
             if (u16Const < constant.u16Const)
                 return true;
-
-            return false;
-        case EbtInt:
-            if (iConst < constant.iConst)
-                return true;
-
-            return false;
-        case EbtUint:
-            if (uConst < constant.uConst)
-                return true;
-
             return false;
         case EbtInt64:
             if (i64Const < constant.i64Const)
@@ -432,6 +426,17 @@ public:
                 return true;
 
             return false;
+#endif
+        case EbtInt:
+            if (iConst < constant.iConst)
+                return true;
+
+            return false;
+        case EbtUint:
+            if (uConst < constant.uConst)
+                return true;
+
+            return false;
         default:
             assert(false && "Default missing");
             return false;
@@ -445,8 +450,8 @@ public:
         switch (type) {
         case EbtInt:    returnValue.setIConst(iConst + constant.iConst); break;
         case EbtUint:   returnValue.setUConst(uConst + constant.uConst); break;
-        case EbtDouble: returnValue.setDConst(dConst + constant.dConst); break;
 #ifndef GLSLANG_WEB
+        case EbtDouble: returnValue.setDConst(dConst + constant.dConst); break;
         case EbtInt8:   returnValue.setI8Const(i8Const + constant.i8Const); break;
         case EbtInt16:  returnValue.setI16Const(i16Const + constant.i16Const); break;
         case EbtInt64:  returnValue.setI64Const(i64Const + constant.i64Const); break;
@@ -467,8 +472,8 @@ public:
         switch (type) {
         case EbtInt:    returnValue.setIConst(iConst - constant.iConst); break;
         case EbtUint:   returnValue.setUConst(uConst - constant.uConst); break;
-        case EbtDouble: returnValue.setDConst(dConst - constant.dConst); break;
 #ifndef GLSLANG_WEB
+        case EbtDouble: returnValue.setDConst(dConst - constant.dConst); break;
         case EbtInt8:   returnValue.setI8Const(i8Const - constant.i8Const); break;
         case EbtInt16:  returnValue.setI16Const(i16Const - constant.i16Const); break;
         case EbtInt64:  returnValue.setI64Const(i64Const - constant.i64Const); break;
@@ -489,8 +494,8 @@ public:
         switch (type) {
         case EbtInt:    returnValue.setIConst(iConst * constant.iConst); break;
         case EbtUint:   returnValue.setUConst(uConst * constant.uConst); break;
-        case EbtDouble: returnValue.setDConst(dConst * constant.dConst); break;
 #ifndef GLSLANG_WEB
+        case EbtDouble: returnValue.setDConst(dConst * constant.dConst); break;
         case EbtInt8:   returnValue.setI8Const(i8Const * constant.i8Const); break;
         case EbtInt16:  returnValue.setI16Const(i16Const * constant.i16Const); break;
         case EbtInt64:  returnValue.setI64Const(i64Const * constant.i64Const); break;

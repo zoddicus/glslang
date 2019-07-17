@@ -544,9 +544,7 @@ bool TIntermediate::isConversionAllowed(TOperator op, TIntermTyped* node) const
         return false;
     case EbtAtomicUint:
     case EbtSampler:
-#ifndef GLSLANG_WEB
     case EbtAccStructNV:
-#endif
         // opaque types can be passed to functions
         if (op == EOpFunction)
             break;
@@ -585,7 +583,20 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     // Certain explicit conversions are allowed conditionally
     bool arithemeticInt8Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                   extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int8);
-#ifndef GLSLANG_WEB
+#ifdef GLSLANG_WEB
+    bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
+                                   extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16);
+
+    bool arithemeticFloat16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
+                                     extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_float16);
+    bool convertToIntTypes = (convertTo == EbtInt || convertTo == EbtUint);
+
+    bool convertFromIntTypes = (node->getBasicType() == EbtInt || node->getBasicType() == EbtUint);
+
+    bool convertToFloatTypes = (convertTo == EbtFloat);
+
+    bool convertFromFloatTypes = (node->getBasicType() == EbtFloat);
+#else
     bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                    extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16) ||
                                    extensionRequested(E_GL_AMD_gpu_shader_int16);
@@ -593,13 +604,6 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     bool arithemeticFloat16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                      extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_float16) ||
                                      extensionRequested(E_GL_AMD_gpu_shader_half_float);
-#else
-    bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
-                                   extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16);
-
-    bool arithemeticFloat16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
-                                     extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_float16);
-#endif
     bool convertToIntTypes = (convertTo == EbtInt8  || convertTo == EbtUint8  ||
                               convertTo == EbtInt16 || convertTo == EbtUint16 ||
                               convertTo == EbtInt   || convertTo == EbtUint   ||
@@ -615,6 +619,7 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     bool convertFromFloatTypes = (node->getBasicType() == EbtFloat16 ||
                                   node->getBasicType() == EbtFloat ||
                                   node->getBasicType() == EbtDouble);
+#endif
 
     if (! arithemeticInt8Enabled) {
         if (((convertTo == EbtInt8 || convertTo == EbtUint8) && ! convertFromIntTypes) ||
@@ -697,8 +702,8 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
         case EbtInt:     newOp = EOpConvIntToBool;     break;
         case EbtUint:    newOp = EOpConvUintToBool;    break;
         case EbtFloat:   newOp = EOpConvFloatToBool;   break;
-        case EbtDouble:  newOp = EOpConvDoubleToBool;  break;
 #ifndef GLSLANG_WEB
+        case EbtDouble:  newOp = EOpConvDoubleToBool;  break;
         case EbtInt8:    newOp = EOpConvInt8ToBool;    break;
         case EbtUint8:   newOp = EOpConvUint8ToBool;   break;
         case EbtInt16:   newOp = EOpConvInt16ToBool;   break;
@@ -1709,25 +1714,6 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
 #endif
     {
         switch (to) {
-#ifndef GLSLANG_WEB
-        case EbtDouble:
-            switch (from) {
-            case EbtInt:
-            case EbtUint:
-            case EbtInt64:
-            case EbtUint64:
-            case EbtFloat:
-            case EbtDouble:
-                return true;
-            case EbtInt16:
-            case EbtUint16:
-                return extensionRequested(E_GL_AMD_gpu_shader_int16);
-            case EbtFloat16:
-                return extensionRequested(E_GL_AMD_gpu_shader_half_float);
-            default:
-                return false;
-           }
-#endif
         case EbtFloat:
             switch (from) {
             case EbtInt:
@@ -1740,10 +1726,8 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
-#endif
             case EbtFloat16:
                 return 
-#ifndef GLSLANG_WEB
                     extensionRequested(E_GL_AMD_gpu_shader_half_float) ||
 #endif
                     (source == EShSourceHlsl);
@@ -1779,6 +1763,24 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             default:
                 return false;
             }
+#ifndef GLSLANG_WEB
+        case EbtDouble:
+            switch (from) {
+            case EbtInt:
+            case EbtUint:
+            case EbtInt64:
+            case EbtUint64:
+            case EbtFloat:
+            case EbtDouble:
+                return true;
+            case EbtInt16:
+            case EbtUint16:
+                return extensionRequested(E_GL_AMD_gpu_shader_int16);
+            case EbtFloat16:
+                return extensionRequested(E_GL_AMD_gpu_shader_half_float);
+            default:
+                return false;
+           }
         case EbtUint64:
             switch (from) {
             case EbtInt:
@@ -1786,11 +1788,9 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt64:
             case EbtUint64:
                 return true;
-#ifndef GLSLANG_WEB
             case EbtInt16:
             case EbtUint16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
-#endif
             default:
                 return false;
             }
@@ -1799,15 +1799,12 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             case EbtInt:
             case EbtInt64:
                 return true;
-#ifndef GLSLANG_WEB
             case EbtInt16:
                 return extensionRequested(E_GL_AMD_gpu_shader_int16);
-#endif
             default:
                 return false;
             }
         case EbtFloat16:
-#ifndef GLSLANG_WEB
             switch (from) {
             case EbtInt16:
             case EbtUint16:
@@ -1817,10 +1814,8 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
             default:
                 break;
             }
-#endif
             return false;
         case EbtUint16:
-#ifndef GLSLANG_WEB
             switch (from) {
             case EbtInt16:
             case EbtUint16:
@@ -1838,8 +1833,24 @@ bool TIntermediate::canImplicitlyPromote(TBasicType from, TBasicType to, TOperat
     return false;
 }
 
-static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBasicType uintType) {
+static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBasicType uintType)
+{
     switch(sintType) {
+    case EbtInt:
+        switch(uintType) {
+        case EbtUint:
+            return false;
+#ifndef GLSLANG_WEB
+        case EbtUint8:
+        case EbtUint16:
+            return true;
+#endif
+        default:
+            assert(false);
+            return false;
+        }
+        break;
+#ifndef GLSLANG_WEB
     case EbtInt8:
         switch(uintType) {
         case EbtUint8:
@@ -1865,18 +1876,6 @@ static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBas
             return false;
         }
         break;
-    case EbtInt:
-        switch(uintType) {
-        case EbtUint8:
-        case EbtUint16:
-            return true;
-        case EbtUint:
-            return false;
-        default:
-            assert(false);
-            return false;
-        }
-        break;
     case EbtInt64:
         switch(uintType) {
         case EbtUint8:
@@ -1890,6 +1889,7 @@ static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBas
             return false;
         }
         break;
+#endif
     default:
         assert(false);
         return false;
@@ -1897,16 +1897,19 @@ static bool canSignedIntTypeRepresentAllUnsignedValues(TBasicType sintType, TBas
 }
 
 
-static TBasicType getCorrespondingUnsignedType(TBasicType type) {
+static TBasicType getCorrespondingUnsignedType(TBasicType type)
+{
     switch(type) {
+    case EbtInt:
+        return EbtUint;
+#ifndef GLSLANG_WEB
     case EbtInt8:
         return EbtUint8;
     case EbtInt16:
         return EbtUint16;
-    case EbtInt:
-        return EbtUint;
     case EbtInt64:
         return EbtUint64;
+#endif
     default:
         assert(false);
         return EbtNumTypes;

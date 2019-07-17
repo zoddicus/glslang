@@ -160,7 +160,9 @@ void TParseContext::setPrecisionDefaults()
         }
 
         defaultPrecision[EbtSampler] = EpqLow;
+#ifndef GLSLANG_WEB
         defaultPrecision[EbtAtomicUint] = EpqHigh;
+#endif
     }
 }
 
@@ -3351,15 +3353,18 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
         ) {
         if (isTypeInt(publicType.basicType) ||
             publicType.basicType == EbtDouble ||
-            (publicType.userDef && (publicType.userDef->containsBasicType(EbtInt8)   ||
-                                    publicType.userDef->containsBasicType(EbtUint8)  ||
-                                    publicType.userDef->containsBasicType(EbtInt16)  ||
-                                    publicType.userDef->containsBasicType(EbtUint16) ||
-                                    publicType.userDef->containsBasicType(EbtInt)    ||
-                                    publicType.userDef->containsBasicType(EbtUint)   ||
-                                    publicType.userDef->containsBasicType(EbtInt64)  ||
-                                    publicType.userDef->containsBasicType(EbtUint64) ||
-                                    publicType.userDef->containsBasicType(EbtDouble)))) {
+            (publicType.userDef && (   publicType.userDef->containsBasicType(EbtInt)
+                                    || publicType.userDef->containsBasicType(EbtUint)
+#ifndef GLSLANG_WEB
+                                    || publicType.userDef->containsBasicType(EbtUint8)
+                                    || publicType.userDef->containsBasicType(EbtInt16)
+                                    || publicType.userDef->containsBasicType(EbtUint16)
+                                    || publicType.userDef->containsBasicType(EbtInt8)
+                                    || publicType.userDef->containsBasicType(EbtInt64)
+                                    || publicType.userDef->containsBasicType(EbtUint64)
+                                    || publicType.userDef->containsBasicType(EbtDouble)
+#endif
+                                    ))) {
             if (qualifier.storage == EvqVaryingIn && language == EShLangFragment)
                 error(loc, "must be qualified as flat", TType::getBasicString(publicType.basicType), GetStorageQualifierString(qualifier.storage));
             else if (qualifier.storage == EvqVaryingOut && language == EShLangVertex && version == 300)
@@ -3466,8 +3471,10 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
                 error(loc, "can't use auxiliary qualifier on a fragment output", "centroid/sample/patch", "");
             if (qualifier.isInterpolation())
                 error(loc, "can't use interpolation qualifier on a fragment output", "flat/smooth/noperspective", "");
+#ifndef GLSLANG_WEB
             if (publicType.basicType == EbtDouble || publicType.basicType == EbtInt64 || publicType.basicType == EbtUint64)
                 error(loc, "cannot contain a double, int64, or uint64", GetStorageQualifierString(qualifier.storage), "");
+#endif
         break;
 
         default:
@@ -3668,7 +3675,11 @@ void TParseContext::precisionQualifierCheck(const TSourceLoc& loc, TBasicType ba
         error(loc, "atomic counters can only be highp", "atomic_uint", "");
 #endif
 
-    if (baseType == EbtFloat || baseType == EbtUint || baseType == EbtInt || baseType == EbtSampler || baseType == EbtAtomicUint) {
+    if (baseType == EbtFloat || baseType == EbtUint || baseType == EbtInt || baseType == EbtSampler
+#ifndef GLSLANG_WEB
+        || baseType == EbtAtomicUint
+#endif
+        ) {
         if (qualifier.precision == EpqNone) {
             if (relaxedErrors())
                 warn(loc, "type requires declaration of default precision qualifier", TType::getBasicString(baseType), "substituting 'mediump'");

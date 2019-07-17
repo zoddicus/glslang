@@ -1613,9 +1613,9 @@ public:
         }
         return false;
     }
-    virtual bool isOpaque() const { return basicType == EbtSampler || basicType == EbtAtomicUint
+    virtual bool isOpaque() const { return basicType == EbtSampler
 #ifndef GLSLANG_WEB
-        || basicType == EbtAccStructNV
+        || basicType == EbtAtomicUint || basicType == EbtAccStructNV
 #endif
         ; }
     virtual bool isBuiltIn() const { return getQualifier().builtIn != EbvNone; }
@@ -1849,6 +1849,7 @@ public:
         case EbtSampler:           return "sampler/image";
         case EbtStruct:            return "structure";
         case EbtBlock:             return "block";
+#ifndef GLSLANG_WEB
         case EbtAtomicUint:        return "atomic_uint";
         case EbtDouble:            return "double";
         case EbtFloat16:           return "float16_t";
@@ -1860,6 +1861,7 @@ public:
         case EbtUint64:            return "uint64_t";
         case EbtAccStructNV:       return "accelerationStructureNV";
         case EbtReference:         return "reference";
+#endif
         default:                   return "unknown type";
         }
     }

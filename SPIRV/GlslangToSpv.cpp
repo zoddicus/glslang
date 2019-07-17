@@ -1136,8 +1136,10 @@ spv::StorageClass TGlslangToSpvTraverser::TranslateStorageClass(const glslang::T
 
     if (glslangIntermediate->getSource() != glslang::EShSourceHlsl ||
         type.getQualifier().storage == glslang::EvqUniform) {
+#ifndef GLSLANG_WEB
         if (type.getBasicType() == glslang::EbtAtomicUint)
             return spv::StorageClassAtomicCounter;
+#endif
         if (type.containsOpaque())
             return spv::StorageClassUniformConstant;
     }
