@@ -44,6 +44,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#ifndef GLSLANG_WEB
+
 //
 // Map IO bindings.
 //
@@ -829,3 +831,5 @@ bool TIoMapper::addStage(EShLanguage stage, TIntermediate &intermediate, TInfoSi
 }
 
 } // end namespace glslang
+
+#endif

@@ -1866,7 +1866,9 @@ TProgram::TProgram() : ioMapper(nullptr), linked(false)
 
 TProgram::~TProgram()
 {
+#ifndef GLSLANG_WEB
     delete ioMapper;
+#endif
     delete infoSink;
 
     for (int s = 0; s < EShLangCount; ++s)
@@ -1981,6 +1983,7 @@ const char* TProgram::getInfoDebugLog()
 //
 bool TProgram::mapIO(TIoMapResolver* resolver)
 {
+#ifndef GLSLANG_WEB
     if (! linked || ioMapper)
         return false;
 
@@ -1992,6 +1995,7 @@ bool TProgram::mapIO(TIoMapResolver* resolver)
                 return false;
         }
     }
+#endif
 
     return true;
 }
