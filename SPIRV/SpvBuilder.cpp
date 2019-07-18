@@ -2702,7 +2702,9 @@ Id Builder::accessChainLoad(Decoration precision, Decoration nonUniform, Id resu
         // load through the access chain
         id = createLoad(collapseAccessChain(), memoryAccess, scope, alignment);
         setPrecision(id, precision);
+#ifndef GLSLANG_WEB
         addDecoration(id, nonUniform);
+#endif
     }
 
     // Done, unless there are swizzles to do
@@ -2723,7 +2725,9 @@ Id Builder::accessChainLoad(Decoration precision, Decoration nonUniform, Id resu
     if (accessChain.component != NoResult)
         id = setPrecision(createVectorExtractDynamic(id, resultType, accessChain.component), precision);
 
+#ifndef GLSLANG_WEB
     addDecoration(id, nonUniform);
+#endif
     return id;
 }
 

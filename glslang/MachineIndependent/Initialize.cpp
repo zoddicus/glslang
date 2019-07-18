@@ -7875,10 +7875,12 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
             BuiltInVariable("gl_InstanceIndex", EbvInstanceIndex, symbolTable);
         }
 
+#ifndef GLSLANG_WEB
         if (version >= 300 /* both ES and non-ES */) {
             symbolTable.setVariableExtensions("gl_ViewID_OVR", Num_OVR_multiview_EXTs, OVR_multiview_EXTs);
             BuiltInVariable("gl_ViewID_OVR", EbvViewIndex, symbolTable);
         }
+#endif
 
         if (profile == EEsProfile) {
             symbolTable.setFunctionExtensions("shadow2DEXT",        1, &E_GL_EXT_shadow_samplers);

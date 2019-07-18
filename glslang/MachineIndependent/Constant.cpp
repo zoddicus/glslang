@@ -412,10 +412,12 @@ TIntermTyped* TIntermConstantUnion::fold(TOperator op, const TType& returnType) 
         resultSize = 1;
         break;
 
+#ifndef GLSLANG_WEB
     case EOpEmitStreamVertex:
     case EOpEndStreamPrimitive:
         // These don't actually fold
         return 0;
+#endif
 
     case EOpPackSnorm2x16:
     case EOpPackUnorm2x16:

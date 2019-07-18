@@ -473,13 +473,15 @@ public:
     // drop qualifiers that don't belong in a temporary variable
     void makeTemporary()
     {
-        semanticName = nullptr;
         storage = EvqTemporary;
         builtIn = EbvNone;
         clearInterstage();
         clearMemory();
         specConstant = false;
+#ifndef GLSLANG_WEB
+        semanticName = nullptr;
         nonUniform = false;
+#endif
         clearLayout();
     }
 
@@ -534,10 +536,11 @@ public:
     {
         storage      = EvqTemporary;
         specConstant = false;
+#ifndef GLSLANG_WEB
         nonUniform   = false;
+#endif
     }
 
-    const char*         semanticName;
     TStorageQualifier   storage   : 6;
     TBuiltInVariable    builtIn   : 9;
     TBuiltInVariable    declaredBuiltIn : 9;
@@ -548,8 +551,9 @@ public:
     bool smooth       : 1;
     bool flat         : 1;
     bool specConstant : 1;  // having a constant_id is not sufficient: expressions have no id, but are still specConstant
-    bool nonUniform   : 1;
 #ifndef GLSLANG_WEB
+    const char*         semanticName;
+    bool nonUniform   : 1;
     bool noContraction: 1; // prevent contraction and reassociation, e.g., for 'precise' keyword, and expressions it affects
     bool nopersp      : 1;
     bool explicitInterp : 1;
@@ -976,6 +980,10 @@ public:
     {
         return layoutBufferReferenceAlign != layoutBufferReferenceAlignEnd;
     }
+    bool isNonUniform() const
+    {
+        return nonUniform;
+    }
 #endif
     bool isSpecConstant() const
     {
@@ -983,10 +991,6 @@ public:
         // had a specialization-constant ID, and false if it is not a
         // true front-end constant.
         return specConstant;
-    }
-    bool isNonUniform() const
-    {
-        return nonUniform;
     }
     bool isFrontEndConstant() const
     {

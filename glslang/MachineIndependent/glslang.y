@@ -132,7 +132,7 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %token <lex> U8VEC2  U8VEC3  U8VEC4
 %token <lex> VEC2 VEC3 VEC4
 %token <lex> MAT2 MAT3 MAT4 CENTROID IN OUT INOUT
-%token <lex> UNIFORM PATCH SAMPLE BUFFER SHARED NONUNIFORM
+%token <lex> UNIFORM PATCH SAMPLE BUFFER SHARED
 %token <lex> NOPERSPECTIVE FLAT SMOOTH LAYOUT 
 
 %token <lex> MAT2X2 MAT2X3 MAT2X4
@@ -213,7 +213,6 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %type <interm> array_specifier
 %type <interm.type> invariant_qualifier interpolation_qualifier storage_qualifier precision_qualifier
 %type <interm.type> layout_qualifier layout_qualifier_id_list layout_qualifier_id
-%type <interm.type> non_uniform_qualifier
 
 %type <interm.typeParameters> type_parameter_specifier
 %type <interm.typeParameters> type_parameter_specifier_opt
@@ -388,11 +387,6 @@ function_identifier
             TString* empty = NewPoolTString("");
             $$.function = new TFunction(empty, TType(EbtVoid), EOpNull);
         }
-    }
-    | non_uniform_qualifier {
-        // Constructor
-        $$.intermNode = 0;
-        $$.function = parseContext.handleConstructorCall($1.loc, $1);
     }
     ;
 
@@ -1114,9 +1108,6 @@ single_type_qualifier
         // allow inheritance of storage qualifier from block declaration
         $$ = $1;
     }
-    | non_uniform_qualifier {
-        $$ = $1;
-    }
     ;
 
 storage_qualifier
@@ -1195,13 +1186,6 @@ storage_qualifier
 #endif
         $$.init($1.loc);
         $$.qualifier.storage = EvqShared;
-    }
-    ;
-
-non_uniform_qualifier
-    : NONUNIFORM {
-        $$.init($1.loc);
-        $$.qualifier.nonUniform = true;
     }
     ;
 

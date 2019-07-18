@@ -514,11 +514,11 @@ TIntermTyped* TParseContext::handleBracketDereference(const TSourceLoc& loc, TIn
     }
     result->setType(newType);
 
+#ifndef GLSLANG_WEB
     // Propagate nonuniform
     if (base->getQualifier().isNonUniform() || index->getQualifier().isNonUniform())
         result->getWritableType().getQualifier().nonUniform = true;
 
-#ifndef GLSLANG_WEB
     if (anyIndexLimits)
         handleIndexLimits(loc, base, index);
 #endif
@@ -922,11 +922,11 @@ TIntermTyped* TParseContext::handleDotDereference(const TSourceLoc& loc, TInterm
     // Propagate noContraction up the dereference chain
     if (base->getQualifier().noContraction)
         result->getWritableType().getQualifier().noContraction = true;
-#endif
 
     // Propagate nonuniform
     if (base->getQualifier().isNonUniform())
         result->getWritableType().getQualifier().nonUniform = true;
+#endif
 
     return result;
 }
@@ -2223,8 +2223,10 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
         const bool isBuffer = sampler.dim == EsdBuffer;
         const bool isFetch = callNode.getOp() == EOpTextureFetch || callNode.getOp() == EOpTextureFetchOffset;
 
+#ifndef GLSLANG_WEB
         if (isTexture && (!isBuffer || !isFetch))
             requireExtensions(loc, 1, &E_GL_EXT_samplerless_texture_functions, fnCandidate.getName().c_str());
+#endif
 
         break;
     }
@@ -3260,10 +3262,12 @@ void TParseContext::memberQualifierCheck(glslang::TPublicType& publicType)
 {
     globalQualifierFixCheck(publicType.loc, publicType.qualifier);
     checkNoShaderLayouts(publicType.loc, publicType.shaderQualifiers);
+#ifndef GLSLANG_WEB
     if (publicType.qualifier.isNonUniform()) {
         error(publicType.loc, "not allowed on block or structure members", "nonuniformEXT", "");
         publicType.qualifier.nonUniform = false;
     }
+#endif
 }
 
 //
@@ -3298,8 +3302,10 @@ void TParseContext::globalQualifierFixCheck(const TSourceLoc& loc, TQualifier& q
         break;
     }
 
+#ifndef GLSLANG_WEB
     if (!nonuniformOkay && qualifier.nonUniform)
         error(loc, "for non-parameter, can only apply to 'in' or no storage qualifier", "nonuniformEXT", "");
+#endif
 
     invariantCheck(loc, qualifier);
 }
@@ -3591,9 +3597,9 @@ void TParseContext::mergeQualifiers(const TSourceLoc& loc, TQualifier& dst, cons
     MERGE_SINGLETON(restrict);
     MERGE_SINGLETON(readonly);
     MERGE_SINGLETON(writeonly);
+    MERGE_SINGLETON(nonUniform);
 #endif
     MERGE_SINGLETON(specConstant);
-    MERGE_SINGLETON(nonUniform);
 
     if (repeated)
         error(loc, "replicated qualifiers", "", "");
@@ -4554,9 +4560,9 @@ void TParseContext::paramCheckFix(const TSourceLoc& loc, const TQualifier& quali
         else
             warn(loc, "qualifier has no effect on non-output parameters", "precise", "");
     }
-#endif
     if (qualifier.isNonUniform())
         type.getQualifier().nonUniform = qualifier.nonUniform;
+#endif
 
     paramCheckFixStorage(loc, qualifier.storage, type);
 }
@@ -4918,13 +4924,14 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         publicType.qualifier.layoutPacking = ElpStd430;
         return;
     }
-#endif
     if (id == TQualifier::getLayoutPackingString(ElpScalar)) {
         requireVulkan(loc, "scalar");
         requireExtensions(loc, 1, &E_GL_EXT_scalar_block_layout, "scalar block layout");
         publicType.qualifier.layoutPacking = ElpScalar;
         return;
     }
+#endif
+
     // TODO: compile-time performance: may need to stop doing linear searches
     for (TLayoutFormat format = (TLayoutFormat)(ElfNone + 1); format < ElfCount; format = (TLayoutFormat)(format + 1)) {
         if (id == TQualifier::getLayoutFormatString(format)) {
@@ -7142,6 +7149,12 @@ TIntermTyped* TParseContext::constructBuiltIn(const TType& type, TOperator op, T
         }
 
         return node;
+
+    case EOpConstructNonuniform:
+        // Make a nonuniform copy of node
+        newNode = intermediate.addBuiltInFunctionCall(node->getLoc(), EOpCopyObject, true, node, node->getType());
+        newNode->getWritableType().getQualifier().nonUniform = true;
+        return newNode;
 #endif
 
     case EOpConstructBVec2:
@@ -7150,12 +7163,6 @@ TIntermTyped* TParseContext::constructBuiltIn(const TType& type, TOperator op, T
     case EOpConstructBool:
         basicOp = EOpConstructBool;
         break;
-
-    case EOpConstructNonuniform:
-        // Make a nonuniform copy of node
-        newNode = intermediate.addBuiltInFunctionCall(node->getLoc(), EOpCopyObject, true, node, node->getType());
-        newNode->getWritableType().getQualifier().nonUniform = true;
-        return newNode;
 
     default:
         error(loc, "unsupported construction", "", "");
@@ -7503,8 +7510,10 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
     case EvqUniform:
         profileRequires(loc, EEsProfile, 300, nullptr, "uniform block");
         profileRequires(loc, ENoProfile, 140, nullptr, "uniform block");
+#ifndef GLSLANG_WEB
         if (currentBlockQualifier.layoutPacking == ElpStd430 && ! currentBlockQualifier.layoutPushConstant)
             requireExtensions(loc, 1, &E_GL_EXT_scalar_block_layout, "std430 requires the buffer storage qualifier");
+#endif
         break;
     case EvqBuffer:
         requireProfile(loc, EEsProfile | ECoreProfile | ECompatibilityProfile, "buffer block");

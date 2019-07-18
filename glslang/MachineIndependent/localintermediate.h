@@ -730,12 +730,11 @@ public:
         return true;
     }
     int getPrimitives() const { return primitives; }
-#endif
-
     const char* addSemanticName(const TString& name)
     {
         return semanticNameSet.insert(name).first->c_str();
     }
+#endif
 
     void setSourceFile(const char* file) { if (file != nullptr) sourceFile = file; }
     const std::string& getSourceFile() const { return sourceFile; }
@@ -887,9 +886,11 @@ protected:
 
     std::set<TString> ioAccessed;           // set of names of statically read/written I/O that might need extra checking
     std::vector<TIoRange> usedIo[4];        // sets of used locations, one for each of in, out, uniform, and buffers
-    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters
+    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters //??
     std::unordered_set<int> usedConstantId; // specialization constant ids used
+#ifndef GLSLANG_WEB
     std::set<TString> semanticNameSet;
+#endif
 
     EShTextureSamplerTransformMode textureSamplerTransformMode;
 

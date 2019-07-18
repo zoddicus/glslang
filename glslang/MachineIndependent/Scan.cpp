@@ -341,7 +341,6 @@ void TScanContext::fillInKeywordMap()
 
     (*KeywordMap)["const"] =                   CONST;
     (*KeywordMap)["uniform"] =                 UNIFORM;
-    (*KeywordMap)["nonuniformEXT"] =           NONUNIFORM;
     (*KeywordMap)["in"] =                      IN;
     (*KeywordMap)["out"] =                     OUT;
     (*KeywordMap)["inout"] =                   INOUT;
@@ -384,6 +383,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["varying"] =                 VARYING;
     (*KeywordMap)["buffer"] =                  BUFFER;
 #ifndef GLSLANG_WEB
+    (*KeywordMap)["nonuniformEXT"] =           NONUNIFORM;
     (*KeywordMap)["coherent"] =                COHERENT;
     (*KeywordMap)["devicecoherent"] =          DEVICECOHERENT;
     (*KeywordMap)["queuefamilycoherent"] =     QUEUEFAMILYCOHERENT;
@@ -904,12 +904,6 @@ int TScanContext::tokenizeIdentifier()
         afterStruct = true;
         return keyword;
 
-    case NONUNIFORM:
-        if (parseContext.extensionTurnedOn(E_GL_EXT_nonuniform_qualifier))
-            return keyword;
-        else
-            return identifierOrType();
-
     case SWITCH:
     case DEFAULT:
         if ((parseContext.profile == EEsProfile && parseContext.version < 300) ||
@@ -959,6 +953,12 @@ int TScanContext::tokenizeIdentifier()
         return keyword;
 
 #ifndef GLSLANG_WEB
+    case NONUNIFORM:
+        if (parseContext.extensionTurnedOn(E_GL_EXT_nonuniform_qualifier))
+            return keyword;
+        else
+            return identifierOrType();
+
     case PAYLOADNV:
     case PAYLOADINNV:
     case HITATTRNV:

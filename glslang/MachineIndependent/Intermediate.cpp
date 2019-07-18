@@ -219,10 +219,12 @@ TIntermTyped* TIntermediate::addBinaryMath(TOperator op, TIntermTyped* left, TIn
     if (specConstantPropagates(*node->getLeft(), *node->getRight()) && isSpecializationOperation(*node))
         node->getWritableType().getQualifier().makeSpecConstant();
 
+#ifndef GLSLANG_WEB
     // If must propagate nonuniform, make a nonuniform.
     if ((node->getLeft()->getQualifier().nonUniform || node->getRight()->getQualifier().nonUniform) &&
             isNonuniformPropagating(node->getOp()))
         node->getWritableType().getQualifier().nonUniform = true;
+#endif
 
     return node;
 }
@@ -456,9 +458,11 @@ TIntermTyped* TIntermediate::addUnaryMath(TOperator op, TIntermTyped* child, TSo
     if (node->getOperand()->getType().getQualifier().isSpecConstant() && isSpecializationOperation(*node))
         node->getWritableType().getQualifier().makeSpecConstant();
 
+#ifndef GLSLANG_WEB
     // If must propagate nonuniform, make a nonuniform.
     if (node->getOperand()->getQualifier().nonUniform && isNonuniformPropagating(node->getOp()))
         node->getWritableType().getQualifier().nonUniform = true;
+#endif
 
     return node;
 }
@@ -2025,10 +2029,9 @@ TOperator TIntermediate::mapTypeToConstructorOp(const TType& type) const
 {
     TOperator op = EOpNull;
 
+#ifndef GLSLANG_WEB
     if (type.getQualifier().nonUniform)
         return EOpConstructNonuniform;
-
-#ifndef GLSLANG_WEB
     if (type.isCoopMat())
         return EOpConstructCooperativeMatrix;
 #endif
@@ -3096,6 +3099,7 @@ bool TIntermediate::isSpecializationOperation(const TIntermOperator& node) const
     }
 }
 
+#ifndef GLSLANG_WEB
 // Is the operation one that must propagate nonuniform?
 bool TIntermediate::isNonuniformPropagating(TOperator op) const
 {
@@ -3153,6 +3157,7 @@ bool TIntermediate::isNonuniformPropagating(TOperator op) const
 
     return false;
 }
+#endif
 
 ////////////////////////////////////////////////////////////////
 //
