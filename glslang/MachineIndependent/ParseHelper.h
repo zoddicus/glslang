@@ -69,6 +69,10 @@ class TPpContext;
 
 typedef std::set<int> TIdSetType;
 
+#ifdef GLSLANG_WEB
+#define ppError(A, B, C, D) addError()
+#endif
+
 //
 // Sharable code (as well as what's in TParseVersions) across
 // parse helpers.
@@ -97,6 +101,7 @@ public:
     }
     virtual ~TParseContextBase() { }
 
+#ifndef GLSLANG_WEB
     virtual void C_DECL   error(const TSourceLoc&, const char* szReason, const char* szToken,
                                 const char* szExtraInfoFormat, ...);
     virtual void C_DECL    warn(const TSourceLoc&, const char* szReason, const char* szToken,
@@ -105,6 +110,7 @@ public:
                                 const char* szExtraInfoFormat, ...);
     virtual void C_DECL  ppWarn(const TSourceLoc&, const char* szReason, const char* szToken,
                                 const char* szExtraInfoFormat, ...);
+#endif
 
     virtual void setLimits(const TBuiltInResource&) = 0;
 
@@ -328,7 +334,11 @@ public:
     void samplerConstructorLocationCheck(const TSourceLoc&, const char* token, TIntermNode*);
     TFunction* handleConstructorCall(const TSourceLoc&, const TPublicType&);
     void handlePrecisionQualifier(const TSourceLoc&, TQualifier&, TPrecisionQualifier);
+#ifdef GLSLANG_WEB
+    void checkPrecisionQualifier(const TSourceLoc&, TPrecisionQualifier) { }
+#else
     void checkPrecisionQualifier(const TSourceLoc&, TPrecisionQualifier);
+#endif
     void memorySemanticsCheck(const TSourceLoc&, const TFunction&, const TIntermOperator& callNode);
 
     void assignError(const TSourceLoc&, const char* op, TString left, TString right);
@@ -353,8 +363,10 @@ public:
     void boolCheck(const TSourceLoc&, const TIntermTyped*);
     void boolCheck(const TSourceLoc&, const TPublicType&);
     void samplerCheck(const TSourceLoc&, const TType&, const TString& identifier, TIntermTyped* initializer);
+#ifndef GLSLANG_WEB
     void atomicUintCheck(const TSourceLoc&, const TType&, const TString& identifier);
     void accStructNVCheck(const TSourceLoc & loc, const TType & type, const TString & identifier);
+#endif
     void transparentOpaqueCheck(const TSourceLoc&, const TType&, const TString& identifier);
     void memberQualifierCheck(glslang::TPublicType&);
     void globalQualifierFixCheck(const TSourceLoc&, TQualifier&);
@@ -375,12 +387,14 @@ public:
     void nestedStructCheck(const TSourceLoc&);
     void arrayObjectCheck(const TSourceLoc&, const TType&, const char* op);
     void opaqueCheck(const TSourceLoc&, const TType&, const char* op);
-#ifndef GLSLANG_WEB
+#ifdef GLSLANG_WEB
+    void storage16BitAssignmentCheck(const TSourceLoc&, const TType&, const char* op) { }
+#else
     void referenceCheck(const TSourceLoc&, const TType&, const char* op);
     void inductiveLoopCheck(const TSourceLoc&, TIntermNode* init, TIntermLoop* loop);
     void inductiveLoopBodyCheck(TIntermNode*, int loopIndexId, TSymbolTable&);
-#endif
     void storage16BitAssignmentCheck(const TSourceLoc&, const TType&, const char* op);
+#endif
     void specializationCheck(const TSourceLoc&, const TType&, const char* op);
     void structTypeCheck(const TSourceLoc&, TPublicType&);
     void arrayLimitCheck(const TSourceLoc&, const TString&, int size);
@@ -475,13 +489,14 @@ protected:
     TQualifier globalUniformDefaults;
     TQualifier globalInputDefaults;
     TQualifier globalOutputDefaults;
-    int* atomicUintOffsets;       // to become an array of the right size to hold an offset per binding point
-    TString currentCaller;        // name of last function body entered (not valid when at global scope)
-    bool anyIndexLimits;
 #ifndef GLSLANG_WEB
+    int* atomicUintOffsets;       // to become an array of the right size to hold an offset per binding point
+#endif
+    TString currentCaller;        // name of last function body entered (not valid when at global scope)
+#ifndef GLSLANG_WEB
+    bool anyIndexLimits;
     TIdSetType inductiveLoopIds;
     TVector<TIntermTyped*> needsIndexLimitationChecking;
-#endif
 
     //
     // Geometry shader input arrays:
@@ -516,6 +531,7 @@ protected:
     //    array-sizing declarations
     //
     TVector<TSymbol*> ioArraySymbolResizeList;
+#endif
 };
 
 } // end namespace glslang

@@ -56,7 +56,7 @@ namespace glslang {
 //
 #ifdef GLSLANG_WEB
 #define error(A, B) ++numErrors
-#define warn(A, B) ++numErrors
+#define warn(A, B)
 #else
 void TIntermediate::error(TInfoSink& infoSink, const char* message)
 {
@@ -1143,6 +1143,7 @@ int TIntermediate::checkLocationRange(int set, const TIoRange& range, const TTyp
     return -1; // no collision
 }
 
+#ifndef GLSLANG_WEB
 // Accumulate bindings and offsets, and check for collisions
 // as the accumulation is done.
 //
@@ -1166,6 +1167,7 @@ int TIntermediate::addUsedOffsets(int binding, int offset, int numOffsets)
 
     return -1; // no collision
 }
+#endif
 
 // Accumulate used constant_id values.
 //

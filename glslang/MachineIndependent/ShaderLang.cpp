@@ -876,12 +876,14 @@ bool ProcessDeferred(
                                             versionNotFirst, defaultVersion, source, version, profile, spvVersion);
     bool versionWillBeError = (versionNotFound || (profile == EEsProfile && version >= 300 && versionNotFirst));
     bool warnVersionNotFirst = false;
+#ifndef GLSLANG_WEB
     if (! versionWillBeError && versionNotFirstToken) {
         if (messages & EShMsgRelaxedErrors)
             warnVersionNotFirst = true;
         else
             versionWillBeError = true;
     }
+#endif
 
     intermediate.setSource(source);
     intermediate.setVersion(version);
@@ -943,11 +945,13 @@ bool ProcessDeferred(
     parseContext->setLimits(*resources);
     if (! goodVersion)
         parseContext->addError();
+#ifndef GLSLANG_WEB
     if (warnVersionNotFirst) {
         TSourceLoc loc;
         loc.init();
         parseContext->warn(loc, "Illegal to have non-comment, non-whitespace tokens before #version", "#version", "");
     }
+#endif
 
     parseContext->initializeExtensionBehavior();
 

@@ -148,7 +148,9 @@ int TPpContext::CPPdefine(TPpToken* ppToken)
 
         token = scanToken(ppToken);
     } else if (token != '\n' && token != EndOfInput && !ppToken->space) {
+#ifndef GLSLANG_WEB
         parseContext.ppWarn(ppToken->loc, "missing space after macro name", "#define", "");
+#endif
 
         return token;
     }
@@ -335,10 +337,12 @@ int TPpContext::extraTokenCheck(int contextAtom, TPpToken* ppToken, int token)
         else
             label = "";
 
+#ifndef GLSLANG_WEB
         if (parseContext.relaxedErrors())
             parseContext.ppWarn(ppToken->loc, message, label, "");
         else
             parseContext.ppError(ppToken->loc, message, label, "");
+#endif
 
         while (token != '\n' && token != EndOfInput)
             token = scanToken(ppToken);
@@ -419,6 +423,7 @@ int TPpContext::eval(int token, int precedence, bool shortCircuit, int& res, boo
     TSourceLoc loc = ppToken->loc;  // because we sometimes read the newline before reporting the error
     if (token == PpAtomIdentifier) {
         if (strcmp("defined", ppToken->name) == 0) {
+#ifndef GLSLANG_WEB
             if (! parseContext.isReadingHLSL() && isMacroInput()) {
                 if (parseContext.relaxedErrors())
                     parseContext.ppWarn(ppToken->loc, "nonportable when expanded from macros for preprocessor expression",
@@ -427,6 +432,7 @@ int TPpContext::eval(int token, int precedence, bool shortCircuit, int& res, boo
                     parseContext.ppError(ppToken->loc, "cannot use in preprocessor expression when expanded from macros",
                                                        "defined", "");
             }
+#endif
             bool needclose = 0;
             token = scanToken(ppToken);
             if (token == '(') {
@@ -547,10 +553,12 @@ int TPpContext::evalToToken(int token, bool shortCircuit, int& res, bool& err, T
         case MacroExpandUndef:
             if (! shortCircuit && parseContext.profile == EEsProfile) {
                 const char* message = "undefined macro in expression not allowed in es profile";
+#ifndef GLSLANG_WEB
                 if (parseContext.relaxedErrors())
                     parseContext.ppWarn(ppToken->loc, message, "preprocessor evaluation", ppToken->name);
                 else
                     parseContext.ppError(ppToken->loc, message, "preprocessor evaluation", ppToken->name);
+#endif
             }
             break;
         }

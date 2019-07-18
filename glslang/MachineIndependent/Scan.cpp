@@ -1659,7 +1659,7 @@ int TScanContext::identifierOrType()
 int TScanContext::reservedWord()
 {
     if (! parseContext.symbolTable.atBuiltInLevel())
-        parseContext.error(loc, "Reserved word.", tokenText, "", "");
+        parseContext.error(loc, "Reserved word.", tokenText, "");
 
     return 0;
 }
@@ -1672,8 +1672,10 @@ int TScanContext::identifierOrReserved(bool reserved)
         return 0;
     }
 
+#ifndef GLSLANG_WEB
     if (parseContext.forwardCompatible)
         parseContext.warn(loc, "using future reserved keyword", tokenText, "");
+#endif
 
     return identifierOrType();
 }
@@ -1687,9 +1689,10 @@ int TScanContext::es30ReservedFromGLSL(int version)
 
     if ((parseContext.profile == EEsProfile && parseContext.version < 300) ||
         (parseContext.profile != EEsProfile && parseContext.version < version)) {
+#ifndef GLSLANG_WEB
             if (parseContext.forwardCompatible)
                 parseContext.warn(loc, "future reserved word in ES 300 and keyword in GLSL", tokenText, "");
-
+#endif
             return identifierOrType();
     } else if (parseContext.profile == EEsProfile && parseContext.version >= 300)
         reservedWord();
@@ -1703,9 +1706,10 @@ int TScanContext::nonreservedKeyword(int esVersion, int nonEsVersion)
 {
     if ((parseContext.profile == EEsProfile && parseContext.version < esVersion) ||
         (parseContext.profile != EEsProfile && parseContext.version < nonEsVersion)) {
+#ifndef GLSLANG_WEB
         if (parseContext.forwardCompatible)
             parseContext.warn(loc, "using future keyword", tokenText, "");
-
+#endif
         return identifierOrType();
     }
 
@@ -1717,9 +1721,10 @@ int TScanContext::precisionKeyword()
     if (parseContext.profile == EEsProfile || parseContext.version >= 130)
         return keyword;
 
+#ifndef GLSLANG_WEB
     if (parseContext.forwardCompatible)
         parseContext.warn(loc, "using ES precision qualifier keyword", tokenText, "");
-
+#endif
     return identifierOrType();
 }
 
@@ -1730,9 +1735,10 @@ int TScanContext::matNxM()
     if (parseContext.version > 110)
         return keyword;
 
+#ifndef GLSLANG_WEB
     if (parseContext.forwardCompatible)
         parseContext.warn(loc, "using future non-square matrix type keyword", tokenText, "");
-
+#endif
     return identifierOrType();
 }
 
@@ -1749,9 +1755,10 @@ int TScanContext::dMat()
     if (parseContext.profile != EEsProfile && parseContext.version >= 400)
         return keyword;
 
+#ifndef GLSLANG_WEB
     if (parseContext.forwardCompatible)
         parseContext.warn(loc, "using future type keyword", tokenText, "");
-
+#endif
     return identifierOrType();
 }
 
@@ -1770,9 +1777,10 @@ int TScanContext::firstGenerationImage(bool inEs310)
         return keyword;
     }
 
+#ifndef GLSLANG_WEB
     if (parseContext.forwardCompatible)
         parseContext.warn(loc, "using future type keyword", tokenText, "");
-
+#endif
     return identifierOrType();
 }
 
@@ -1788,9 +1796,10 @@ int TScanContext::secondGenerationImage()
          (parseContext.version >= 420 || parseContext.extensionTurnedOn(E_GL_ARB_shader_image_load_store))))
         return keyword;
 
+#ifndef GLSLANG_WEB
     if (parseContext.forwardCompatible)
         parseContext.warn(loc, "using future type keyword", tokenText, "");
-
+#endif
     return identifierOrType();
 }
 

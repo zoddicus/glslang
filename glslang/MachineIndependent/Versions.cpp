@@ -609,6 +609,7 @@ void TParseVersions::requireStage(const TSourceLoc& loc, EShLanguage stage, cons
 //
 void TParseVersions::checkDeprecated(const TSourceLoc& loc, int profileMask, int depVersion, const char* featureDesc)
 {
+#ifndef GLSLANG_WEB
     if (profile & profileMask) {
         if (version >= depVersion) {
             if (forwardCompatible)
@@ -618,6 +619,7 @@ void TParseVersions::checkDeprecated(const TSourceLoc& loc, int profileMask, int
                                                        String(depVersion) + "; may be removed in future release").c_str(), loc);
         }
     }
+#endif
 }
 
 //
@@ -836,19 +838,23 @@ void TParseVersions::updateExtensionBehavior(const char* extension, TExtensionBe
             case EBhRequire:
                 error(getCurrentLoc(), "extension not supported:", "#extension", extension);
                 break;
+#ifndef GLSLANG_WEB
             case EBhEnable:
             case EBhWarn:
             case EBhDisable:
                 warn(getCurrentLoc(), "extension not supported:", "#extension", extension);
                 break;
+#endif
             default:
                 assert(0 && "unexpected behavior");
             }
 
             return;
         } else {
+#ifndef GLSLANG_WEB
             if (iter->second == EBhDisablePartial)
                 warn(getCurrentLoc(), "extension is only partially supported:", "#extension", extension);
+#endif
             if (behavior == EBhEnable || behavior == EBhRequire)
                 intermediate.addRequestedExtension(extension);
             iter->second = behavior;

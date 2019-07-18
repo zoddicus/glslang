@@ -786,8 +786,10 @@ public:
 
 protected:
     TIntermSymbol* addSymbol(int Id, const TString&, const TType&, const TConstUnionArray&, TIntermTyped* subtree, const TSourceLoc&);
+#ifndef GLSLANG_WEB
     void error(TInfoSink& infoSink, const char*);
     void warn(TInfoSink& infoSink, const char*);
+#endif
     void mergeCallGraphs(TInfoSink&, TIntermediate&);
     void mergeModes(TInfoSink&, TIntermediate&);
     void mergeTrees(TInfoSink&, TIntermediate&);
@@ -886,7 +888,7 @@ protected:
 
     std::set<TString> ioAccessed;           // set of names of statically read/written I/O that might need extra checking
     std::vector<TIoRange> usedIo[4];        // sets of used locations, one for each of in, out, uniform, and buffers
-    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters //??
+    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters
     std::unordered_set<int> usedConstantId; // specialization constant ids used
 #ifndef GLSLANG_WEB
     std::set<TString> semanticNameSet;

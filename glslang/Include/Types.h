@@ -1027,6 +1027,7 @@ public:
         default:             return "none";
         }
     }
+#ifndef GLSLANG_WEB
     static const char* getLayoutFormatString(TLayoutFormat f)
     {
         switch (f) {
@@ -1161,6 +1162,7 @@ public:
         default:                                return "none";
         }
     }
+#endif
 };
 
 // Qualifiers that don't need to be keep per object.  They have shader scope, not object scope.

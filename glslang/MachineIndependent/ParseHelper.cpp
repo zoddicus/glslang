@@ -56,8 +56,11 @@ TParseContext::TParseContext(TSymbolTable& symbolTable, TIntermediate& interm, b
                               infoSink, forwardCompatible, messages, entryPoint),
             inMain(false),
             blockName(nullptr),
-            limits(resources.limits),
-            atomicUintOffsets(nullptr), anyIndexLimits(false)
+            limits(resources.limits)
+#ifndef GLSLANG_WEB
+            , atomicUintOffsets(nullptr)
+            , anyIndexLimits(false)
+#endif
 {
     // decide whether precision qualifiers should be ignored or respected
     if (profile == EEsProfile || spvVersion.vulkan > 0) {
@@ -103,7 +106,9 @@ TParseContext::TParseContext(TSymbolTable& symbolTable, TIntermediate& interm, b
 
 TParseContext::~TParseContext()
 {
+#ifndef GLSLANG_WEB
     delete [] atomicUintOffsets;
+#endif
 }
 
 // Set up all default precisions as needed by the current environment.
@@ -208,16 +213,6 @@ bool TParseContext::parseShaderStrings(TPpContext& ppContext, TInputScanner& inp
 
     return numErrors == 0;
 }
-
-#ifdef GLSLANG_WEB
-#define error(A, B, C, D)          ++numErrors
-#define error5(A, B, C, D, E)      ++numErrors
-#define error6(A, B, C, D, E, F)   ++numErrors
-#define warn(A, B, C, D)
-#else
-#define error5(A, B, C, D, E) error(A, B, C, D, E)
-#define error6(A, B, C, D, E, F)  error(A, B, C, D, E, F)
-#endif
 
 // This is called from bison when it has a parse (syntax) error
 // Note though that to stop cascading errors, we set EOF, which
@@ -1432,8 +1427,10 @@ TIntermNode* TParseContext::handleReturnValue(const TSourceLoc& loc, TIntermType
         if (converted) {
             if (*currentFunctionType != converted->getType())
                 error(loc, "cannot convert return value to function return type", "return", "");
+#ifndef GLSLANG_WEB
             if (version < 420)
                 warn(loc, "type conversion on return values was not explicitly allowed until version 420", "return", "");
+#endif
             return intermediate.addBranch(EOpReturn, converted, loc);
         } else {
             error(loc, "type does not match, or is not convertible to, the function's return type", "return", "");
@@ -2425,6 +2422,7 @@ void TParseContext::handlePrecisionQualifier(const TSourceLoc& /*loc*/, TQualifi
         qualifier.precision = precision;
 }
 
+#ifndef GLSLANG_WEB
 // Check for messages to give on seeing a precision qualifier used in a
 // declaration in the grammar.
 void TParseContext::checkPrecisionQualifier(const TSourceLoc& loc, TPrecisionQualifier)
@@ -2435,6 +2433,7 @@ void TParseContext::checkPrecisionQualifier(const TSourceLoc& loc, TPrecisionQua
         precisionManager.defaultWarningGiven();
     }
 }
+#endif
 
 //
 // Same error message for all places assignments don't work.
@@ -2692,8 +2691,10 @@ void TParseContext::reservedErrorCheck(const TSourceLoc& loc, const TString& ide
         if (identifier.find("__") != TString::npos) {
             if (profile == EEsProfile && version <= 300)
                 error(loc, "identifiers containing consecutive underscores (\"__\") are reserved, and an error if version <= 300", identifier.c_str(), "");
+#ifndef GLSLANG_WEB
             else
                 warn(loc, "identifiers containing consecutive underscores (\"__\") are reserved", identifier.c_str(), "");
+#endif
         }
     }
 }
@@ -2723,8 +2724,10 @@ void TParseContext::reservedPpErrorCheck(const TSourceLoc& loc, const char* iden
         else {
             if (profile == EEsProfile && version <= 300)
                 ppError(loc, "names containing consecutive underscores are reserved, and an error if version <= 300:", op, identifier);
+#ifndef GLSLANG_WEB
             else
                 ppWarn(loc, "names containing consecutive underscores are reserved:", op, identifier);
+#endif
         }
     }
 }
@@ -2742,14 +2745,17 @@ bool TParseContext::lineContinuationCheck(const TSourceLoc& loc, bool endOfComme
                                    (profile != EEsProfile && (version >= 420 || extensionTurnedOn(E_GL_ARB_shading_language_420pack)));
 
     if (endOfComment) {
+#ifndef GLSLANG_WEB
         if (lineContinuationAllowed)
             warn(loc, "used at end of comment; the following line is still part of the comment", message, "");
         else
             warn(loc, "used at end of comment, but this version does not provide line continuation", message, "");
+#endif
 
         return lineContinuationAllowed;
     }
 
+#ifndef GLSLANG_WEB
     if (relaxedErrors()) {
         if (! lineContinuationAllowed)
             warn(loc, "not allowed in this version", message, "");
@@ -2758,6 +2764,7 @@ bool TParseContext::lineContinuationCheck(const TSourceLoc& loc, bool endOfComme
         profileRequires(loc, EEsProfile, 300, nullptr, message);
         profileRequires(loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, message);
     }
+#endif
 
     return lineContinuationAllowed;
 }
@@ -3687,10 +3694,12 @@ void TParseContext::precisionQualifierCheck(const TSourceLoc& loc, TBasicType ba
 #endif
         ) {
         if (qualifier.precision == EpqNone) {
+#ifndef GLSLANG_WEB
             if (relaxedErrors())
                 warn(loc, "type requires declaration of default precision qualifier", TType::getBasicString(baseType), "substituting 'mediump'");
             else
                 error(loc, "type requires declaration of default precision qualifier", TType::getBasicString(baseType), "");
+#endif
             qualifier.precision = EpqMedium;
             defaultPrecision[baseType] = EpqMedium;
         }
@@ -4602,11 +4611,9 @@ void TParseContext::referenceCheck(const TSourceLoc& loc, const TType& type, con
     if (containsFieldWithBasicType(type, EbtReference))
         error(loc, "can't use with reference types", op, "");
 }
-#endif
 
 void TParseContext::storage16BitAssignmentCheck(const TSourceLoc& loc, const TType& type, const char* op)
 {
-#ifndef GLSLANG_WEB
     if (type.getBasicType() == EbtStruct && containsFieldWithBasicType(type, EbtFloat16))
         requireFloat16Arithmetic(loc, op, "can't use with structs containing float16");
 
@@ -4636,8 +4643,8 @@ void TParseContext::storage16BitAssignmentCheck(const TSourceLoc& loc, const TTy
 
     if (type.isArray() && type.getBasicType() == EbtUint8)
         requireInt8Arithmetic(loc, op, "can't use with arrays containing uint8");
-#endif
 }
+#endif
 
 void TParseContext::specializationCheck(const TSourceLoc& loc, const TType& type, const char* op)
 {
@@ -4930,8 +4937,6 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         publicType.qualifier.layoutPacking = ElpScalar;
         return;
     }
-#endif
-
     // TODO: compile-time performance: may need to stop doing linear searches
     for (TLayoutFormat format = (TLayoutFormat)(ElfNone + 1); format < ElfCount; format = (TLayoutFormat)(format + 1)) {
         if (id == TQualifier::getLayoutFormatString(format)) {
@@ -4945,6 +4950,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
             return;
         }
     }
+#endif
     if (id == "push_constant") {
         requireVulkan(loc, "push_constant");
         publicType.qualifier.layoutPushConstant = true;
@@ -5785,8 +5791,10 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
                         lastBinding += type.getCumulativeArraySize();
                     else {
                         lastBinding += 1;
+#ifndef GLSLANG_WEB
                         if (spvVersion.vulkan == 0)
                             warn(loc, "assuming binding count of one for compile-time checking of binding numbers for unsized array", "[]", "");
+#endif
                     }
                 }
             }
@@ -6049,6 +6057,7 @@ void TParseContext::checkNoShaderLayouts(const TSourceLoc& loc, const TShaderQua
 {
     const char* message = "can only apply to a standalone qualifier";
 
+#ifndef GLSLANG_WEB
     if (shaderQualifiers.geometry != ElgNone)
         error(loc, message, TQualifier::getGeometryString(shaderQualifiers.geometry), "");
     if (shaderQualifiers.spacing != EvsNone)
@@ -6069,7 +6078,6 @@ void TParseContext::checkNoShaderLayouts(const TSourceLoc& loc, const TShaderQua
         if (shaderQualifiers.localSizeSpecId[i] != TQualifier::layoutNotSet)
             error(loc, message, "local_size id", "");
     }
-#ifndef GLSLANG_WEB
     if (shaderQualifiers.vertices != TQualifier::layoutNotSet) {
         if (language == EShLangGeometry || language == EShLangMeshNV)
             error(loc, message, "max_vertices", "");
@@ -6734,10 +6742,12 @@ TIntermNode* TParseContext::executeInitializer(const TSourceLoc& loc, TIntermTyp
         if (symbolTable.atGlobalLevel() && ! initializer->getType().getQualifier().isConstant()) {
             const char* initFeature = "non-constant global initializer (needs GL_EXT_shader_non_constant_global_initializers)";
             if (profile == EEsProfile) {
+#ifndef GLSLANG_WEB
                 if (relaxedErrors() && ! extensionTurnedOn(E_GL_EXT_shader_non_constant_global_initializers))
                     warn(loc, "not allowed in this version", initFeature, "");
                 else
                     profileRequires(loc, EEsProfile, 0, E_GL_EXT_shader_non_constant_global_initializers, initFeature);
+#endif
             }
         }
     }
@@ -7831,8 +7841,11 @@ void TParseContext::addQualifierToExisting(const TSourceLoc& loc, TQualifier qua
         symbol->getWritableType().getQualifier().makeSpecConstant();
         if (qualifier.hasSpecConstantId())
             symbol->getWritableType().getQualifier().layoutSpecConstantId = qualifier.layoutSpecConstantId;
-    } else
+    }
+#ifndef GLSLANG_WEB
+    else
         warn(loc, "unknown requalification", "", "");
+#endif
 }
 
 void TParseContext::addQualifierToExisting(const TSourceLoc& loc, TQualifier qualifier, TIdentifierList& identifiers)
@@ -8205,6 +8218,7 @@ TIntermNode* TParseContext::addSwitch(const TSourceLoc& loc, TIntermTyped* expre
         return expression;
 
     if (lastStatements == nullptr) {
+#ifndef GLSLANG_WEB
         // This was originally an ERRROR, because early versions of the specification said
         // "it is an error to have no statement between a label and the end of the switch statement."
         // The specifications were updated to remove this (being ill-defined what a "statement" was),
@@ -8213,6 +8227,7 @@ TIntermNode* TParseContext::addSwitch(const TSourceLoc& loc, TIntermTyped* expre
             error(loc, "last case/default label not followed by statements", "switch", "");
         else
             warn(loc, "last case/default label not followed by statements", "switch", "");
+#endif
 
         // emulate a break for error recovery
         lastStatements = intermediate.makeAggregate(intermediate.addBranch(EOpBreak, loc));

@@ -45,7 +45,7 @@ class TConstTraverser : public TIntermTraverser {
 public:
     TConstTraverser(const TConstUnionArray& cUnion, bool singleConstParam, TOperator constructType, const TType& t)
       : unionArray(cUnion), type(t),
-        constructorType(constructType), singleConstantParam(singleConstParam), error(false), isMatrix(false),
+        constructorType(constructType), singleConstantParam(singleConstParam), errorFound(false), isMatrix(false),
         matrixCols(0), matrixRows(0) {  index = 0; tOp = EOpNull; }
 
     virtual void visitConstantUnion(TIntermConstantUnion* node);
@@ -57,7 +57,7 @@ public:
     const TType& type;
     TOperator constructorType;
     bool singleConstantParam;
-    bool error;
+    bool errorFound;
     int size; // size of the constructor ( 4 for vec4)
     bool isMatrix;
     int matrixCols;
@@ -71,7 +71,7 @@ protected:
 bool TConstTraverser::visitAggregate(TVisit /* visit */, TIntermAggregate* node)
 {
     if (! node->isConstructor() && node->getOp() != EOpComma) {
-        error = true;
+        errorFound = true;
 
         return false;
     }
@@ -195,7 +195,7 @@ bool TIntermediate::parseConstTree(TIntermNode* root, TConstUnionArray unionArra
     TConstTraverser it(unionArray, singleConstantParam, constructorType, t);
 
     root->traverse(&it);
-    if (it.error)
+    if (it.errorFound)
         return true;
     else
         return false;

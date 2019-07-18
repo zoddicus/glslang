@@ -45,6 +45,15 @@
 
 #include <map>
 
+#ifdef GLSLANG_WEB
+#define error(A, B, C, D)          addError()
+#define error5(A, B, C, D, E)      addError()
+#define error6(A, B, C, D, E, F)   addError()
+#else
+#define error5(A, B, C, D, E) error(A, B, C, D, E)
+#define error6(A, B, C, D, E, F)  error(A, B, C, D, E, F)
+#endif
+
 namespace glslang {
 
 //
@@ -105,6 +114,7 @@ public:
     virtual bool checkExtensionsRequested(const TSourceLoc&, int numExtensions, const char* const extensions[], const char* featureDesc);
     virtual void updateExtensionBehavior(const char* const extension, TExtensionBehavior);
 
+#ifndef GLSLANG_WEB
     virtual void C_DECL error(const TSourceLoc&, const char* szReason, const char* szToken,
         const char* szExtraInfoFormat, ...) = 0;
     virtual void C_DECL  warn(const TSourceLoc&, const char* szReason, const char* szToken,
@@ -113,6 +123,7 @@ public:
         const char* szExtraInfoFormat, ...) = 0;
     virtual void C_DECL ppWarn(const TSourceLoc&, const char* szReason, const char* szToken,
         const char* szExtraInfoFormat, ...) = 0;
+#endif
 
     void addError() { ++numErrors; }
     int getNumErrors() const { return numErrors; }
@@ -126,7 +137,11 @@ public:
     void setCurrentString(int string) { currentScanner->setString(string); }
 
     void getPreamble(std::string&);
+#ifdef GLSLANG_WEB
+    bool relaxedErrors()    const { return true; }
+#else
     bool relaxedErrors()    const { return (messages & EShMsgRelaxedErrors) != 0; }
+#endif
     bool suppressWarnings() const { return (messages & EShMsgSuppressWarnings) != 0; }
     bool isReadingHLSL()    const { return (messages & EShMsgReadHlsl) == EShMsgReadHlsl; }
     bool hlslEnable16BitTypes() const { return (messages & EShMsgHlslEnable16BitTypes) != 0; }
