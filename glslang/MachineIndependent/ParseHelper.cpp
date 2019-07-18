@@ -2357,13 +2357,17 @@ void TParseContext::nonOpBuiltInCheck(const TSourceLoc& loc, const TFunction& fn
     if (fnCandidate.getName().compare(0, 11, "imageAtomic") == 0) {
         const TType& imageType = callNode.getSequence()[0]->getAsTyped()->getType();
         if (imageType.getSampler().type == EbtInt || imageType.getSampler().type == EbtUint) {
+#ifndef GLSLANG_WEB
             if (imageType.getQualifier().layoutFormat != ElfR32i && imageType.getQualifier().layoutFormat != ElfR32ui)
                 error(loc, "only supported on image with format r32i or r32ui", fnCandidate.getName().c_str(), "");
+#endif
         } else {
             if (fnCandidate.getName().compare(0, 19, "imageAtomicExchange") != 0)
                 error(loc, "only supported on integer images", fnCandidate.getName().c_str(), "");
+#ifndef GLSLANG_WEB
             else if (imageType.getQualifier().layoutFormat != ElfR32f && profile == EEsProfile)
                 error(loc, "only supported on image with format r32f", fnCandidate.getName().c_str(), "");
+#endif
         }
     }
 }
@@ -5521,16 +5525,13 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
     if (src.hasPacking())
         dst.layoutPacking = src.layoutPacking;
 
+#ifndef GLSLANG_WEB
     if (src.hasStream())
         dst.layoutStream = src.layoutStream;
-
     if (src.hasFormat())
         dst.layoutFormat = src.layoutFormat;
-
     if (src.hasAlign())
         dst.layoutAlign = src.layoutAlign;
-
-#ifndef GLSLANG_WEB
     if (src.hasXfbBuffer())
         dst.layoutXfbBuffer = src.layoutXfbBuffer;
     if (src.hasBufferReferenceAlign())
@@ -5541,15 +5542,14 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
         if (src.hasLocation())
             dst.layoutLocation = src.layoutLocation;
 
-        if (src.hasOffset())
-            dst.layoutOffset = src.layoutOffset;
-
         if (src.hasSet())
             dst.layoutSet = src.layoutSet;
         if (src.layoutBinding != TQualifier::layoutBindingEnd)
             dst.layoutBinding = src.layoutBinding;
 
 #ifndef GLSLANG_WEB
+        if (src.hasOffset())
+            dst.layoutOffset = src.layoutOffset;
         if (src.hasComponent())
             dst.layoutComponent = src.layoutComponent;
         if (src.hasIndex())
@@ -5638,11 +5638,11 @@ void TParseContext::layoutObjectCheck(const TSourceLoc& loc, const TSymbol& symb
                     error(loc, "cannot specify packing on a variable declaration", "layout", "");
                 // "The offset qualifier can only be used on block members of blocks..."
                 // "The align qualifier can only be used on blocks or block members..."
-                if (qualifier.hasAlign())
-                    error(loc, "cannot specify on a variable declaration", "align", "");
                 if (qualifier.layoutPushConstant)
                     error(loc, "can only specify on a uniform block", "push_constant", "");
 #ifndef GLSLANG_WEB
+                if (qualifier.hasAlign())
+                    error(loc, "cannot specify on a variable declaration", "align", "");
                 if (qualifier.hasOffset() && type.getBasicType() != EbtAtomicUint)
                     error(loc, "cannot specify on a variable declaration", "offset", "");
                 if (qualifier.layoutShaderRecordNV)
@@ -5841,7 +5841,6 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
                 warn(loc, "Generating SPIR-V array-of-arrays, but Vulkan only supports single array level for this resource", "[][]", "");
         }
     }
-#endif
 
     // "The offset qualifier can only be used on block members of blocks..."
     if (qualifier.hasOffset()) {
@@ -5860,21 +5859,16 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
                 error(loc, "does not apply to signed integer images", TQualifier::getLayoutFormatString(qualifier.layoutFormat), "");
             if (type.getSampler().type == EbtUint && qualifier.layoutFormat < ElfIntGuard)
                 error(loc, "does not apply to unsigned integer images", TQualifier::getLayoutFormatString(qualifier.layoutFormat), "");
-
             if (profile == EEsProfile) {
                 // "Except for image variables qualified with the format qualifiers r32f, r32i, and r32ui, image variables must
                 // specify either memory qualifier readonly or the memory qualifier writeonly."
                 if (! (qualifier.layoutFormat == ElfR32f || qualifier.layoutFormat == ElfR32i || qualifier.layoutFormat == ElfR32ui)) {
-#ifndef GLSLANG_WEB
                     if (! qualifier.readonly && ! qualifier.writeonly)
-#endif
                         error(loc, "format requires readonly or writeonly memory qualifier", TQualifier::getLayoutFormatString(qualifier.layoutFormat), "");
                 }
             }
         }
-    }
-#ifndef GLSLANG_WEB
-    else if (type.isImage() && ! qualifier.writeonly) {
+    } else if (type.isImage() && ! qualifier.writeonly) {
         const char *explanation = "image variables not declared 'writeonly' and without a format layout qualifier";
         requireProfile(loc, ECoreProfile | ECompatibilityProfile, explanation);
         profileRequires(loc, ECoreProfile | ECompatibilityProfile, 0, E_GL_EXT_shader_image_load_formatted, explanation);
@@ -6022,8 +6016,10 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
         if (! qualifier.isUniformOrBuffer() && !qualifier.isTaskMemory()) {
             if (qualifier.hasMatrix() || qualifier.hasPacking())
                 error(loc, "matrix or packing qualifiers can only be used on a uniform or buffer", "layout", "");
+#ifndef GLSLANG_WEB
             if (qualifier.hasOffset() || qualifier.hasAlign())
                 error(loc, "offset/align can only be used on a uniform or buffer", "layout", "");
+#endif
         }
     }
     if (qualifier.layoutPushConstant) {
@@ -6685,7 +6681,9 @@ TIntermNode* TParseContext::executeInitializer(const TSourceLoc& loc, TIntermTyp
     TType skeletalType;
     skeletalType.shallowCopy(variable->getType());
     skeletalType.getQualifier().makeTemporary();
+#ifndef GLSLANG_WEB
     initializer = convertInitializerList(loc, skeletalType, initializer);
+#endif
     if (! initializer) {
         // error recovery; don't leave const without constant values
         if (qualifier == EvqConst)
@@ -6791,6 +6789,7 @@ TIntermNode* TParseContext::executeInitializer(const TSourceLoc& loc, TIntermTyp
     return nullptr;
 }
 
+#ifndef GLSLANG_WEB
 //
 // Reprocess any initializer-list (the  "{ ... }" syntax) parts of the
 // initializer.
@@ -6826,7 +6825,6 @@ TIntermTyped* TParseContext::convertInitializerList(const TSourceLoc& loc, const
         // edit array sizes to fill in unsized dimensions
         arrayType.changeOuterArraySize((int)initList->getSequence().size());
         TIntermTyped* firstInit = initList->getSequence()[0]->getAsTyped();
-#ifndef GLSLANG_WEB
         if (arrayType.isArrayOfArrays() && firstInit->getType().isArray() &&
             arrayType.getArraySizes()->getNumDims() == firstInit->getType().getArraySizes()->getNumDims() + 1) {
             for (int d = 1; d < arrayType.getArraySizes()->getNumDims(); ++d) {
@@ -6834,7 +6832,6 @@ TIntermTyped* TParseContext::convertInitializerList(const TSourceLoc& loc, const
                     arrayType.getArraySizes()->setDimSize(d, firstInit->getType().getArraySizes()->getDimSize(d - 1));
             }
         }
-#endif
 
         TType elementType(arrayType, 0); // dereferenced type
         for (size_t i = 0; i < initList->getSequence().size(); ++i) {
@@ -6884,6 +6881,7 @@ TIntermTyped* TParseContext::convertInitializerList(const TSourceLoc& loc, const
         emulatedConstructorArguments = initList;
     return addConstructor(loc, emulatedConstructorArguments, type);
 }
+#endif
 
 //
 // Test for the correctness of the parameters passed to various constructor functions
@@ -7253,12 +7251,14 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
             error(memberLoc, "member of uniform or buffer block cannot have an auxiliary or interpolation qualifier", memberType.getFieldName().c_str(), "");
         if (memberType.isArray())
             arraySizesCheck(memberLoc, currentBlockQualifier, memberType.getArraySizes(), nullptr, member == typeList.size() - 1);
+#ifndef GLSLANG_WEB
         if (memberQualifier.hasOffset()) {
             if (spvVersion.spv == 0) {
                 requireProfile(memberLoc, ~EEsProfile, "offset on block member");
                 profileRequires(memberLoc, ~EEsProfile, 440, E_GL_ARB_enhanced_layouts, "offset on block member");
             }
         }
+#endif
         if (memberType.containsOpaque())
             error(memberLoc, "member of block cannot be or contain a sampler, image, or atomic_uint type", typeList[member].type->getFieldName().c_str(), "");
     }
@@ -7307,6 +7307,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
 
     mergeObjectLayoutQualifiers(defaultQualification, currentBlockQualifier, true);
 
+#ifndef GLSLANG_WEB
     // "The align qualifier can only be used on blocks or block members, and only for blocks declared with std140 or std430 layouts."
     if (currentBlockQualifier.hasAlign()) {
         if (defaultQualification.layoutPacking != ElpStd140 &&
@@ -7316,12 +7317,11 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
             defaultQualification.layoutAlign = -1;
         }
     }
-
-    bool memberWithLocation = false;
-    bool memberWithoutLocation = false;
-#ifndef GLSLANG_WEB
     bool memberWithPerViewQualifier = false;
 #endif
+    bool memberWithLocation = false;
+    bool memberWithoutLocation = false;
+
     for (unsigned int member = 0; member < typeList.size(); ++member) {
         TQualifier& memberQualifier = typeList[member].type->getQualifier();
         const TSourceLoc& memberLoc = typeList[member].loc;
@@ -7361,6 +7361,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
         } else
             memberWithoutLocation = true;
 
+#ifndef GLSLANG_WEB
         // "The offset qualifier can only be used on block members of blocks declared with std140 or std430 layouts."
         // "The align qualifier can only be used on blocks or block members, and only for blocks declared with std140 or std430 layouts."
         if (memberQualifier.hasAlign() || memberQualifier.hasOffset()) {
@@ -7370,7 +7371,6 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
                 error(memberLoc, "can only be used with std140, std430, or scalar layout packing", "offset/align", "");
         }
 
-#ifndef GLSLANG_WEB
         if (memberQualifier.isPerView()) {
             memberWithPerViewQualifier = true;
         }
@@ -7739,6 +7739,7 @@ void TParseContext::fixBlockUniformOffsets(TQualifier& qualifier, TTypeList& typ
         int dummyStride;
         int memberAlignment = intermediate.getMemberAlignment(*typeList[member].type, memberSize, dummyStride, qualifier.layoutPacking,
                                                               subMatrixLayout != ElmNone ? subMatrixLayout == ElmRowMajor : qualifier.layoutMatrix == ElmRowMajor);
+#ifndef GLSLANG_WEB
         if (memberQualifier.hasOffset()) {
             // "The specified offset must be a multiple
             // of the base alignment of the type of the block member it qualifies, or a compile-time error results."
@@ -7768,6 +7769,7 @@ void TParseContext::fixBlockUniformOffsets(TQualifier& qualifier, TTypeList& typ
         // (e.g., std140) base alignment for the member's type."
         if (memberQualifier.hasAlign())
             memberAlignment = std::max(memberAlignment, memberQualifier.layoutAlign);
+#endif
 
         // "If the resulting offset is not a multiple of the actual alignment,
         // increase it to the first offset that is a multiple of
@@ -8100,11 +8102,14 @@ void TParseContext::updateStandaloneQualifierDefaults(const TSourceLoc& loc, con
         qualifier.isInterpolation() ||
         qualifier.precision != EpqNone)
         error(loc, "cannot use auxiliary, memory, interpolation, or precision qualifier in a default qualifier declaration (declaration with no type)", "qualifier", "");
+
+#ifndef GLSLANG_WEB
     // "The offset qualifier can only be used on block members of blocks..."
     // "The align qualifier can only be used on blocks or block members..."
     if (qualifier.hasOffset() ||
         qualifier.hasAlign())
         error(loc, "cannot use offset or align qualifiers in a default qualifier declaration (declaration with no type)", "layout qualifier", "");
+#endif
 
     layoutQualifierCheck(loc, qualifier);
 

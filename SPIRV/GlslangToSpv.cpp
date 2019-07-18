@@ -1025,12 +1025,10 @@ spv::ImageFormat TGlslangToSpvTraverser::TranslateImageFormat(const glslang::TTy
     default:
         break;
     }
-#endif
 
     // do the translation
     switch (type.getQualifier().layoutFormat) {
     case glslang::ElfNone:          return spv::ImageFormatUnknown;
-#ifndef GLSLANG_WEB
     case glslang::ElfRgba32f:       return spv::ImageFormatRgba32f;
     case glslang::ElfRgba16f:       return spv::ImageFormatRgba16f;
     case glslang::ElfR32f:          return spv::ImageFormatR32f;
@@ -1070,9 +1068,10 @@ spv::ImageFormat TGlslangToSpvTraverser::TranslateImageFormat(const glslang::TTy
     case glslang::ElfRg8ui:         return spv::ImageFormatRg8ui;
     case glslang::ElfR16ui:         return spv::ImageFormatR16ui;
     case glslang::ElfR8ui:          return spv::ImageFormatR8ui;
-#endif
-    default:                        return spv::ImageFormatMax;
+    default:                        break;
     }
+#endif
+    return spv::ImageFormatMax;
 }
 
 spv::SelectionControlMask TGlslangToSpvTraverser::TranslateSelectionControl(const glslang::TIntermSelection& selectionNode) const

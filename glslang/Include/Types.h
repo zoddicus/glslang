@@ -768,13 +768,12 @@ public:
         layoutShaderRecordNV = false;
 
         layoutBufferReferenceAlign = layoutBufferReferenceAlignEnd;
+        layoutFormat = ElfNone;
 #endif
 
         clearInterstageLayout();
 
         layoutSpecConstantId = layoutSpecConstantIdEnd;
-
-        layoutFormat = ElfNone;
     }
     void clearInterstageLayout()
     {
@@ -799,9 +798,9 @@ public:
     {
         return hasUniformLayout() ||
                hasAnyLocation() ||
+#ifndef GLSLANG_WEB
                hasStream() ||
                hasFormat() ||
-#ifndef GLSLANG_WEB
                layoutShaderRecordNV ||
                layoutBufferReference ||
 #endif
@@ -857,9 +856,8 @@ public:
     // stored as log2 of the actual alignment value
                  unsigned int layoutBufferReferenceAlign :  6;
     static const unsigned int layoutBufferReferenceAlignEnd = 0x3F;
-#endif
-
     TLayoutFormat layoutFormat                           :  8;
+#endif
 
     bool layoutPushConstant;
 
@@ -875,10 +873,12 @@ public:
     {
         return hasMatrix() ||
                hasPacking() ||
+#ifndef GLSLANG_WEB
                hasOffset() ||
+               hasAlign() ||
+#endif
                hasBinding() ||
-               hasSet() ||
-               hasAlign();
+               hasSet();
     }
     void clearUniformLayout() // only uniform specific
     {
@@ -900,14 +900,6 @@ public:
     {
         return layoutPacking != ElpNone;
     }
-    bool hasOffset() const
-    {
-        return layoutOffset != layoutNotSet;
-    }
-    bool hasAlign() const
-    {
-        return layoutAlign != layoutNotSet;
-    }
     bool hasAnyLocation() const
     {
         return hasLocation()
@@ -921,14 +913,6 @@ public:
     {
         return layoutLocation != layoutLocationEnd;
     }
-    bool hasComponent() const
-    {
-        return layoutComponent != layoutComponentEnd;
-    }
-    bool hasIndex() const
-    {
-        return layoutIndex != layoutIndexEnd;
-    }
     bool hasSet() const
     {
         return layoutSet != layoutSetEnd;
@@ -936,6 +920,23 @@ public:
     bool hasBinding() const
     {
         return layoutBinding != layoutBindingEnd;
+    }
+#ifndef GLSLANG_WEB
+    bool hasOffset() const
+    {
+        return layoutOffset != layoutNotSet;
+    }
+    bool hasAlign() const
+    {
+        return layoutAlign != layoutNotSet;
+    }
+    bool hasComponent() const
+    {
+        return layoutComponent != layoutComponentEnd;
+    }
+    bool hasIndex() const
+    {
+        return layoutIndex != layoutIndexEnd;
     }
     bool hasStream() const
     {
@@ -945,7 +946,6 @@ public:
     {
         return layoutFormat != ElfNone;
     }
-#ifndef GLSLANG_WEB
     bool hasXfb() const
     {
         return hasXfbBuffer() ||
@@ -964,6 +964,10 @@ public:
     {
         return layoutXfbOffset != layoutXfbOffsetEnd;
     }
+#else
+    bool hasIndex() const { return false; }
+    bool hasOffset() const { return false; }
+    bool hasComponent() const { return false; }
 #endif
     bool hasAttachment() const
     {

@@ -138,7 +138,7 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
         default:
             break;
         }
-        error(loc, " l-value required", op, "", "");
+        error(loc, " l-value required", op, "");
 
         return true;
     }
@@ -191,7 +191,7 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
     }
 
     if (message == nullptr && binaryNode == nullptr && symNode == nullptr) {
-        error(loc, " l-value required", op, "", "");
+        error(loc, " l-value required", op, "");
 
         return true;
     }
@@ -206,9 +206,9 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
     // If we get here, we have an error and a message.
     //
     if (symNode)
-        error(loc, " l-value required", op, "\"%s\" (%s)", symbol, message);
+        error6(loc, " l-value required", op, "\"%s\" (%s)", symbol, message);
     else
-        error(loc, " l-value required", op, "(%s)", message);
+        error5(loc, " l-value required", op, "(%s)", message);
 
     return true;
 }
@@ -259,21 +259,21 @@ void TParseContextBase::trackLinkage(TSymbol& symbol)
 void TParseContextBase::checkIndex(const TSourceLoc& loc, const TType& type, int& index)
 {
     if (index < 0) {
-        error(loc, "", "[", "index out of range '%d'", index);
+        error5(loc, "", "[", "index out of range '%d'", index);
         index = 0;
     } else if (type.isArray()) {
         if (type.isSizedArray() && index >= type.getOuterArraySize()) {
-            error(loc, "", "[", "array index out of range '%d'", index);
+            error5(loc, "", "[", "array index out of range '%d'", index);
             index = type.getOuterArraySize() - 1;
         }
     } else if (type.isVector()) {
         if (index >= type.getVectorSize()) {
-            error(loc, "", "[", "vector index out of range '%d'", index);
+            error5(loc, "", "[", "vector index out of range '%d'", index);
             index = type.getVectorSize() - 1;
         }
     } else if (type.isMatrix()) {
         if (index >= type.getMatrixCols()) {
-            error(loc, "", "[", "matrix index out of range '%d'", index);
+            error5(loc, "", "[", "matrix index out of range '%d'", index);
             index = type.getMatrixCols() - 1;
         }
     }
