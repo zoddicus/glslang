@@ -303,10 +303,12 @@ spv::Dim TranslateDimensionality(const glslang::TSampler& sampler)
     case glslang::Esd2D:      return spv::Dim2D;
     case glslang::Esd3D:      return spv::Dim3D;
     case glslang::EsdCube:    return spv::DimCube;
+#ifndef GLSLANG_WEB
     case glslang::Esd1D:      return spv::Dim1D;
     case glslang::EsdRect:    return spv::DimRect;
     case glslang::EsdBuffer:  return spv::DimBuffer;
     case glslang::EsdSubpass: return spv::DimSubpassData;
+#endif
     default:
         assert(0);
         return spv::Dim2D;
@@ -1165,7 +1167,7 @@ spv::StorageClass TGlslangToSpvTraverser::TranslateStorageClass(const glslang::T
     }
 
     if (type.getQualifier().isUniformOrBuffer()) {
-        if (type.getQualifier().layoutPushConstant)
+        if (type.getQualifier().isPushConstant())
             return spv::StorageClassPushConstant;
         if (type.getBasicType() == glslang::EbtBlock)
             return spv::StorageClassUniform;
@@ -1243,10 +1245,8 @@ bool IsDescriptorResource(const glslang::TType& type)
     // uniform and buffer blocks are included, unless it is a push_constant
     if (type.getBasicType() == glslang::EbtBlock)
         return type.getQualifier().isUniformOrBuffer() &&
-#ifndef GLSLANG_WEB
-        ! type.getQualifier().layoutShaderRecordNV &&
-#endif
-        ! type.getQualifier().layoutPushConstant;
+             ! type.getQualifier().isShaderRecordNV() &&
+             ! type.getQualifier().isPushConstant();
 
     // non block...
     // basically samplerXXX/subpass/sampler/texture are all included
@@ -3197,10 +3197,12 @@ spv::Id TGlslangToSpvTraverser::createSpvVariable(const glslang::TIntermSymbol* 
             addPre13Extension(spv::E_SPV_KHR_16bit_storage);
             builder.addCapability(spv::CapabilityStorageInputOutput16);
             break;
+#ifndef GLSLANG_WEB
         case spv::StorageClassPushConstant:
             addPre13Extension(spv::E_SPV_KHR_16bit_storage);
             builder.addCapability(spv::CapabilityStoragePushConstant16);
             break;
+#endif
         case spv::StorageClassUniform:
             addPre13Extension(spv::E_SPV_KHR_16bit_storage);
             if (node->getType().getQualifier().storage == glslang::EvqBuffer)
@@ -3223,6 +3225,7 @@ spv::Id TGlslangToSpvTraverser::createSpvVariable(const glslang::TIntermSymbol* 
         }
     }
 
+#ifndef GLSLANG_WEB
     const bool contains8BitType = node->getType().containsBasicType(glslang::EbtInt8)   ||
                                   node->getType().containsBasicType(glslang::EbtUint8);
     if (contains8BitType) {
@@ -3239,6 +3242,7 @@ spv::Id TGlslangToSpvTraverser::createSpvVariable(const glslang::TIntermSymbol* 
             builder.addCapability(spv::CapabilityInt8);
         }
     }
+#endif
 
     const char* name = node->getName().c_str();
     if (glslang::IsAnonymous(name))
@@ -7673,9 +7677,9 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
         // default to 0
         builder.addDecoration(id, spv::DecorationBinding, 0);
     }
+#ifndef GLSLANG_WEB
     if (symbol->getQualifier().hasAttachment())
         builder.addDecoration(id, spv::DecorationInputAttachmentIndex, symbol->getQualifier().layoutAttachment);
-#ifndef GLSLANG_WEB
     if (glslangIntermediate->getXfbMode()) {
         builder.addCapability(spv::CapabilityTransformFeedback);
         if (symbol->getQualifier().hasXfbBuffer()) {

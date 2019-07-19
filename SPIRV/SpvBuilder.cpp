@@ -516,6 +516,7 @@ Id Builder::makeImageType(Id sampledType, Dim dim, bool depth, bool arrayed, boo
     constantsTypesGlobals.push_back(std::unique_ptr<Instruction>(type));
     module.mapInstruction(type);
 
+#ifndef GLSLANG_WEB
     // deal with capabilities
     switch (dim) {
     case DimBuffer:
@@ -561,6 +562,7 @@ Id Builder::makeImageType(Id sampledType, Dim dim, bool depth, bool arrayed, boo
                 addCapability(CapabilityImageMSArray);
         }
     }
+#endif
 
     return type->getResultId();
 }

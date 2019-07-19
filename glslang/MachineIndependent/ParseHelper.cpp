@@ -4954,13 +4954,11 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
             return;
         }
     }
-#endif
     if (id == "push_constant") {
         requireVulkan(loc, "push_constant");
         publicType.qualifier.layoutPushConstant = true;
         return;
     }
-#ifndef GLSLANG_WEB
     if (id == "buffer_reference") {
         requireVulkan(loc, "buffer_reference");
         requireExtensions(loc, 1, &E_GL_EXT_buffer_reference, "buffer_reference");
@@ -5304,8 +5302,6 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
             return;
         }
     }
-#endif
-
     if (id == "input_attachment_index") {
         requireVulkan(loc, "input_attachment_index");
         if (value >= (int)TQualifier::layoutAttachmentEnd)
@@ -5316,6 +5312,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
             error(loc, "needs a literal integer", "input_attachment_index", "");
         return;
     }
+#endif
     if (id == "constant_id") {
         requireSpv(loc, "constant_id");
         if (value >= (int)TQualifier::layoutSpecConstantIdEnd) {
@@ -5558,15 +5555,15 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
             dst.layoutXfbStride = src.layoutXfbStride;
         if (src.hasXfbOffset())
             dst.layoutXfbOffset = src.layoutXfbOffset;
-#endif
         if (src.hasAttachment())
             dst.layoutAttachment = src.layoutAttachment;
+#endif
         if (src.hasSpecConstantId())
             dst.layoutSpecConstantId = src.layoutSpecConstantId;
 
+#ifndef GLSLANG_WEB
         if (src.layoutPushConstant)
             dst.layoutPushConstant = true;
-#ifndef GLSLANG_WEB
         if (src.layoutBufferReference)
             dst.layoutBufferReference = true;
         if (src.layoutPassthrough)
@@ -5636,11 +5633,11 @@ void TParseContext::layoutObjectCheck(const TSourceLoc& loc, const TSymbol& symb
                     error(loc, "cannot specify matrix layout on a variable declaration", "layout", "");
                 if (qualifier.hasPacking())
                     error(loc, "cannot specify packing on a variable declaration", "layout", "");
+#ifndef GLSLANG_WEB
+                if (qualifier.isPushConstant())
+                    error(loc, "can only specify on a uniform block", "push_constant", "");
                 // "The offset qualifier can only be used on block members of blocks..."
                 // "The align qualifier can only be used on blocks or block members..."
-                if (qualifier.layoutPushConstant)
-                    error(loc, "can only specify on a uniform block", "push_constant", "");
-#ifndef GLSLANG_WEB
                 if (qualifier.hasAlign())
                     error(loc, "cannot specify on a variable declaration", "align", "");
                 if (qualifier.hasOffset() && type.getBasicType() != EbtAtomicUint)
@@ -5820,12 +5817,14 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
         // SPIR-V
         if (spvVersion.spv > 0) {
             if (qualifier.isUniformOrBuffer()) {
-                if (type.getBasicType() == EbtBlock && !qualifier.layoutPushConstant
+                if (type.getBasicType() == EbtBlock
 #ifndef GLSLANG_WEB
+                       && !qualifier.layoutPushConstant
                        && !qualifier.layoutShaderRecordNV
                        && !qualifier.layoutBufferReference
+                       && !qualifier.hasAttachment()
 #endif
-                       && !qualifier.layoutAttachment)
+                       )
                     error(loc, "uniform/buffer blocks require layout(binding=X)", "binding", "");
                 else if (spvVersion.vulkan > 0 && type.getBasicType() == EbtSampler)
                     error(loc, "sampler/texture/image requires layout(binding=X)", "binding", "");
@@ -5873,12 +5872,10 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
         requireProfile(loc, ECoreProfile | ECompatibilityProfile, explanation);
         profileRequires(loc, ECoreProfile | ECompatibilityProfile, 0, E_GL_EXT_shader_image_load_formatted, explanation);
     }
-#endif
 
     if (qualifier.layoutPushConstant && type.getBasicType() != EbtBlock)
         error(loc, "can only be used with a block", "push_constant", "");
 
-#ifndef GLSLANG_WEB
     if (qualifier.layoutBufferReference && type.getBasicType() != EbtBlock)
         error(loc, "can only be used with a block", "buffer_reference", "");
 
@@ -6022,13 +6019,13 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
 #endif
         }
     }
+#ifndef GLSLANG_WEB
     if (qualifier.layoutPushConstant) {
         if (qualifier.storage != EvqUniform)
             error(loc, "can only be used with a uniform", "push_constant", "");
         if (qualifier.hasSet())
             error(loc, "cannot be used with push_constant", "set", "");
     }
-#ifndef GLSLANG_WEB
     if (qualifier.layoutBufferReference) {
         if (qualifier.storage != EvqBuffer)
             error(loc, "can only be used with buffer", "buffer_reference", "");
@@ -7288,16 +7285,13 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
     default:            defaultQualification.clear();                    break;
     }
 
+#ifndef GLSLANG_WEB
     // Special case for "push_constant uniform", which has a default of std430,
     // contrary to normal uniform defaults, and can't have a default tracked for it.
     if ((currentBlockQualifier.layoutPushConstant && !currentBlockQualifier.hasPacking())
-#ifndef GLSLANG_WEB
-        || (currentBlockQualifier.layoutShaderRecordNV && !currentBlockQualifier.hasPacking())
-#endif
-       )
+        || (currentBlockQualifier.layoutShaderRecordNV && !currentBlockQualifier.hasPacking()))
         currentBlockQualifier.layoutPacking = ElpStd430;
 
-#ifndef GLSLANG_WEB
     // Special case for "taskNV in/out", which has a default of std430,
     if (currentBlockQualifier.perTaskNV && !currentBlockQualifier.hasPacking())
         currentBlockQualifier.layoutPacking = ElpStd430;
@@ -7616,9 +7610,9 @@ void TParseContext::blockQualifierCheck(const TSourceLoc& loc, const TQualifier&
         error(loc, "cannot use centroid qualifier on an interface block", "centroid", "");
     if (qualifier.invariant)
         error(loc, "cannot use invariant qualifier on an interface block", "invariant", "");
+#ifndef GLSLANG_WEB
     if (qualifier.layoutPushConstant)
         intermediate.addPushConstantCount();
-#ifndef GLSLANG_WEB
     if (qualifier.sample)
         error(loc, "cannot use sample qualifier on an interface block", "sample", "");
     if (qualifier.layoutShaderRecordNV)
@@ -8149,11 +8143,11 @@ void TParseContext::updateStandaloneQualifierDefaults(const TSourceLoc& loc, con
         error(loc, "cannot declare a default, include a type or full declaration", "binding", "");
     if (qualifier.hasAnyLocation())
         error(loc, "cannot declare a default, use a full declaration", "location/component/index", "");
-    if (qualifier.layoutPushConstant)
-        error(loc, "cannot declare a default, can only be used on a block", "push_constant", "");
     if (qualifier.hasSpecConstantId())
         error(loc, "cannot declare a default, can only be used on a scalar", "constant_id", "");
 #ifndef GLSLANG_WEB
+    if (qualifier.isPushConstant())
+        error(loc, "cannot declare a default, can only be used on a block", "push_constant", "");
     if (qualifier.hasXfbOffset())
         error(loc, "cannot declare a default, use a full declaration", "xfb_offset", "");
     if (qualifier.layoutBufferReference)

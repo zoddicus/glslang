@@ -55,6 +55,7 @@ namespace glslang {
 // Link-time error emitter.
 //
 #ifdef GLSLANG_WEB
+#undef error
 #define error(A, B) ++numErrors
 #define warn(A, B)
 #else
@@ -614,8 +615,10 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             warn(infoSink, "Entry point not found");
     }
 
+#ifndef GLSLANG_WEB
     if (numPushConstants > 1)
         error(infoSink, "Only one push_constant block is allowed per stage");
+#endif
 
     // recursion and missing body checking
     checkCallGraphCycles(infoSink);

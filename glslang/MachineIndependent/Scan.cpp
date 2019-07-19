@@ -626,14 +626,13 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["utexture2DMSArray"] =       UTEXTURE2DMSARRAY;
     (*KeywordMap)["texture3D"] =               TEXTURE3D;
 
+#ifndef GLSLANG_WEB
     (*KeywordMap)["subpassInput"] =            SUBPASSINPUT;
     (*KeywordMap)["subpassInputMS"] =          SUBPASSINPUTMS;
     (*KeywordMap)["isubpassInput"] =           ISUBPASSINPUT;
     (*KeywordMap)["isubpassInputMS"] =         ISUBPASSINPUTMS;
     (*KeywordMap)["usubpassInput"] =           USUBPASSINPUT;
     (*KeywordMap)["usubpassInputMS"] =         USUBPASSINPUTMS;
-
-#ifndef GLSLANG_WEB
     (*KeywordMap)["itexture2DRect"] =          ITEXTURE2DRECT;
     (*KeywordMap)["utexture2DRect"] =          UTEXTURE2DRECT;
     (*KeywordMap)["texture2DRect"] =           TEXTURE2DRECT;
@@ -1455,6 +1454,7 @@ int TScanContext::tokenizeIdentifier()
         else
             return identifierOrType();
 
+#ifndef GLSLANG_WEB
     case SUBPASSINPUT:
     case SUBPASSINPUTMS:
     case ISUBPASSINPUT:
@@ -1466,7 +1466,6 @@ int TScanContext::tokenizeIdentifier()
         else
             return identifierOrType();
 
-#ifndef GLSLANG_WEB
     case ITEXTURE2DRECT:
     case UTEXTURE2DRECT:
     case TEXTURE2DRECT:

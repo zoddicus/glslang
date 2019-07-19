@@ -233,13 +233,14 @@ public:
     explicit TIntermediate(EShLanguage l, int v = 0, EProfile p = ENoProfile) :
         implicitThisName("@this"), implicitCounterName("@count"),
         language(l), source(EShSourceNone), profile(p), version(v), treeRoot(0),
-        numEntryPoints(0), numErrors(0), numPushConstants(0), recursive(false),
+        numEntryPoints(0), numErrors(0), recursive(false),
         invocations(TQualifier::layoutNotSet), vertices(TQualifier::layoutNotSet),
         inputPrimitive(ElgNone), outputPrimitive(ElgNone),
         pixelCenterInteger(false), originUpperLeft(false),
         vertexSpacing(EvsNone), vertexOrder(EvoNone), interlockOrdering(EioNone),
         depthReplacing(false),
 #ifndef GLSLANG_WEB
+        numPushConstants(0),
         pointMode(false),
         earlyFragmentTests(false),
         postDepthCoverage(false), depthLayout(EldNone),
@@ -485,8 +486,8 @@ public:
     void incrementEntryPointCount() { ++numEntryPoints; }
     int getNumEntryPoints() const { return numEntryPoints; }
     int getNumErrors() const { return numErrors; }
-    void addPushConstantCount() { ++numPushConstants; }
 #ifndef GLSLANG_WEB
+    void addPushConstantCount() { ++numPushConstants; }
     void addShaderRecordNVCount() { ++numShaderRecordNVBlocks; }
     void addTaskNVCount() { ++numTaskNVBlocks; }
 #endif
@@ -835,7 +836,6 @@ protected:
     TBuiltInResource resources;
     int numEntryPoints;
     int numErrors;
-    int numPushConstants;
     bool recursive;
     int invocations;
     int vertices;
@@ -849,6 +849,7 @@ protected:
     bool depthReplacing;
 
 #ifndef GLSLANG_WEB
+    int numPushConstants;
     bool pointMode;
     int localSize[3];
     int localSizeSpecId[3];

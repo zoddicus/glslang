@@ -758,8 +758,8 @@ public:
     {
         clearUniformLayout();
 
-        layoutPushConstant = false;
 #ifndef GLSLANG_WEB
+        layoutPushConstant = false;
         layoutBufferReference = false;
         layoutPassthrough = false;
         layoutViewportRelative = false;
@@ -796,15 +796,16 @@ public:
 
     bool hasNonXfbLayout() const
     {
-        return hasUniformLayout() ||
-               hasAnyLocation() ||
+        return hasUniformLayout()
+               || hasAnyLocation()
 #ifndef GLSLANG_WEB
-               hasStream() ||
-               hasFormat() ||
-               layoutShaderRecordNV ||
-               layoutBufferReference ||
+               || hasStream()
+               || hasFormat()
+               || layoutShaderRecordNV
+               || layoutBufferReference
+               || layoutPushConstant
 #endif
-               layoutPushConstant;
+        ;
     }
     bool hasLayout() const
     {
@@ -846,22 +847,21 @@ public:
                  unsigned int layoutXfbOffset            : 13;
     static const unsigned int layoutXfbOffsetEnd     = 0x1FFF;
 
-                 unsigned int layoutAttachment           :  8;  // for input_attachment_index
-    static const unsigned int layoutAttachmentEnd      = 0XFF;
-
                  unsigned int layoutSpecConstantId       : 11;
     static const unsigned int layoutSpecConstantIdEnd = 0x7FF;
 
 #ifndef GLSLANG_WEB
+                 unsigned int layoutAttachment           :  8;  // for input_attachment_index
+    static const unsigned int layoutAttachmentEnd      = 0XFF;
+
     // stored as log2 of the actual alignment value
                  unsigned int layoutBufferReferenceAlign :  6;
     static const unsigned int layoutBufferReferenceAlignEnd = 0x3F;
     TLayoutFormat layoutFormat                           :  8;
 #endif
-
-    bool layoutPushConstant;
-
+    
 #ifndef GLSLANG_WEB
+    bool layoutPushConstant;
     bool layoutBufferReference;
     bool layoutPassthrough;
     bool layoutViewportRelative;
@@ -889,7 +889,9 @@ public:
 
         layoutSet = layoutSetEnd;
         layoutBinding = layoutBindingEnd;
+#ifndef GLSLANG_WEB
         layoutAttachment = layoutAttachmentEnd;
+#endif
     }
 
     bool hasMatrix() const
@@ -964,31 +966,25 @@ public:
     {
         return layoutXfbOffset != layoutXfbOffsetEnd;
     }
+    bool isPushConstant() const { return layoutPushConstant; }
+    bool isShaderRecordNV() const { return layoutShaderRecordNV; }
+    bool hasAttachment() const { return layoutAttachment != layoutAttachmentEnd; }
+    bool hasBufferReferenceAlign() const { return layoutBufferReferenceAlign != layoutBufferReferenceAlignEnd; }
+    bool isNonUniform() const { return nonUniform; }
 #else
     bool hasIndex() const { return false; }
     bool hasOffset() const { return false; }
     bool hasComponent() const { return false; }
+    bool isPushConstant() const { return false; }
+    bool isShaderRecordNV() const { return false; }
+    bool hasAttachment() const { return false; }
 #endif
-    bool hasAttachment() const
-    {
-        return layoutAttachment != layoutAttachmentEnd;
-    }
     bool hasSpecConstantId() const
     {
         // Not the same thing as being a specialization constant, this
         // is just whether or not it was declared with an ID.
         return layoutSpecConstantId != layoutSpecConstantIdEnd;
     }
-#ifndef GLSLANG_WEB
-    bool hasBufferReferenceAlign() const
-    {
-        return layoutBufferReferenceAlign != layoutBufferReferenceAlignEnd;
-    }
-    bool isNonUniform() const
-    {
-        return nonUniform;
-    }
-#endif
     bool isSpecConstant() const
     {
         // True if type is a specialization constant, whether or not it
