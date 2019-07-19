@@ -289,6 +289,11 @@ public:
 
     void setSource(EShSource s) { source = s; }
     EShSource getSource() const { return source; }
+#ifdef GLSLANG_WEB
+    bool isSourceHlsl() const { return false; }
+#else
+    bool isSourceHlsl() const { return source == EShSourceHlsl; }
+#endif
     void setEntryPointName(const char* ep)
     {
         entryPointName = ep;
@@ -889,9 +894,9 @@ protected:
 
     std::set<TString> ioAccessed;           // set of names of statically read/written I/O that might need extra checking
     std::vector<TIoRange> usedIo[4];        // sets of used locations, one for each of in, out, uniform, and buffers
-    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters
     std::unordered_set<int> usedConstantId; // specialization constant ids used
 #ifndef GLSLANG_WEB
+    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters
     std::set<TString> semanticNameSet;
 #endif
 

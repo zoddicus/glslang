@@ -338,8 +338,8 @@ public:
     void checkPrecisionQualifier(const TSourceLoc&, TPrecisionQualifier) { }
 #else
     void checkPrecisionQualifier(const TSourceLoc&, TPrecisionQualifier);
-#endif
     void memorySemanticsCheck(const TSourceLoc&, const TFunction&, const TIntermOperator& callNode);
+#endif
 
     void assignError(const TSourceLoc&, const char* op, TString left, TString right);
     void unaryOpError(const TSourceLoc&, const char* op, TString operand);

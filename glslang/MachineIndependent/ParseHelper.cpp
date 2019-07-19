@@ -1219,13 +1219,13 @@ TIntermTyped* TParseContext::handleFunctionCall(const TSourceLoc& loc, TFunction
                         requireInt16Arithmetic(arguments->getLoc(), "built-in function", "(u)int16 types can only be in uniform block or buffer storage");
                     if (builtIn && arg->getAsTyped()->getType().contains8BitInt())
                         requireInt8Arithmetic(arguments->getLoc(), "built-in function", "(u)int8 types can only be in uniform block or buffer storage");
-#endif
 
                     // TODO 4.5 functionality:  A shader will fail to compile
                     // if the value passed to the memargument of an atomic memory function does not correspond to a buffer or
                     // shared variable. It is acceptable to pass an element of an array or a single component of a vector to the
                     // memargument of an atomic memory function, as long as the underlying array or vector is a buffer or
                     // shared variable.
+#endif
                 }
 
                 // Convert 'in' arguments
@@ -1676,6 +1676,7 @@ TIntermTyped* TParseContext::addOutputArgumentConversions(const TFunction& funct
     return conversionTree;
 }
 
+#ifndef GLSLANG_WEB
 void TParseContext::memorySemanticsCheck(const TSourceLoc& loc, const TFunction& fnCandidate, const TIntermOperator& callNode)
 {
     const TIntermSequence* argp = &callNode.getAsAggregate()->getSequence();
@@ -1840,7 +1841,7 @@ void TParseContext::memorySemanticsCheck(const TSourceLoc& loc, const TFunction&
               fnCandidate.getName().c_str(), "");
     }
 }
-
+#endif
 
 //
 // Do additional checking of built-in function calls that is not caught
@@ -2350,6 +2351,7 @@ void TParseContext::nonOpBuiltInCheck(const TSourceLoc& loc, const TFunction& fn
         }
     }
 
+#ifndef GLSLANG_WEB
     // GL_ARB_shader_texture_image_samples
     if (fnCandidate.getName().compare(0, 14, "textureSamples") == 0 || fnCandidate.getName().compare(0, 12, "imageSamples") == 0)
         profileRequires(loc, ~EEsProfile, 450, E_GL_ARB_shader_texture_image_samples, "textureSamples and imageSamples");
@@ -2357,19 +2359,16 @@ void TParseContext::nonOpBuiltInCheck(const TSourceLoc& loc, const TFunction& fn
     if (fnCandidate.getName().compare(0, 11, "imageAtomic") == 0) {
         const TType& imageType = callNode.getSequence()[0]->getAsTyped()->getType();
         if (imageType.getSampler().type == EbtInt || imageType.getSampler().type == EbtUint) {
-#ifndef GLSLANG_WEB
             if (imageType.getQualifier().layoutFormat != ElfR32i && imageType.getQualifier().layoutFormat != ElfR32ui)
                 error(loc, "only supported on image with format r32i or r32ui", fnCandidate.getName().c_str(), "");
-#endif
         } else {
             if (fnCandidate.getName().compare(0, 19, "imageAtomicExchange") != 0)
                 error(loc, "only supported on integer images", fnCandidate.getName().c_str(), "");
-#ifndef GLSLANG_WEB
             else if (imageType.getQualifier().layoutFormat != ElfR32f && profile == EEsProfile)
                 error(loc, "only supported on image with format r32f", fnCandidate.getName().c_str(), "");
-#endif
         }
     }
+#endif
 }
 
 //
@@ -5184,6 +5183,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
 
     std::transform(id.begin(), id.end(), id.begin(), ::tolower);
 
+#ifndef GLSLANG_WEB
     if (id == "offset") {
         // "offset" can be for either
         //  - uniform offsets
@@ -5213,7 +5213,9 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
         if (nonLiteral)
             error(loc, "needs a literal integer", "align", "");
         return;
-    } else if (id == "location") {
+    } else
+#endif
+    if (id == "location") {
         profileRequires(loc, EEsProfile, 300, nullptr, "location");
         const char* exts[2] = { E_GL_ARB_separate_shader_objects, E_GL_ARB_explicit_attrib_location };
         profileRequires(loc, ~EEsProfile, 330, 2, exts, "location");

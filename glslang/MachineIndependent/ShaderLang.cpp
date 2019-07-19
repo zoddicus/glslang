@@ -714,15 +714,17 @@ void TranslateEnvironment(const TEnvironment* environment, EShMessages& messages
                 break;
             }
             switch (environment->input.languageFamily) {
-            case EShSourceNone:
-                break;
             case EShSourceGlsl:
                 source = EShSourceGlsl;
                 messages = static_cast<EShMessages>(messages & ~EShMsgReadHlsl);
                 break;
+#ifndef GLSLANG_WEB
             case EShSourceHlsl:
                 source = EShSourceHlsl;
                 messages = static_cast<EShMessages>(messages | EShMsgReadHlsl);
+                break;
+#endif
+            default:
                 break;
             }
         }

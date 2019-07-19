@@ -1006,6 +1006,7 @@ int TPpContext::readCPPline(TPpToken* ppToken)
     return token;
 }
 
+#ifndef GLSLANG_WEB
 // Context-dependent parsing of a #include <header-name>.
 // Assumes no macro expansions etc. are being done; the name is just on the current input.
 // Always creates a name and returns PpAtomicConstString, unless we run out of input.
@@ -1037,6 +1038,7 @@ int TPpContext::scanHeaderName(TPpToken* ppToken, char delimit)
             tooLong = true;
     } while (true);
 }
+#endif
 
 // Macro-expand a macro argument 'arg' to create 'expandedArg'.
 // Does not replace 'arg'.

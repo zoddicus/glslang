@@ -251,6 +251,9 @@ protected:
 // Translate glslang profile to SPIR-V source language.
 spv::SourceLanguage TranslateSourceLanguage(glslang::EShSource source, EProfile profile)
 {
+#ifdef GLSLANG_WEB
+    return spv::SourceLanguageESSL;
+#else
     switch (source) {
     case glslang::EShSourceGlsl:
         switch (profile) {
@@ -268,6 +271,7 @@ spv::SourceLanguage TranslateSourceLanguage(glslang::EShSource source, EProfile 
     default:
         return spv::SourceLanguageUnknown;
     }
+#endif
 }
 
 // Translate glslang language (stage) to SPIR-V execution model.
@@ -1144,12 +1148,10 @@ spv::StorageClass TGlslangToSpvTraverser::TranslateStorageClass(const glslang::T
     if (type.getQualifier().isPipeOutput())
         return spv::StorageClassOutput;
 
-    if (glslangIntermediate->getSource() != glslang::EShSourceHlsl ||
+    if (!glslangIntermediate->isSourceHlsl() ||
         type.getQualifier().storage == glslang::EvqUniform) {
-#ifndef GLSLANG_WEB
         if (type.getBasicType() == glslang::EbtAtomicUint)
             return spv::StorageClassAtomicCounter;
-#endif
         if (type.containsOpaque())
             return spv::StorageClassUniformConstant;
     }
@@ -3645,7 +3647,7 @@ void TGlslangToSpvTraverser::decorateStructType(const glslang::TType& type,
         if (type.getQualifier().storage == glslang::EvqVaryingIn ||
             type.getQualifier().storage == glslang::EvqVaryingOut) {
             if (type.getBasicType() == glslang::EbtBlock ||
-                glslangIntermediate->getSource() == glslang::EShSourceHlsl) {
+                glslangIntermediate->isSourceHlsl()) {
                 builder.addMemberDecoration(spvType, member, TranslateInterpolationDecoration(memberQualifier));
                 builder.addMemberDecoration(spvType, member, TranslateAuxiliaryStorageDecoration(memberQualifier));
 #ifndef GLSLANG_WEB
@@ -4105,7 +4107,7 @@ bool TGlslangToSpvTraverser::originalParam(glslang::TStorageQualifier qualifier,
 {
     if (implicitThisParam)                                                                     // implicit this
         return true;
-    if (glslangIntermediate->getSource() == glslang::EShSourceHlsl)
+    if (glslangIntermediate->isSourceHlsl())
         return paramType.getBasicType() == glslang::EbtBlock;
     return paramType.containsOpaque() ||                                                       // sampler, etc.
            (paramType.getBasicType() == glslang::EbtBlock && qualifier == glslang::EvqBuffer); // SSBO
@@ -5700,7 +5702,6 @@ spv::Id TGlslangToSpvTraverser::createUnaryOperation(glslang::TOperator op, OpDe
         operands.push_back(operand);
         return createAtomicOperation(op, decorations.precision, typeId, operands, typeProxy, lvalueCoherentFlags);
     }
-#endif
 
     case glslang::EOpBitFieldReverse:
         unaryOp = spv::OpBitReverse;
@@ -5718,7 +5719,6 @@ spv::Id TGlslangToSpvTraverser::createUnaryOperation(glslang::TOperator op, OpDe
             libCall = spv::GLSLstd450FindSMsb;
         break;
 
-#ifndef GLSLANG_WEB
     case glslang::EOpBallot:
     case glslang::EOpReadFirstInvocation:
     case glslang::EOpAnyInvocation:
@@ -8041,7 +8041,7 @@ bool TGlslangToSpvTraverser::isTrivial(const glslang::TIntermTyped* node)
         return false;
 
     // count non scalars as trivial, as well as anything coming from HLSL
-    if (! node->getType().isScalarOrVec1() || glslangIntermediate->getSource() == glslang::EShSourceHlsl)
+    if (! node->getType().isScalarOrVec1() || glslangIntermediate->isSourceHlsl())
         return true;
 
     // symbols and constants are trivial
@@ -8252,8 +8252,8 @@ void GlslangToSpv(const TIntermediate& intermediate, std::vector<unsigned int>& 
 #if ENABLE_OPT
     // If from HLSL, run spirv-opt to "legalize" the SPIR-V for Vulkan
     // eg. forward and remove memory writes of opaque types.
-    bool prelegalization = intermediate.getSource() == EShSourceHlsl;
-    if ((intermediate.getSource() == EShSourceHlsl || options->optimizeSize) && !options->disableOptimizer) {
+    bool prelegalization = intermediate.isSourceHlsl();
+    if ((intermediate.isSourceHlsl() || options->optimizeSize) && !options->disableOptimizer) {
         SpirvToolsLegalize(intermediate, spirv, logger, options);
         prelegalization = false;
     }

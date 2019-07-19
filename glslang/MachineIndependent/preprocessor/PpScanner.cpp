@@ -143,7 +143,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
         int firstDecimal = len;
 
         // 1.#INF or -1.#INF
-        if (ch == '#' && (ifdepth > 0 || parseContext.intermediate.getSource() == EShSourceHlsl)) {
+        if (ch == '#' && (ifdepth > 0 || parseContext.intermediate.isSourceHlsl())) {
             if ((len <  2) ||
                 (len == 2 && ppToken->name[0] != '1') ||
                 (len == 3 && ppToken->name[1] != '1' && !(ppToken->name[0] == '-' || ppToken->name[0] == '+')) ||
@@ -273,7 +273,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
                 saveName(ch2);
                 isDouble = true;
             }
-        } else if (parseContext.intermediate.getSource() == EShSourceHlsl) {
+        } else if (parseContext.intermediate.isSourceHlsl()) {
             saveName(ch);
             isDouble = true;
         }
@@ -292,7 +292,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
                 saveName(ch2);
                 isFloat16 = true;
             }
-        } else if (parseContext.intermediate.getSource() == EShSourceHlsl) {
+        } else if (parseContext.intermediate.isSourceHlsl()) {
             saveName(ch);
             isFloat16 = true;
         }
@@ -379,7 +379,7 @@ int TPpContext::characterLiteral(TPpToken* ppToken)
     ppToken->name[0] = 0;
     ppToken->ival = 0;
 
-    if (parseContext.intermediate.getSource() != EShSourceHlsl) {
+    if (!parseContext.intermediate.isSourceHlsl()) {
         // illegal, except in macro definition, for which case we report the character
         return '\'';
     }
@@ -1129,7 +1129,7 @@ int TPpContext::tokenize(TPpToken& ppToken)
                 continue;
             break;
         case PpAtomConstString:
-            if (ifdepth == 0 && parseContext.intermediate.getSource() != EShSourceHlsl) {
+            if (ifdepth == 0 && !parseContext.intermediate.isSourceHlsl()) {
                 // HLSL allows string literals.
                 parseContext.ppError(ppToken.loc, "string literals not supported", "\"\"", "");
                 continue;

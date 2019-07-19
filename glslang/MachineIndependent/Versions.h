@@ -104,7 +104,7 @@ typedef enum {
 //
 // Symbolic names for extensions.  Strings may be directly used when calling the
 // functions, but better to have the compiler do spelling checks.
-//
+//??
 const char* const E_GL_OES_texture_3D                   = "GL_OES_texture_3D";
 const char* const E_GL_OES_standard_derivatives         = "GL_OES_standard_derivatives";
 const char* const E_GL_EXT_frag_depth                   = "GL_EXT_frag_depth";
@@ -230,7 +230,7 @@ const char* const E_GL_NV_shader_sm_builtins                    = "GL_NV_shader_
 const char* const E_GL_ANDROID_extension_pack_es31a             = "GL_ANDROID_extension_pack_es31a";
 const char* const E_GL_KHR_blend_equation_advanced              = "GL_KHR_blend_equation_advanced";
 const char* const E_GL_OES_sample_variables                     = "GL_OES_sample_variables";
-const char* const E_GL_OES_shader_image_atomic                  = "GL_OES_shader_image_atomic";
+const char* const E_GL_OES_shader_image_atomic                  = "GL_OES_shader_image_atomic"; //??
 const char* const E_GL_OES_shader_multisample_interpolation     = "GL_OES_shader_multisample_interpolation";
 const char* const E_GL_OES_texture_storage_multisample_2d_array = "GL_OES_texture_storage_multisample_2d_array";
 const char* const E_GL_EXT_geometry_shader                      = "GL_EXT_geometry_shader";
