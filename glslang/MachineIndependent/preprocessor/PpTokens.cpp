@@ -119,8 +119,12 @@ int TPpContext::TokenStream::getToken(TParseContextBase& parseContext, TPpToken 
     // Check for ##, unless the current # is the last character
     if (atom == '#') {
         if (peekToken('#')) {
+#ifdef GLSLANG_WEB
+            parseContext.addError();
+#else
             parseContext.requireProfile(ppToken->loc, ~EEsProfile, "token pasting (##)");
             parseContext.profileRequires(ppToken->loc, ~EEsProfile, 130, 0, "token pasting (##)");
+#endif
             currentPos++;
             atom = PpAtomPaste;
         }

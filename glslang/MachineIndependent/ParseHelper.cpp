@@ -478,19 +478,27 @@ TIntermTyped* TParseContext::handleBracketDereference(const TSourceLoc& loc, TIn
         if (base->getBasicType() == EbtBlock) {
             if (base->getQualifier().storage == EvqBuffer)
                 requireProfile(base->getLoc(), ~EEsProfile, "variable indexing buffer block array");
-            else if (base->getQualifier().storage == EvqUniform)
+            else if (base->getQualifier().storage == EvqUniform) {
+#ifdef GLSLANG_WEB
+                addError();
+#else
                 profileRequires(base->getLoc(), EEsProfile, 320, Num_AEP_gpu_shader5, AEP_gpu_shader5,
                                 "variable indexing uniform block array");
-            else {
+#endif
+            } else {
                 // input/output blocks either don't exist or can be variable indexed
             }
         } else if (language == EShLangFragment && base->getQualifier().isPipeOutput())
             requireProfile(base->getLoc(), ~EEsProfile, "variable indexing fragment shader output array");
         else if (base->getBasicType() == EbtSampler && version >= 130) {
+#ifdef GLSLANG_WEB
+            addError();
+#else
             const char* explanation = "variable indexing sampler array";
             requireProfile(base->getLoc(), EEsProfile | ECoreProfile | ECompatibilityProfile, explanation);
             profileRequires(base->getLoc(), EEsProfile, 320, Num_AEP_gpu_shader5, AEP_gpu_shader5, explanation);
             profileRequires(base->getLoc(), ECoreProfile | ECompatibilityProfile, 400, nullptr, explanation);
+#endif
         }
 
         result = intermediate.addIndex(EOpIndexIndirect, base, index, loc);
@@ -833,9 +841,13 @@ TIntermTyped* TParseContext::handleDotDereference(const TSourceLoc& loc, TInterm
     if ((base->isVector() || base->isScalar()) &&
         (base->isFloatingDomain() || base->isIntegerDomain() || base->getBasicType() == EbtBool)) {
         if (base->isScalar()) {
+#ifdef GLSLANG_WEB
+            addError();
+#else
             const char* dotFeature = "scalar swizzle";
             requireProfile(loc, ~EEsProfile, dotFeature);
             profileRequires(loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, dotFeature);
+#endif
         }
 
         TSwizzleSelectors<TVectorSelector> selectors;
@@ -980,8 +992,10 @@ TFunction* TParseContext::handleFunctionDeclarator(const TSourceLoc& loc, TFunct
         requireProfile(loc, ~EEsProfile, "redefinition of built-in function");
     const TFunction* prevDec = symbol ? symbol->getAsFunction() : 0;
     if (prevDec) {
+#ifndef GLSLANG_WEB
         if (prevDec->isPrototyped() && prototype)
             profileRequires(loc, EEsProfile, 300, nullptr, "multiple prototypes for same function");
+#endif
         if (prevDec->getType() != function.getType())
             error(loc, "overloaded functions must have the same return type", function.getName().c_str(), "");
         for (int i = 0; i < prevDec->getParamCount(); ++i) {
@@ -2399,10 +2413,12 @@ TFunction* TParseContext::handleConstructorCall(const TSourceLoc& loc, const TPu
     TType type(publicType);
     type.getQualifier().precision = EpqNone;
 
+#ifndef GLSLANG_WEB
     if (type.isArray()) {
         profileRequires(loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed constructor");
         profileRequires(loc, EEsProfile, 300, nullptr, "arrayed constructor");
     }
+#endif
 
     TOperator op = intermediate.mapTypeToConstructorOp(type);
 
@@ -2495,7 +2511,9 @@ void TParseContext::variableCheck(TIntermTyped*& nodePtr)
             // substitute a symbol node for this new variable
             nodePtr = intermediate.addSymbol(*fakeVariable, symbol->getLoc());
         }
-    } else {
+    } 
+#ifndef GLSLANG_WEB
+    else {
         switch (symbol->getQualifier().storage) {
         case EvqPointCoord:
             profileRequires(symbol->getLoc(), ENoProfile, 120, nullptr, "gl_PointCoord");
@@ -2503,6 +2521,7 @@ void TParseContext::variableCheck(TIntermTyped*& nodePtr)
         default: break; // some compilers want this
         }
     }
+#endif
 }
 
 //
@@ -3049,7 +3068,9 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
     }
 
     if (matrixInMatrix && ! type.isArray()) {
+#ifndef GLSLANG_WEB
         profileRequires(loc, ENoProfile, 120, nullptr, "constructing matrix from matrix");
+#endif
 
         // "If a matrix argument is given to a matrix constructor,
         // it is a compile-time error to have any other arguments."
@@ -3290,14 +3311,18 @@ void TParseContext::globalQualifierFixCheck(const TSourceLoc& loc, TQualifier& q
     // move from parameter/unknown qualifiers to pipeline in/out qualifiers
     switch (qualifier.storage) {
     case EvqIn:
+#ifndef GLSLANG_WEB
         profileRequires(loc, ENoProfile, 130, nullptr, "in for stage inputs");
         profileRequires(loc, EEsProfile, 300, nullptr, "in for stage inputs");
+#endif
         qualifier.storage = EvqVaryingIn;
         nonuniformOkay = true;
         break;
     case EvqOut:
+#ifndef GLSLANG_WEB
         profileRequires(loc, ENoProfile, 130, nullptr, "out for stage outputs");
         profileRequires(loc, EEsProfile, 300, nullptr, "out for stage outputs");
+#endif
         qualifier.storage = EvqVaryingOut;
         break;
     case EvqInOut:
@@ -3359,8 +3384,10 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
         return;
     }
 
+#ifndef GLSLANG_WEB
     if (isTypeInt(publicType.basicType) || publicType.basicType == EbtDouble)
         profileRequires(loc, EEsProfile, 300, nullptr, "shader input/output");
+#endif
 
     if (!qualifier.flat
 #ifndef GLSLANG_WEB
@@ -3403,11 +3430,17 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
                 return;
             }
             if (publicType.arraySizes) {
+#ifdef GLSLANG_WEB
+                addError();
+#else
                 requireProfile(loc, ~EEsProfile, "vertex input arrays");
                 profileRequires(loc, ENoProfile, 150, nullptr, "vertex input arrays");
+#endif
             }
+#ifndef GLSLANG_WEB
             if (publicType.basicType == EbtDouble)
                 profileRequires(loc, ~EEsProfile, 410, nullptr, "vertex-shader `double` type input");
+#endif
             if (qualifier.isAuxiliary() || qualifier.isInterpolation() || qualifier.isMemory() || qualifier.invariant)
                 error(loc, "vertex input cannot be further qualified", "", "");
             break;
@@ -3431,12 +3464,22 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
 
         case EShLangFragment:
             if (publicType.userDef) {
+#ifndef GLSLANG_WEB
                 profileRequires(loc, EEsProfile, 300, nullptr, "fragment-shader struct input");
                 profileRequires(loc, ~EEsProfile, 150, nullptr, "fragment-shader struct input");
+#endif
                 if (publicType.userDef->containsStructure())
+#ifdef GLSLANG_WEB
+                    addError();
+#else
                     requireProfile(loc, ~EEsProfile, "fragment-shader struct input containing structure");
+#endif
                 if (publicType.userDef->containsArray())
+#ifdef GLSLANG_WEB
+                    addError();
+#else
                     requireProfile(loc, ~EEsProfile, "fragment-shader struct input containing an array");
+#endif
             }
             break;
 
@@ -3448,12 +3491,22 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
         switch (language) {
         case EShLangVertex:
             if (publicType.userDef) {
+#ifndef GLSLANG_WEB
                 profileRequires(loc, EEsProfile, 300, nullptr, "vertex-shader struct output");
                 profileRequires(loc, ~EEsProfile, 150, nullptr, "vertex-shader struct output");
+#endif
                 if (publicType.userDef->containsStructure())
+#ifdef GLSLANG_WEB
+                    addError();
+#else
                     requireProfile(loc, ~EEsProfile, "vertex-shader struct output containing structure");
+#endif
                 if (publicType.userDef->containsArray())
+#ifdef GLSLANG_WEB
+                    addError();
+#else
                     requireProfile(loc, ~EEsProfile, "vertex-shader struct output containing an array");
+#endif
             }
 
             break;
@@ -3474,7 +3527,9 @@ void TParseContext::globalQualifierTypeCheck(const TSourceLoc& loc, const TQuali
             break;
 #endif
         case EShLangFragment:
+#ifndef GLSLANG_WEB
             profileRequires(loc, EEsProfile, 300, nullptr, "fragment shader output");
+#endif
             if (publicType.basicType == EbtStruct) {
                 error(loc, "cannot be a structure", GetStorageQualifierString(qualifier.storage), "");
                 return;
@@ -3793,14 +3848,20 @@ void TParseContext::arraySizeCheck(const TSourceLoc& loc, TIntermTyped* expr, TA
 //
 bool TParseContext::arrayQualifierError(const TSourceLoc& loc, const TQualifier& qualifier)
 {
+#ifndef GLSLANG_WEB
     if (qualifier.storage == EvqConst) {
         profileRequires(loc, ENoProfile, 120, E_GL_3DL_array_objects, "const array");
         profileRequires(loc, EEsProfile, 300, nullptr, "const array");
     }
+#endif
 
     if (qualifier.storage == EvqVaryingIn && language == EShLangVertex) {
+#ifdef GLSLANG_WEB
+        addError();
+#else
         requireProfile(loc, ~EEsProfile, "vertex input arrays");
         profileRequires(loc, ENoProfile, 150, nullptr, "vertex input arrays");
+#endif
     }
 
     return false;
@@ -3933,11 +3994,14 @@ void TParseContext::arrayOfArrayVersionCheck(const TSourceLoc& loc, const TArray
     if (sizes == nullptr || sizes->getNumDims() == 1)
         return;
 
+#ifdef GLSLANG_WEB
+    addError();
+#else
     const char* feature = "arrays of arrays";
-
     requireProfile(loc, EEsProfile | ECoreProfile | ECompatibilityProfile, feature);
     profileRequires(loc, EEsProfile, 310, nullptr, feature);
     profileRequires(loc, ECoreProfile | ECompatibilityProfile, 430, nullptr, feature);
+#endif
 }
 
 //
@@ -4595,11 +4659,13 @@ void TParseContext::nestedStructCheck(const TSourceLoc& loc)
 
 void TParseContext::arrayObjectCheck(const TSourceLoc& loc, const TType& type, const char* op)
 {
+#ifndef GLSLANG_WEB
     // Some versions don't allow comparing arrays or structures containing arrays
     if (type.containsArray()) {
         profileRequires(loc, ENoProfile, 120, E_GL_3DL_array_objects, op);
         profileRequires(loc, EEsProfile, 300, nullptr, op);
     }
+#endif
 }
 
 void TParseContext::opaqueCheck(const TSourceLoc& loc, const TType& type, const char* op)
@@ -5167,8 +5233,12 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
     if (constUnion) {
         value = constUnion->getConstArray()[0].getIConst();
         if (! constUnion->isLiteral()) {
+#ifdef GLSLANG_WEB
+            addError();
+#else
             requireProfile(loc, ECoreProfile | ECompatibilityProfile, nonLiteralFeature);
             profileRequires(loc, ECoreProfile | ECompatibilityProfile, 440, E_GL_ARB_enhanced_layouts, nonLiteralFeature);
+#endif
         }
     } else {
         // grammar should have give out the error message
@@ -5216,9 +5286,11 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
     } else
 #endif
     if (id == "location") {
+#ifndef GLSLANG_WEB
         profileRequires(loc, EEsProfile, 300, nullptr, "location");
         const char* exts[2] = { E_GL_ARB_separate_shader_objects, E_GL_ARB_explicit_attrib_location };
         profileRequires(loc, ~EEsProfile, 330, 2, exts, "location");
+#endif
         if ((unsigned int)value >= TQualifier::layoutLocationEnd)
             error(loc, "location is too large", id.c_str(), "");
         else
@@ -5237,8 +5309,10 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
             error(loc, "needs a literal integer", "set", "");
         return;
     } else if (id == "binding") {
+#ifndef GLSLANG_WEB
         profileRequires(loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, "binding");
         profileRequires(loc, EEsProfile, 310, nullptr, "binding");
+#endif
         if ((unsigned int)value >= TQualifier::layoutBindingEnd)
             error(loc, "binding is too large", id.c_str(), "");
         else
@@ -5708,10 +5782,17 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
         switch (qualifier.storage) {
         case EvqVaryingIn:
         case EvqVaryingOut:
-            if (type.getBasicType() == EbtBlock)
+            if (type.getBasicType() == EbtBlock) {
+#ifdef GLSLANG_WEB
+                addError();
+#else
                 profileRequires(loc, ECoreProfile | ECompatibilityProfile, 440, E_GL_ARB_enhanced_layouts, "location qualifier on in/out block");
+#endif
+            }
+#ifndef GLSLANG_WEB
             if (type.getQualifier().isTaskMemory())
                 error(loc, "cannot apply to taskNV in/out blocks", "location", "");
+#endif
             break;
         case EvqUniform:
         case EvqBuffer:
@@ -5943,6 +6024,7 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
         switch (qualifier.storage) {
         case EvqVaryingIn:
         {
+#ifndef GLSLANG_WEB
             const char* feature = "location qualifier on input";
             if (profile == EEsProfile && version < 310)
                 requireStage(loc, EShLangVertex, feature);
@@ -5956,10 +6038,12 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
                 profileRequires(loc, ~EEsProfile, 410, E_GL_ARB_separate_shader_objects, feature);
                 profileRequires(loc, EEsProfile, 310, nullptr, feature);
             }
+#endif
             break;
         }
         case EvqVaryingOut:
         {
+#ifndef GLSLANG_WEB
             const char* feature = "location qualifier on output";
             if (profile == EEsProfile && version < 310)
                 requireStage(loc, EShLangFragment, feature);
@@ -5973,15 +6057,20 @@ void TParseContext::layoutQualifierCheck(const TSourceLoc& loc, const TQualifier
                 profileRequires(loc, ~EEsProfile, 410, E_GL_ARB_separate_shader_objects, feature);
                 profileRequires(loc, EEsProfile, 310, nullptr, feature);
             }
+#endif
             break;
         }
         case EvqUniform:
         case EvqBuffer:
         {
+#ifdef GLSLANG_WEB
+            addError();
+#else
             const char* feature = "location qualifier on uniform or buffer";
             requireProfile(loc, EEsProfile | ECoreProfile | ECompatibilityProfile, feature);
             profileRequires(loc, ECoreProfile | ECompatibilityProfile, 430, nullptr, feature);
             profileRequires(loc, EEsProfile, 310, nullptr, feature);
+#endif
             break;
         }
         default:
@@ -6557,10 +6646,12 @@ TIntermNode* TParseContext::declareVariable(const TSourceLoc& loc, TString& iden
         if (! arrayQualifierError(loc, type.getQualifier()) && ! arrayError(loc, type))
             declareArray(loc, identifier, type, symbol);
 
+#ifndef GLSLANG_WEB
         if (initializer) {
             profileRequires(loc, ENoProfile, 120, E_GL_3DL_array_objects, "initializer");
             profileRequires(loc, EEsProfile, 300, nullptr, "initializer");
         }
+#endif
     } else {
         // non-array case
         if (symbol == nullptr)
@@ -6725,9 +6816,13 @@ TIntermNode* TParseContext::executeInitializer(const TSourceLoc& loc, TIntermTyp
     // Const variables require a constant initializer, depending on version
     if (qualifier == EvqConst) {
         if (! initializer->getType().getQualifier().isConstant()) {
+#ifdef GLSLANG_WEB
+            addError();
+#else
             const char* initFeature = "non-constant initializer";
             requireProfile(loc, ~EEsProfile, initFeature);
             profileRequires(loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, initFeature);
+#endif
             variable->getWritableType().getQualifier().storage = EvqConstReadOnly;
             qualifier = EvqConstReadOnly;
         }
@@ -7345,9 +7440,11 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
             switch (currentBlockQualifier.storage) {
             case EvqVaryingIn:
             case EvqVaryingOut:
+#ifndef GLSLANG_WEB
                 requireProfile(memberLoc, ECoreProfile | ECompatibilityProfile | EEsProfile, feature);
                 profileRequires(memberLoc, ECoreProfile | ECompatibilityProfile, 440, E_GL_ARB_enhanced_layouts, feature);
                 profileRequires(memberLoc, EEsProfile, 320, Num_AEP_shader_io_blocks, AEP_shader_io_blocks, feature);
+#endif
                 memberWithLocation = true;
                 break;
             default:
@@ -7514,19 +7611,26 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
 {
     switch (qualifier.storage) {
     case EvqUniform:
+#ifndef GLSLANG_WEB
         profileRequires(loc, EEsProfile, 300, nullptr, "uniform block");
         profileRequires(loc, ENoProfile, 140, nullptr, "uniform block");
-#ifndef GLSLANG_WEB
         if (currentBlockQualifier.layoutPacking == ElpStd430 && ! currentBlockQualifier.layoutPushConstant)
             requireExtensions(loc, 1, &E_GL_EXT_scalar_block_layout, "std430 requires the buffer storage qualifier");
 #endif
         break;
     case EvqBuffer:
+#ifdef GLSLANG_WEB
+        addError();
+#else
         requireProfile(loc, EEsProfile | ECoreProfile | ECompatibilityProfile, "buffer block");
         profileRequires(loc, ECoreProfile | ECompatibilityProfile, 430, nullptr, "buffer block");
         profileRequires(loc, EEsProfile, 310, nullptr, "buffer block");
+#endif
         break;
     case EvqVaryingIn:
+#ifdef GLSLANG_WEB
+        addError();
+#else
         profileRequires(loc, ~EEsProfile, 150, E_GL_ARB_separate_shader_objects, "input block");
         // It is a compile-time error to have an input block in a vertex shader or an output block in a fragment shader
         // "Compute shaders do not permit user-defined input variables..."
@@ -7537,14 +7641,21 @@ void TParseContext::blockStageIoCheck(const TSourceLoc& loc, const TQualifier& q
         } else if (language == EShLangMeshNV && ! qualifier.isTaskMemory()) {
             error(loc, "input blocks cannot be used in a mesh shader", "out", "");
         }
+#endif
         break;
     case EvqVaryingOut:
+#ifndef GLSLANG_WEB
         profileRequires(loc, ~EEsProfile, 150, E_GL_ARB_separate_shader_objects, "output block");
+#endif
         requireStage(loc, (EShLanguageMask)(EShLangVertexMask|EShLangTessControlMask|EShLangTessEvaluationMask|
                                             EShLangGeometryMask|EShLangMeshNVMask|EShLangTaskNVMask), "output block");
         // ES 310 can have a block before shader_io is turned on, so skip this test for built-ins
         if (language == EShLangVertex && ! parsingBuiltins) {
+#ifdef GLSLANG_WEB
+            addError();
+#else
             profileRequires(loc, EEsProfile, 320, Num_AEP_shader_io_blocks, AEP_shader_io_blocks, "vertex output block");
+#endif
         }
 #ifndef GLSLANG_WEB
         else if (language == EShLangMeshNV && qualifier.isTaskMemory()) {
@@ -8203,8 +8314,10 @@ void TParseContext::wrapupSwitchSubsequence(TIntermAggregate* statements, TInter
 //
 TIntermNode* TParseContext::addSwitch(const TSourceLoc& loc, TIntermTyped* expression, TIntermAggregate* lastStatements)
 {
+#ifndef GLSLANG_WEB
     profileRequires(loc, EEsProfile, 300, nullptr, "switch statements");
     profileRequires(loc, ENoProfile, 130, nullptr, "switch statements");
+#endif
 
     wrapupSwitchSubsequence(lastStatements, nullptr);
 

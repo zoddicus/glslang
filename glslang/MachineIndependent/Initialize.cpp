@@ -5416,15 +5416,12 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "in highp int gl_ViewIndex;"       // GL_EXT_multiview
             "\n");
     }
-#endif
 
     if (version >= 300 /* both ES and non-ES */) {
         stageBuiltins[EShLangVertex].append(
             "in highp uint gl_ViewID_OVR;"     // GL_OVR_multiview, GL_OVR_multiview2
             "\n");
     }
-
-#ifndef GLSLANG_WEB
 
     //============================================================================
     //
@@ -6097,7 +6094,6 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
         stageBuiltins[EShLangClosestHitNV].append(deviceIndex);
         stageBuiltins[EShLangMissNV].append(deviceIndex);
     }
-#endif
 
     if (version >= 300 /* both ES and non-ES */) {
         stageBuiltins[EShLangFragment].append(
@@ -6105,7 +6101,6 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "\n");
     }
 
-#ifndef GLSLANG_WEB
     if ((profile != EEsProfile && version >= 420) ||
         (profile == EEsProfile && version >= 310)) {
         commonBuiltins.append("const int gl_ScopeDevice      = 1;\n");

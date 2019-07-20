@@ -704,8 +704,9 @@ declaration
         $$ = $1.intermNode;
     }
     | PRECISION precision_qualifier type_specifier SEMICOLON {
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($1.loc, ENoProfile, 130, 0, "precision statement");
-
+#endif
         // lazy setting of the previous scope's defaults, has effect only the first time it is called in a particular scope
         parseContext.symbolTable.setPreviousDefaultPrecisions(&parseContext.defaultPrecision[0]);
         parseContext.setDefaultPrecision($1.loc, $3, $2.qualifier.precision);
@@ -834,8 +835,10 @@ parameter_declarator
     // Type + name
     : type_specifier IDENTIFIER {
         if ($1.arraySizes) {
+#ifndef GLSLANG_WEB
             parseContext.profileRequires($1.loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
             parseContext.profileRequires($1.loc, EEsProfile, 300, 0, "arrayed type");
+#endif
             parseContext.arraySizeRequiredCheck($1.loc, *$1.arraySizes);
         }
         if ($1.basicType == EbtVoid) {
@@ -849,8 +852,10 @@ parameter_declarator
     }
     | type_specifier IDENTIFIER array_specifier {
         if ($1.arraySizes) {
+#ifndef GLSLANG_WEB
             parseContext.profileRequires($1.loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
             parseContext.profileRequires($1.loc, EEsProfile, 300, 0, "arrayed type");
+#endif
             parseContext.arraySizeRequiredCheck($1.loc, *$1.arraySizes);
         }
         TType* type = new TType($1);
@@ -982,8 +987,10 @@ fully_specified_type
 
         parseContext.globalQualifierTypeCheck($1.loc, $1.qualifier, $$);
         if ($1.arraySizes) {
+#ifndef GLSLANG_WEB
             parseContext.profileRequires($1.loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
             parseContext.profileRequires($1.loc, EEsProfile, 300, 0, "arrayed type");
+#endif
         }
 
         parseContext.precisionQualifierCheck($$.loc, $$.basicType, $$.qualifier);
@@ -993,8 +1000,10 @@ fully_specified_type
         parseContext.globalQualifierTypeCheck($1.loc, $1.qualifier, $2);
 
         if ($2.arraySizes) {
+#ifndef GLSLANG_WEB
             parseContext.profileRequires($2.loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
             parseContext.profileRequires($2.loc, EEsProfile, 300, 0, "arrayed type");
+#endif
         }
 
         if ($2.arraySizes && parseContext.arrayQualifierError($2.loc, $1.qualifier))
@@ -1017,7 +1026,9 @@ fully_specified_type
 invariant_qualifier
     : INVARIANT {
         parseContext.globalCheck($1.loc, "invariant");
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($$.loc, ENoProfile, 120, 0, "invariant");
+#endif
         $$.init($1.loc);
         $$.qualifier.invariant = true;
     }
@@ -1026,15 +1037,19 @@ invariant_qualifier
 interpolation_qualifier
     : SMOOTH {
         parseContext.globalCheck($1.loc, "smooth");
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($1.loc, ENoProfile, 130, 0, "smooth");
         parseContext.profileRequires($1.loc, EEsProfile, 300, 0, "smooth");
+#endif
         $$.init($1.loc);
         $$.qualifier.smooth = true;
     }
     | FLAT {
         parseContext.globalCheck($1.loc, "flat");
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($1.loc, ENoProfile, 130, 0, "flat");
         parseContext.profileRequires($1.loc, EEsProfile, 300, 0, "flat");
+#endif
         $$.init($1.loc);
         $$.qualifier.flat = true;
     }
@@ -1156,8 +1171,10 @@ storage_qualifier
         $$.qualifier.storage = EvqOut;
     }
     | CENTROID {
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($1.loc, ENoProfile, 120, 0, "centroid");
         parseContext.profileRequires($1.loc, EEsProfile, 300, 0, "centroid");
+#endif
         parseContext.globalCheck($1.loc, "centroid");
         $$.init($1.loc);
         $$.qualifier.centroid = true;
@@ -1171,18 +1188,6 @@ storage_qualifier
         parseContext.globalCheck($1.loc, "buffer");
         $$.init($1.loc);
         $$.qualifier.storage = EvqBuffer;
-    }
-    | SHARED {
-        parseContext.globalCheck($1.loc, "shared");
-        parseContext.profileRequires($1.loc, ECoreProfile | ECompatibilityProfile, 430, E_GL_ARB_compute_shader, "shared");
-        parseContext.profileRequires($1.loc, EEsProfile, 310, 0, "shared");
-#ifndef GLSLANG_WEB
-        parseContext.requireStage($1.loc, (EShLanguageMask)(EShLangComputeMask | EShLangMeshNVMask | EShLangTaskNVMask), "shared");
-#else
-        parseContext.requireStage($1.loc, EShLangCompute, "shared");
-#endif
-        $$.init($1.loc);
-        $$.qualifier.storage = EvqShared;
     }
     ;
 
@@ -1686,17 +1691,23 @@ type_specifier_nonarray
 
 precision_qualifier
     : HIGH_PRECISION {
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($1.loc, ENoProfile, 130, 0, "highp precision qualifier");
+#endif
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         parseContext.handlePrecisionQualifier($1.loc, $$.qualifier, EpqHigh);
     }
     | MEDIUM_PRECISION {
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($1.loc, ENoProfile, 130, 0, "mediump precision qualifier");
+#endif
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         parseContext.handlePrecisionQualifier($1.loc, $$.qualifier, EpqMedium);
     }
     | LOW_PRECISION {
+#ifndef GLSLANG_WEB
         parseContext.profileRequires($1.loc, ENoProfile, 130, 0, "lowp precision qualifier");
+#endif
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         parseContext.handlePrecisionQualifier($1.loc, $$.qualifier, EpqLow);
     }
@@ -1742,8 +1753,10 @@ struct_declaration_list
 struct_declaration
     : type_specifier struct_declarator_list SEMICOLON {
         if ($1.arraySizes) {
+#ifndef GLSLANG_WEB
             parseContext.profileRequires($1.loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
             parseContext.profileRequires($1.loc, EEsProfile, 300, 0, "arrayed type");
+#endif
             if (parseContext.profile == EEsProfile)
                 parseContext.arraySizeRequiredCheck($1.loc, *$1.arraySizes);
         }
@@ -1764,8 +1777,10 @@ struct_declaration
     }
     | type_qualifier type_specifier struct_declarator_list SEMICOLON {
         if ($2.arraySizes) {
+#ifndef GLSLANG_WEB
             parseContext.profileRequires($2.loc, ENoProfile, 120, E_GL_3DL_array_objects, "arrayed type");
             parseContext.profileRequires($2.loc, EEsProfile, 300, 0, "arrayed type");
+#endif
             if (parseContext.profile == EEsProfile)
                 parseContext.arraySizeRequiredCheck($2.loc, *$2.arraySizes);
         }
@@ -1820,14 +1835,18 @@ initializer
     }
     | LEFT_BRACE initializer_list RIGHT_BRACE {
         const char* initFeature = "{ } style initializers";
+#ifndef GLSLANG_WEB
         parseContext.requireProfile($1.loc, ~EEsProfile, initFeature);
         parseContext.profileRequires($1.loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, initFeature);
+#endif
         $$ = $2;
     }
     | LEFT_BRACE initializer_list COMMA RIGHT_BRACE {
         const char* initFeature = "{ } style initializers";
+#ifndef GLSLANG_WEB
         parseContext.requireProfile($1.loc, ~EEsProfile, initFeature);
         parseContext.profileRequires($1.loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, initFeature);
+#endif
         $$ = $2;
     }
     ;
@@ -2177,8 +2196,12 @@ external_declaration
         $$ = $1;
     }
     | SEMICOLON {
+#ifdef GLSLANG_WEB
+        parseContext.addError();
+#else
         parseContext.requireProfile($1.loc, ~EEsProfile, "extraneous semicolon");
         parseContext.profileRequires($1.loc, ~EEsProfile, 460, nullptr, "extraneous semicolon");
+#endif
         $$ = nullptr;
     }
     ;

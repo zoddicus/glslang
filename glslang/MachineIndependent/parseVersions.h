@@ -72,8 +72,10 @@ public:
     virtual ~TParseVersions() { }
     virtual void initializeExtensionBehavior();
     virtual void requireProfile(const TSourceLoc&, int queryProfiles, const char* featureDesc);
+#ifndef GLSLANG_WEB
     virtual void profileRequires(const TSourceLoc&, int queryProfiles, int minVersion, int numExtensions, const char* const extensions[], const char* featureDesc);
     virtual void profileRequires(const TSourceLoc&, int queryProfiles, int minVersion, const char* const extension, const char* featureDesc);
+#endif
     virtual void requireStage(const TSourceLoc&, EShLanguageMask, const char* featureDesc);
     virtual void requireStage(const TSourceLoc&, EShLanguage, const char* featureDesc);
     virtual void checkDeprecated(const TSourceLoc&, int queryProfiles, int depVersion, const char* featureDesc);

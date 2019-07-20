@@ -536,6 +536,7 @@ const char* StageName(EShLanguage stage)
     }
 }
 
+#ifndef GLSLANG_WEB
 //
 // When to use profileRequires():
 //
@@ -582,6 +583,7 @@ void TParseVersions::profileRequires(const TSourceLoc& loc, int profileMask, int
 {
     profileRequires(loc, profileMask, minVersion, extension ? 1 : 0, &extension, featureDesc);
 }
+#endif
 
 //
 // When to use requireStage()
@@ -865,8 +867,10 @@ void TParseVersions::updateExtensionBehavior(const char* extension, TExtensionBe
 // Call for any operation needing full GLSL integer data-type support.
 void TParseVersions::fullIntegerCheck(const TSourceLoc& loc, const char* op)
 {
+#ifndef GLSLANG_WEB
     profileRequires(loc, ENoProfile, 130, nullptr, op);
     profileRequires(loc, EEsProfile, 300, nullptr, op);
+#endif
 }
 
 #ifndef GLSLANG_WEB
