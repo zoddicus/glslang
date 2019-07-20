@@ -2761,23 +2761,23 @@ void TParseContext::reservedPpErrorCheck(const TSourceLoc& loc, const char* iden
 //
 bool TParseContext::lineContinuationCheck(const TSourceLoc& loc, bool endOfComment)
 {
+#ifdef GLSLANG_WEB
+    return true;
+#else
     const char* message = "line continuation";
 
     bool lineContinuationAllowed = (profile == EEsProfile && version >= 300) ||
                                    (profile != EEsProfile && (version >= 420 || extensionTurnedOn(E_GL_ARB_shading_language_420pack)));
 
     if (endOfComment) {
-#ifndef GLSLANG_WEB
         if (lineContinuationAllowed)
             warn(loc, "used at end of comment; the following line is still part of the comment", message, "");
         else
             warn(loc, "used at end of comment, but this version does not provide line continuation", message, "");
-#endif
 
         return lineContinuationAllowed;
     }
 
-#ifndef GLSLANG_WEB
     if (relaxedErrors()) {
         if (! lineContinuationAllowed)
             warn(loc, "not allowed in this version", message, "");
@@ -2786,9 +2786,9 @@ bool TParseContext::lineContinuationCheck(const TSourceLoc& loc, bool endOfComme
         profileRequires(loc, EEsProfile, 300, nullptr, message);
         profileRequires(loc, ~EEsProfile, 420, E_GL_ARB_shading_language_420pack, message);
     }
-#endif
 
     return lineContinuationAllowed;
+#endif
 }
 
 bool TParseContext::builtInName(const TString& identifier)
@@ -3580,7 +3580,10 @@ void TParseContext::mergeQualifiers(const TSourceLoc& loc, TQualifier& dst, cons
     // Ordering
     if (! force && ((profile != EEsProfile && version < 420) ||
                     (profile == EEsProfile && version < 310))
-                && ! extensionTurnedOn(E_GL_ARB_shading_language_420pack)) {
+#ifndef GLSLANG_WEB
+                && ! extensionTurnedOn(E_GL_ARB_shading_language_420pack)
+#endif
+                ) {
         // non-function parameters
 #ifndef GLSLANG_WEB
         if (src.noContraction && (dst.invariant || dst.isInterpolation() || dst.isAuxiliary() || dst.storage != EvqTemporary || dst.precision != EpqNone))

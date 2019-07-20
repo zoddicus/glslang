@@ -5416,13 +5416,15 @@ void TBuiltIns::initialize(int version, EProfile profile, const SpvVersion& spvV
             "in highp int gl_ViewIndex;"       // GL_EXT_multiview
             "\n");
     }
+#endif
 
+#ifndef GLSLANG_WEB
     if (version >= 300 /* both ES and non-ES */) {
         stageBuiltins[EShLangVertex].append(
             "in highp uint gl_ViewID_OVR;"     // GL_OVR_multiview, GL_OVR_multiview2
             "\n");
     }
-
+    
     //============================================================================
     //
     // Define the interface to the geometry shader.
@@ -7831,10 +7833,8 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
             BuiltInVariable("gl_MultiTexCoord7", EbvMultiTexCoord7, symbolTable);
             BuiltInVariable("gl_FogCoord",       EbvFogFragCoord,   symbolTable);
         }
-#endif
 
         if (profile == EEsProfile) {
-#ifndef GLSLANG_WEB
             if (spvVersion.spv == 0) {
                 symbolTable.setFunctionExtensions("texture2DGradEXT",     1, &E_GL_EXT_shader_texture_lod);
                 symbolTable.setFunctionExtensions("texture2DProjGradEXT", 1, &E_GL_EXT_shader_texture_lod);
@@ -7842,12 +7842,10 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
                 if (version == 310)
                     symbolTable.setFunctionExtensions("textureGatherOffsets", Num_AEP_gpu_shader5, AEP_gpu_shader5);
             }
-#endif
             if (version == 310)
                 symbolTable.setFunctionExtensions("fma", Num_AEP_gpu_shader5, AEP_gpu_shader5);
         }
 
-#ifndef GLSLANG_WEB
         if (profile == EEsProfile && version < 320) {
             symbolTable.setFunctionExtensions("imageAtomicAdd",      1, &E_GL_OES_shader_image_atomic);
             symbolTable.setFunctionExtensions("imageAtomicMin",      1, &E_GL_OES_shader_image_atomic);
@@ -7875,12 +7873,12 @@ void TBuiltIns::identifyBuiltIns(int version, EProfile profile, const SpvVersion
             symbolTable.setVariableExtensions("gl_ViewID_OVR", Num_OVR_multiview_EXTs, OVR_multiview_EXTs);
             BuiltInVariable("gl_ViewID_OVR", EbvViewIndex, symbolTable);
         }
-#endif
 
         if (profile == EEsProfile) {
             symbolTable.setFunctionExtensions("shadow2DEXT",        1, &E_GL_EXT_shadow_samplers);
             symbolTable.setFunctionExtensions("shadow2DProjEXT",    1, &E_GL_EXT_shadow_samplers);
         }
+#endif
 
         // Fall through
 

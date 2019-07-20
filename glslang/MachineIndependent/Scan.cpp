@@ -558,7 +558,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["samplerCubeArrayShadow"] =  SAMPLERCUBEARRAYSHADOW;
     (*KeywordMap)["isamplerCubeArray"] =       ISAMPLERCUBEARRAY;
     (*KeywordMap)["usamplerCubeArray"] =       USAMPLERCUBEARRAY;
-    (*KeywordMap)["samplerBuffer"] =           SAMPLERBUFFER;
     (*KeywordMap)["samplerCubeShadow"] =       SAMPLERCUBESHADOW;
     (*KeywordMap)["sampler2DArray"] =          SAMPLER2DARRAY;
     (*KeywordMap)["sampler2DArrayShadow"] =    SAMPLER2DARRAYSHADOW;
@@ -570,6 +569,11 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["usampler3D"] =              USAMPLER3D;
     (*KeywordMap)["usamplerCube"] =            USAMPLERCUBE;
     (*KeywordMap)["usampler2DArray"] =         USAMPLER2DARRAY;
+    (*KeywordMap)["sampler3D"] =               SAMPLER3D;
+    (*KeywordMap)["sampler2DShadow"] =         SAMPLER2DSHADOW;
+
+#ifndef GLSLANG_WEB
+    (*KeywordMap)["samplerBuffer"] =           SAMPLERBUFFER;
     (*KeywordMap)["isamplerBuffer"] =          ISAMPLERBUFFER;
     (*KeywordMap)["usamplerBuffer"] =          USAMPLERBUFFER;
     (*KeywordMap)["sampler2DMS"] =             SAMPLER2DMS;
@@ -578,10 +582,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["sampler2DMSArray"] =        SAMPLER2DMSARRAY;
     (*KeywordMap)["isampler2DMSArray"] =       ISAMPLER2DMSARRAY;
     (*KeywordMap)["usampler2DMSArray"] =       USAMPLER2DMSARRAY;
-    (*KeywordMap)["sampler3D"] =               SAMPLER3D;
-    (*KeywordMap)["sampler2DShadow"] =         SAMPLER2DSHADOW;
-
-#ifndef GLSLANG_WEB
     (*KeywordMap)["sampler1DArrayShadow"] =    SAMPLER1DARRAYSHADOW;
     (*KeywordMap)["isampler1DArray"] =         ISAMPLER1DARRAY;
     (*KeywordMap)["usampler1D"] =              USAMPLER1D;
@@ -596,7 +596,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["sampler2DRectShadow"] =     SAMPLER2DRECTSHADOW;
     (*KeywordMap)["samplerExternalOES"] =      SAMPLEREXTERNALOES; // GL_OES_EGL_image_external
     (*KeywordMap)["__samplerExternal2DY2YEXT"] = SAMPLEREXTERNAL2DY2YEXT; // GL_EXT_YUV_target
-#endif
 
     (*KeywordMap)["sampler"] =                 SAMPLER;
     (*KeywordMap)["samplerShadow"] =           SAMPLERSHADOW;
@@ -626,7 +625,6 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["utexture2DMSArray"] =       UTEXTURE2DMSARRAY;
     (*KeywordMap)["texture3D"] =               TEXTURE3D;
 
-#ifndef GLSLANG_WEB
     (*KeywordMap)["subpassInput"] =            SUBPASSINPUT;
     (*KeywordMap)["subpassInputMS"] =          SUBPASSINPUTMS;
     (*KeywordMap)["isubpassInput"] =           ISUBPASSINPUT;
@@ -689,17 +687,17 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["f16subpassInputMS"] =            F16SUBPASSINPUTMS;
 #endif
 
-    (*KeywordMap)["noperspective"] =           NOPERSPECTIVE;
     (*KeywordMap)["smooth"] =                  SMOOTH;
     (*KeywordMap)["flat"] =                    FLAT;
     (*KeywordMap)["centroid"] =                CENTROID;
-    (*KeywordMap)["precise"] =                 PRECISE;
     (*KeywordMap)["invariant"] =               INVARIANT;
     (*KeywordMap)["packed"] =                  PACKED;
     (*KeywordMap)["resource"] =                RESOURCE;
     (*KeywordMap)["superp"] =                  SUPERP;
 
 #ifndef GLSLANG_WEB
+    (*KeywordMap)["noperspective"] =           NOPERSPECTIVE;
+    (*KeywordMap)["precise"] =                 PRECISE;
     (*KeywordMap)["__explicitInterpAMD"] =     EXPLICITINTERPAMD;
     (*KeywordMap)["pervertexNV"] =             PERVERTEXNV;
     (*KeywordMap)["rayPayloadNV"] =            PAYLOADNV;
@@ -714,7 +712,7 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["fcoopmatNV"] =              FCOOPMATNV;
 #endif
 
-    ReservedSet = new std::unordered_set<const char*, str_hash, str_eq>;
+    ReservedSet = new std::unordered_set<const char*, str_hash, str_eq>;  //?? all or nothing
 
 #ifndef GLSLANG_WEB
     ReservedSet->insert("common");
@@ -1000,6 +998,7 @@ int TScanContext::tokenizeIdentifier()
 
     case LAYOUT:
     {
+#ifndef GLSLANG_WEB
         const int numLayoutExts = 2;
         const char* layoutExts[numLayoutExts] = { E_GL_ARB_shading_language_420pack,
                                                   E_GL_ARB_explicit_attrib_location };
@@ -1007,6 +1006,7 @@ int TScanContext::tokenizeIdentifier()
             (parseContext.profile != EEsProfile && parseContext.version < 140 &&
             ! parseContext.extensionsTurnedOn(numLayoutExts, layoutExts)))
             return identifierOrType();
+#endif
         return keyword;
     }
     case SHARED:
@@ -1015,6 +1015,7 @@ int TScanContext::tokenizeIdentifier()
             return identifierOrType();
         return keyword;
 
+#ifndef GLSLANG_WEB
     case PATCH:
         if (parseContext.symbolTable.atBuiltInLevel() ||
             (parseContext.profile == EEsProfile &&
@@ -1033,7 +1034,8 @@ int TScanContext::tokenizeIdentifier()
 
     case SUBROUTINE:
         return es30ReservedFromGLSL(400);
-
+#endif
+        
     case HIGH_PRECISION:
     case MEDIUM_PRECISION:
     case LOW_PRECISION:
@@ -1289,12 +1291,17 @@ int TScanContext::tokenizeIdentifier()
     case ISAMPLERCUBEARRAY:
     case USAMPLERCUBEARRAY:
         afterType = true;
+#ifdef GLSLANG_WEB
+        return keyword;
+#else
         if ((parseContext.profile == EEsProfile && parseContext.version >= 320) ||
             parseContext.extensionsTurnedOn(Num_AEP_texture_cube_map_array, AEP_texture_cube_map_array))
             return keyword;
-        if (parseContext.profile == EEsProfile || (parseContext.version < 400 && ! parseContext.extensionTurnedOn(E_GL_ARB_texture_cube_map_array)))
+        if (parseContext.profile == EEsProfile ||
+            (parseContext.version < 400 && ! parseContext.extensionTurnedOn(E_GL_ARB_texture_cube_map_array)))
             reservedWord();
         return keyword;
+#endif
 
     case UINT:
     case UVEC2:
@@ -1327,7 +1334,6 @@ int TScanContext::tokenizeIdentifier()
     case USAMPLER2DRECT:
         afterType = true;
         return es30ReservedFromGLSL(140);
-#endif
 
     case SAMPLERBUFFER:
         afterType = true;
@@ -1361,20 +1367,26 @@ int TScanContext::tokenizeIdentifier()
             return keyword;
         return es30ReservedFromGLSL(150);
 
+#endif
+
     case SAMPLER3D:
         afterType = true;
+#ifndef GLSLANG_WEB
         if (parseContext.profile == EEsProfile && parseContext.version < 300) {
             if (!parseContext.extensionTurnedOn(E_GL_OES_texture_3D))
                 reservedWord();
         }
+#endif
         return keyword;
 
     case SAMPLER2DSHADOW:
         afterType = true;
+#ifndef GLSLANG_WEB
         if (parseContext.profile == EEsProfile && parseContext.version < 300) {
             if (!parseContext.extensionTurnedOn(E_GL_EXT_shadow_samplers))
                 reservedWord();
         }
+#endif
         return keyword;
 
 #ifndef GLSLANG_WEB
@@ -1421,7 +1433,6 @@ int TScanContext::tokenizeIdentifier()
             parseContext.extensionTurnedOn(E_GL_EXT_YUV_target))
             return keyword;
         return identifierOrType();
-#endif
 
     case TEXTURE2D:
     case TEXTURECUBE:
@@ -1454,7 +1465,6 @@ int TScanContext::tokenizeIdentifier()
         else
             return identifierOrType();
 
-#ifndef GLSLANG_WEB
     case SUBPASSINPUT:
     case SUBPASSINPUTMS:
     case ISUBPASSINPUT:
@@ -1526,15 +1536,13 @@ int TScanContext::tokenizeIdentifier()
              parseContext.profile != EEsProfile && parseContext.version >= 450))
             return keyword;
         return identifierOrType();
-#endif
 
     case NOPERSPECTIVE:
-#ifndef GLSLANG_WEB
         if (parseContext.profile == EEsProfile && parseContext.version >= 300 &&
             parseContext.extensionTurnedOn(E_GL_NV_shader_noperspective_interpolation))
             return keyword;
-#endif
         return es30ReservedFromGLSL(130);
+#endif
 
     case SMOOTH:
         if ((parseContext.profile == EEsProfile && parseContext.version < 300) ||
@@ -1568,6 +1576,7 @@ int TScanContext::tokenizeIdentifier()
             return identifierOrType();
         return keyword;
 
+#ifndef GLSLANG_WEB
     case PRECISE:
         if ((parseContext.profile == EEsProfile &&
              (parseContext.version >= 320 || parseContext.extensionsTurnedOn(Num_AEP_gpu_shader5, AEP_gpu_shader5))) ||
@@ -1578,6 +1587,7 @@ int TScanContext::tokenizeIdentifier()
             return keyword;
         }
         return identifierOrType();
+#endif
 
     case INVARIANT:
         if (parseContext.profile != EEsProfile && parseContext.version < 120)
@@ -1763,10 +1773,13 @@ int TScanContext::dMat()
 
 int TScanContext::firstGenerationImage(bool inEs310)
 {
-    if (parseContext.symbolTable.atBuiltInLevel() ||
-        (parseContext.profile != EEsProfile && (parseContext.version >= 420 ||
+    if (parseContext.symbolTable.atBuiltInLevel()
+#ifndef GLSLANG_WEB
+        || (parseContext.profile != EEsProfile && (parseContext.version >= 420 ||
          parseContext.extensionTurnedOn(E_GL_ARB_shader_image_load_store))) ||
-        (inEs310 && parseContext.profile == EEsProfile && parseContext.version >= 310))
+        (inEs310 && parseContext.profile == EEsProfile && parseContext.version >= 310)
+#endif
+        )
         return keyword;
 
     if ((parseContext.profile == EEsProfile && parseContext.version >= 300) ||
@@ -1790,9 +1803,12 @@ int TScanContext::secondGenerationImage()
         return keyword;
     }
 
-    if (parseContext.symbolTable.atBuiltInLevel() ||
-        (parseContext.profile != EEsProfile &&
-         (parseContext.version >= 420 || parseContext.extensionTurnedOn(E_GL_ARB_shader_image_load_store))))
+    if (parseContext.symbolTable.atBuiltInLevel()
+#ifndef GLSLANG_WEB
+        || (parseContext.profile != EEsProfile &&
+         (parseContext.version >= 420 || parseContext.extensionTurnedOn(E_GL_ARB_shader_image_load_store)))
+#endif
+         )
         return keyword;
 
 #ifndef GLSLANG_WEB

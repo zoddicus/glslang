@@ -101,10 +101,11 @@ typedef enum {
     EBhDisablePartial    // use as initial state of an extension that is only partially implemented
 } TExtensionBehavior;
 
+#ifndef GLSLANG_WEB
 //
 // Symbolic names for extensions.  Strings may be directly used when calling the
 // functions, but better to have the compiler do spelling checks.
-//??
+//
 const char* const E_GL_OES_texture_3D                   = "GL_OES_texture_3D";
 const char* const E_GL_OES_standard_derivatives         = "GL_OES_standard_derivatives";
 const char* const E_GL_EXT_frag_depth                   = "GL_EXT_frag_depth";
@@ -161,7 +162,6 @@ const char* const E_GL_EXT_shader_image_load_formatted = "GL_EXT_shader_image_lo
 const char* const E_GL_EXT_shader_16bit_storage             = "GL_EXT_shader_16bit_storage";
 const char* const E_GL_EXT_shader_8bit_storage              = "GL_EXT_shader_8bit_storage";
 
-#ifndef GLSLANG_WEB
 // EXT extensions
 const char* const E_GL_EXT_device_group                     = "GL_EXT_device_group";
 const char* const E_GL_EXT_multiview                        = "GL_EXT_multiview";
@@ -221,7 +221,6 @@ const char* const E_GL_NV_mesh_shader                           = "GL_NV_mesh_sh
 
 const char* const viewportEXTs[] = { E_GL_ARB_shader_viewport_layer_array, E_GL_NV_viewport_array2 };
 const int Num_viewportEXTs = sizeof(viewportEXTs) / sizeof(viewportEXTs[0]);
-#endif
 
 const char* const E_GL_NV_cooperative_matrix                    = "GL_NV_cooperative_matrix";
 const char* const E_GL_NV_shader_sm_builtins                    = "GL_NV_shader_sm_builtins";
@@ -292,6 +291,7 @@ const int Num_AEP_texture_buffer = sizeof(AEP_texture_buffer)/sizeof(AEP_texture
 
 const char* const AEP_texture_cube_map_array[] = { E_GL_EXT_texture_cube_map_array, E_GL_OES_texture_cube_map_array };
 const int Num_AEP_texture_cube_map_array = sizeof(AEP_texture_cube_map_array)/sizeof(AEP_texture_cube_map_array[0]);
+#endif
 
 } // end namespace glslang
 

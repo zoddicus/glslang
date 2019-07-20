@@ -585,14 +585,10 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
     TOperator newOp = EOpNull;
 
     // Certain explicit conversions are allowed conditionally
-    bool arithemeticInt8Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
-                                  extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int8);
 #ifdef GLSLANG_WEB
-    bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
-                                   extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16);
-
-    bool arithemeticFloat16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
-                                     extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_float16);
+    bool arithemeticInt8Enabled = false;
+    bool arithemeticInt16Enabled = false;
+    bool arithemeticFloat16Enabled = false;
     bool convertToIntTypes = (convertTo == EbtInt || convertTo == EbtUint);
 
     bool convertFromIntTypes = (node->getBasicType() == EbtInt || node->getBasicType() == EbtUint);
@@ -601,6 +597,8 @@ TIntermTyped* TIntermediate::createConversion(TBasicType convertTo, TIntermTyped
 
     bool convertFromFloatTypes = (node->getBasicType() == EbtFloat);
 #else
+    bool arithemeticInt8Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
+                                  extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int8);
     bool arithemeticInt16Enabled = extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types) ||
                                    extensionRequested(E_GL_EXT_shader_explicit_arithmetic_types_int16) ||
                                    extensionRequested(E_GL_AMD_gpu_shader_int16);

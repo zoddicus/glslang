@@ -133,7 +133,7 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %token <lex> VEC2 VEC3 VEC4
 %token <lex> MAT2 MAT3 MAT4 CENTROID IN OUT INOUT
 %token <lex> UNIFORM PATCH SAMPLE BUFFER SHARED
-%token <lex> NOPERSPECTIVE FLAT SMOOTH LAYOUT 
+%token <lex> FLAT SMOOTH LAYOUT 
 
 %token <lex> MAT2X2 MAT2X3 MAT2X4
 %token <lex> MAT3X2 MAT3X3 MAT3X4
@@ -145,25 +145,8 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %token <lex> SAMPLER2DARRAYSHADOW ISAMPLER2D ISAMPLER3D ISAMPLERCUBE
 %token <lex> ISAMPLER2DARRAY USAMPLER2D USAMPLER3D
 %token <lex> USAMPLERCUBE USAMPLER2DARRAY
-%token <lex> SAMPLERBUFFER ISAMPLERBUFFER USAMPLERBUFFER
 %token <lex> SAMPLERCUBEARRAY SAMPLERCUBEARRAYSHADOW
 %token <lex> ISAMPLERCUBEARRAY USAMPLERCUBEARRAY
-%token <lex> SAMPLER2DMS ISAMPLER2DMS USAMPLER2DMS
-%token <lex> SAMPLER2DMSARRAY ISAMPLER2DMSARRAY USAMPLER2DMSARRAY
-
-// pure sampler
-%token <lex> SAMPLER SAMPLERSHADOW
-
-// texture without sampler
-%token <lex> TEXTURE2D TEXTURE3D TEXTURECUBE
-%token <lex> TEXTURE2DARRAY
-%token <lex> ITEXTURE2D ITEXTURE3D ITEXTURECUBE
-%token <lex> ITEXTURE2DARRAY UTEXTURE2D UTEXTURE3D
-%token <lex> UTEXTURECUBE UTEXTURE2DARRAY
-%token <lex> TEXTUREBUFFER ITEXTUREBUFFER UTEXTUREBUFFER
-%token <lex> TEXTURECUBEARRAY ITEXTURECUBEARRAY UTEXTURECUBEARRAY
-%token <lex> TEXTURE2DMS ITEXTURE2DMS UTEXTURE2DMS
-%token <lex> TEXTURE2DMSARRAY ITEXTURE2DMSARRAY UTEXTURE2DMSARRAY
 
 %token <lex> STRUCT VOID WHILE
 
@@ -179,7 +162,7 @@ extern int yylex(YYSTYPE*, TParseContext&);
 %token <lex> COMMA COLON EQUAL SEMICOLON BANG DASH TILDE PLUS STAR SLASH PERCENT
 %token <lex> LEFT_ANGLE RIGHT_ANGLE VERTICAL_BAR CARET AMPERSAND QUESTION
 
-%token <lex> INVARIANT PRECISE
+%token <lex> INVARIANT
 %token <lex> HIGH_PRECISION MEDIUM_PRECISION LOW_PRECISION PRECISION
 
 %token <lex> PACKED RESOURCE SUPERP
@@ -1504,170 +1487,6 @@ type_specifier_nonarray
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.set(EbtUint, EsdCube, true);
-    }
-    | SAMPLER2DMS {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtFloat, Esd2D, false, false, true);
-    }
-    | ISAMPLER2DMS {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtInt, Esd2D, false, false, true);
-    }
-    | USAMPLER2DMS {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtUint, Esd2D, false, false, true);
-    }
-    | SAMPLER2DMSARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtFloat, Esd2D, true, false, true);
-    }
-    | ISAMPLER2DMSARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtInt, Esd2D, true, false, true);
-    }
-    | USAMPLER2DMSARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.set(EbtUint, Esd2D, true, false, true);
-    }
-    | SAMPLER {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-#ifndef GLSLANG_WEB
-        $$.sampler.setPureSampler(false);
-#endif
-    }
-    | SAMPLERSHADOW {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-#ifndef GLSLANG_WEB
-        $$.sampler.setPureSampler(true);
-#endif
-    }
-    | TEXTURE2D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, Esd2D);
-    }
-    | TEXTURE3D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, Esd3D);
-    }
-    | TEXTURECUBE {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, EsdCube);
-    }
-    | TEXTURE2DARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, Esd2D, true);
-    }
-    | TEXTURECUBEARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, EsdCube, true);
-    }
-    | ITEXTURE2D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, Esd2D);
-    }
-    | ITEXTURE3D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, Esd3D);
-    }
-    | ITEXTURECUBE {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, EsdCube);
-    }
-    | ITEXTURE2DARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, Esd2D, true);
-    }
-    | ITEXTURECUBEARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, EsdCube, true);
-    }
-    | UTEXTURE2D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, Esd2D);
-    }
-    | UTEXTURE3D {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, Esd3D);
-    }
-    | UTEXTURECUBE {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, EsdCube);
-    }
-    | UTEXTURE2DARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, Esd2D, true);
-    }
-    | UTEXTURECUBEARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, EsdCube, true);
-    }
-    | TEXTUREBUFFER {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, EsdBuffer);
-    }
-    | ITEXTUREBUFFER {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, EsdBuffer);
-    }
-    | UTEXTUREBUFFER {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, EsdBuffer);
-    }
-    | TEXTURE2DMS {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, Esd2D, false, false, true);
-    }
-    | ITEXTURE2DMS {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, Esd2D, false, false, true);
-    }
-    | UTEXTURE2DMS {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, Esd2D, false, false, true);
-    }
-    | TEXTURE2DMSARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtFloat, Esd2D, true, false, true);
-    }
-    | ITEXTURE2DMSARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtInt, Esd2D, true, false, true);
-    }
-    | UTEXTURE2DMSARRAY {
-        $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
-        $$.basicType = EbtSampler;
-        $$.sampler.setTexture(EbtUint, Esd2D, true, false, true);
     }
     | struct_specifier {
         $$ = $1;
