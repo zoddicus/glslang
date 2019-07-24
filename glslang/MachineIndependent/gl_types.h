@@ -78,7 +78,7 @@
 #define GL_DOUBLE_MAT4x2                  0x8F4D
 #define GL_DOUBLE_MAT4x3                  0x8F4E
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
 // Those constants are borrowed from extension NV_gpu_shader5
 #define GL_FLOAT16_NV                     0x8FF8
 #define GL_FLOAT16_VEC2_NV                0x8FF9
@@ -117,7 +117,7 @@
 #define GL_SAMPLER_CUBE_MAP_ARRAY_ARB     0x900C
 #define GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW_ARB 0x900D
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
 #define GL_FLOAT16_SAMPLER_1D_AMD                       0x91CE
 #define GL_FLOAT16_SAMPLER_2D_AMD                       0x91CF
 #define GL_FLOAT16_SAMPLER_3D_AMD                       0x91D0

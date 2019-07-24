@@ -48,6 +48,7 @@ namespace glslang {
 
 class TIntermediate;
 
+#ifndef GLSLANG_WEB
 // I/O mapper
 class TIoMapper {
 public:
@@ -57,6 +58,7 @@ public:
     // grow the reflection stage by stage
     bool addStage(EShLanguage, TIntermediate&, TInfoSink&, TIoMapResolver*);
 };
+#endif
 
 } // end namespace glslang
 

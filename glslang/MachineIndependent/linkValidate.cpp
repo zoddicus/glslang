@@ -54,6 +54,11 @@ namespace glslang {
 //
 // Link-time error emitter.
 //
+#ifdef GLSLANG_WEB
+#undef error
+#define error(A, B) ++numErrors
+#define warn(A, B)
+#else
 void TIntermediate::error(TInfoSink& infoSink, const char* message)
 {
     infoSink.info.prefix(EPrefixError);
@@ -68,6 +73,7 @@ void TIntermediate::warn(TInfoSink& infoSink, const char* message)
     infoSink.info.prefix(EPrefixWarning);
     infoSink.info << "Linking " << StageName(language) << " stage: " << message << "\n";
 }
+#endif
 
 // TODO: 4.4 offset/align:  "Two blocks linked together in the same program with the same block
 // name must have the exact same set of members qualified with offset and their integral-constant
@@ -78,11 +84,14 @@ void TIntermediate::warn(TInfoSink& infoSink, const char* message)
 //
 void TIntermediate::merge(TInfoSink& infoSink, TIntermediate& unit)
 {
+#ifndef GLSLANG_WEB
     mergeCallGraphs(infoSink, unit);
     mergeModes(infoSink, unit);
     mergeTrees(infoSink, unit);
+#endif
 }
 
+#ifndef GLSLANG_WEB
 void TIntermediate::mergeCallGraphs(TInfoSink& infoSink, TIntermediate& unit)
 {
     if (unit.getNumEntryPoints() > 0) {
@@ -143,9 +152,7 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         vertices = unit.vertices;
     else if (vertices != unit.vertices) {
         if (language == EShLangGeometry
-#ifdef NV_EXTENSIONS
             || language == EShLangMeshNV
-#endif
             )
             error(infoSink, "Contradictory layout max_vertices values");
         else if (language == EShLangTessControl)
@@ -153,7 +160,6 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         else
             assert(0);
     }
-#ifdef NV_EXTENSIONS
     if (primitives == TQualifier::layoutNotSet)
         primitives = unit.primitives;
     else if (primitives != unit.primitives) {
@@ -162,7 +168,6 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         else
             assert(0);
     }
-#endif
 
     if (inputPrimitive == ElgNone)
         inputPrimitive = unit.inputPrimitive;
@@ -187,6 +192,7 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
     else if (vertexOrder != unit.vertexOrder)
         error(infoSink, "Contradictory triangle ordering");
 
+#ifndef GLSLANG_WEB
     MERGE_TRUE(pointMode);
 
     for (int i = 0; i < 3; ++i) {
@@ -224,18 +230,14 @@ void TIntermediate::mergeModes(TInfoSink& infoSink, TIntermediate& unit)
         xfbBuffers[b].implicitStride = std::max(xfbBuffers[b].implicitStride, unit.xfbBuffers[b].implicitStride);
         if (unit.xfbBuffers[b].contains64BitType)
             xfbBuffers[b].contains64BitType = true;
-#ifdef AMD_EXTENSIONS
         if (unit.xfbBuffers[b].contains32BitType)
             xfbBuffers[b].contains32BitType = true;
         if (unit.xfbBuffers[b].contains16BitType)
             xfbBuffers[b].contains16BitType = true;
-#endif
         // TODO: 4.4 link: enhanced layouts: compare ranges
     }
 
     MERGE_TRUE(multiStream);
-
-#ifdef NV_EXTENSIONS
     MERGE_TRUE(layoutOverrideCoverage);
     MERGE_TRUE(geoPassthroughEXT);
 #endif
@@ -287,13 +289,8 @@ void TIntermediate::mergeTrees(TInfoSink& infoSink, TIntermediate& unit)
     }
 
     // Getting this far means we have two existing trees to merge...
-#ifdef NV_EXTENSIONS
     numShaderRecordNVBlocks += unit.numShaderRecordNVBlocks;
-#endif
-
-#ifdef NV_EXTENSIONS
     numTaskNVBlocks += unit.numTaskNVBlocks;
-#endif
 
     // Get the top-level globals of each unit
     TIntermSequence& globals = treeRoot->getAsAggregate()->getSequence();
@@ -493,6 +490,7 @@ void TIntermediate::mergeImplicitArraySizes(TType& type, const TType& unitType)
     for (int i = 0; i < (int)type.getStruct()->size(); ++i)
         mergeImplicitArraySizes(*(*type.getStruct())[i].type, *(*unitType.getStruct())[i].type);
 }
+#endif
 
 //
 // Compare two global objects from two compilation units and see if they match
@@ -502,6 +500,7 @@ void TIntermediate::mergeImplicitArraySizes(TType& type, const TType& unitType)
 //
 void TIntermediate::mergeErrorCheck(TInfoSink& infoSink, const TIntermSymbol& symbol, const TIntermSymbol& unitSymbol, bool crossStage)
 {
+#ifndef GLSLANG_WEB
     bool writeTypeComparison = false;
 
     // Types have to match
@@ -595,6 +594,7 @@ void TIntermediate::mergeErrorCheck(TInfoSink& infoSink, const TIntermSymbol& sy
     if (writeTypeComparison)
         infoSink.info << "    " << symbol.getName() << ": \"" << symbol.getType().getCompleteString() << "\" versus \"" <<
                                                              unitSymbol.getType().getCompleteString() << "\"\n";
+#endif
 }
 
 //
@@ -615,8 +615,10 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             warn(infoSink, "Entry point not found");
     }
 
+#ifndef GLSLANG_WEB
     if (numPushConstants > 1)
         error(infoSink, "Only one push_constant block is allowed per stage");
+#endif
 
     // recursion and missing body checking
     checkCallGraphCycles(infoSink);
@@ -629,25 +631,24 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     if (invocations == TQualifier::layoutNotSet)
         invocations = 1;
 
-    if (inIoAccessed("gl_ClipDistance") && inIoAccessed("gl_ClipVertex"))
-        error(infoSink, "Can only use one of gl_ClipDistance or gl_ClipVertex (gl_ClipDistance is preferred)");
-    if (inIoAccessed("gl_CullDistance") && inIoAccessed("gl_ClipVertex"))
-        error(infoSink, "Can only use one of gl_CullDistance or gl_ClipVertex (gl_ClipDistance is preferred)");
-
     if (userOutputUsed() && (inIoAccessed("gl_FragColor") || inIoAccessed("gl_FragData")))
         error(infoSink, "Cannot use gl_FragColor or gl_FragData when using user-defined outputs");
     if (inIoAccessed("gl_FragColor") && inIoAccessed("gl_FragData"))
         error(infoSink, "Cannot use both gl_FragColor and gl_FragData");
 
+#ifndef GLSLANG_WEB
+    if (inIoAccessed("gl_ClipDistance") && inIoAccessed("gl_ClipVertex"))
+        error(infoSink, "Can only use one of gl_ClipDistance or gl_ClipVertex (gl_ClipDistance is preferred)");
+    if (inIoAccessed("gl_CullDistance") && inIoAccessed("gl_ClipVertex"))
+        error(infoSink, "Can only use one of gl_CullDistance or gl_ClipVertex (gl_ClipDistance is preferred)");
+
     for (size_t b = 0; b < xfbBuffers.size(); ++b) {
         if (xfbBuffers[b].contains64BitType)
             RoundToPow2(xfbBuffers[b].implicitStride, 8);
-#ifdef AMD_EXTENSIONS
         else if (xfbBuffers[b].contains32BitType)
             RoundToPow2(xfbBuffers[b].implicitStride, 4);
         else if (xfbBuffers[b].contains16BitType)
             RoundToPow2(xfbBuffers[b].implicitStride, 2);
-#endif
 
         // "It is a compile-time or link-time error to have
         // any xfb_offset that overflows xfb_stride, whether stated on declarations before or after the xfb_stride, or
@@ -668,16 +669,11 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             error(infoSink, "xfb_stride must be multiple of 8 for buffer holding a double or 64-bit integer:");
             infoSink.info.prefix(EPrefixError);
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", xfb_stride " << xfbBuffers[b].stride << "\n";
-#ifdef AMD_EXTENSIONS
         } else if (xfbBuffers[b].contains32BitType && ! IsMultipleOfPow2(xfbBuffers[b].stride, 4)) {
-#else
-        } else if (! IsMultipleOfPow2(xfbBuffers[b].stride, 4)) {
-#endif
             error(infoSink, "xfb_stride must be multiple of 4:");
             infoSink.info.prefix(EPrefixError);
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", xfb_stride " << xfbBuffers[b].stride << "\n";
         }
-#ifdef AMD_EXTENSIONS
         // "If the buffer is capturing any
         // outputs with half-precision or 16-bit integer components, the stride must be a multiple of 2"
         else if (xfbBuffers[b].contains16BitType && ! IsMultipleOfPow2(xfbBuffers[b].stride, 2)) {
@@ -686,7 +682,6 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", xfb_stride " << xfbBuffers[b].stride << "\n";
         }
 
-#endif
         // "The resulting stride (implicit or explicit), when divided by 4, must be less than or equal to the
         // implementation-dependent constant gl_MaxTransformFeedbackInterleavedComponents."
         if (xfbBuffers[b].stride > (unsigned int)(4 * resources.maxTransformFeedbackInterleavedComponents)) {
@@ -695,10 +690,12 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
             infoSink.info << "    xfb_buffer " << (unsigned int)b << ", components (1/4 stride) needed are " << xfbBuffers[b].stride/4 << ", gl_MaxTransformFeedbackInterleavedComponents is " << resources.maxTransformFeedbackInterleavedComponents << "\n";
         }
     }
+#endif
 
     switch (language) {
     case EShLangVertex:
         break;
+#ifndef GLSLANG_WEB
     case EShLangTessControl:
         if (vertices == TQualifier::layoutNotSet)
             error(infoSink, "At least one shader must specify an output layout(vertices=...)");
@@ -731,7 +728,6 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     case EShLangCompute:
         break;
 
-#ifdef NV_EXTENSIONS
     case EShLangRayGenNV:
     case EShLangIntersectNV:
     case EShLangAnyHitNV:
@@ -764,6 +760,9 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
         if (numTaskNVBlocks > 1)
             error(infoSink, "Only one taskNV interface block is allowed per shader");
         break;
+#else
+    case EShLangFragment:
+        break;
 #endif
 
     default:
@@ -771,6 +770,7 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
         break;
     }
 
+#ifndef GLSLANG_WEB
     // Process the tree for any node-specific work.
     class TFinalLinkTraverser : public TIntermTraverser {
     public:
@@ -787,6 +787,7 @@ void TIntermediate::finalCheck(TInfoSink& infoSink, bool keepUncalled)
     } finalLinkTraverser;
 
     treeRoot->traverse(&finalLinkTraverser);
+#endif
 }
 
 //
@@ -1066,6 +1067,7 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
     // So, for the case of dvec3, we need two independent ioRanges.
 
     int collision = -1; // no collision
+#ifndef GLSLANG_WEB
     if (size == 2 && type.getBasicType() == EbtDouble && type.getVectorSize() == 3 &&
         (qualifier.isPipeInput() || qualifier.isPipeOutput())) {
         // Dealing with dvec3 in/out split across two locations.
@@ -1092,7 +1094,9 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
             if (collision < 0)
                 usedIo[set].push_back(range2);
         }
-    } else {
+    } else
+#endif
+    {
         // Not a dvec3 in/out split across two locations, generic path.
         // Need a single IO-range block.
 
@@ -1100,8 +1104,10 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
         TRange componentRange(0, 3);
         if (qualifier.hasComponent() || type.getVectorSize() > 0) {
             int consumedComponents = type.getVectorSize() * (type.getBasicType() == EbtDouble ? 2 : 1);
+#ifndef GLSLANG_WEB
             if (qualifier.hasComponent())
                 componentRange.start = qualifier.layoutComponent;
+#endif
             componentRange.last  = componentRange.start + consumedComponents - 1;
         }
 
@@ -1140,6 +1146,7 @@ int TIntermediate::checkLocationRange(int set, const TIoRange& range, const TTyp
     return -1; // no collision
 }
 
+#ifndef GLSLANG_WEB
 // Accumulate bindings and offsets, and check for collisions
 // as the accumulation is done.
 //
@@ -1163,6 +1170,7 @@ int TIntermediate::addUsedOffsets(int binding, int offset, int numOffsets)
 
     return -1; // no collision
 }
+#endif
 
 // Accumulate used constant_id values.
 //
@@ -1187,14 +1195,10 @@ int TIntermediate::computeTypeLocationSize(const TType& type, EShLanguage stage)
         // TODO: perf: this can be flattened by using getCumulativeArraySize(), and a deref that discards all arrayness
         // TODO: are there valid cases of having an unsized array with a location?  If so, running this code too early.
         TType elementType(type, 0);
-        if (type.isSizedArray()
-#ifdef NV_EXTENSIONS
-            && !type.getQualifier().isPerView()
-#endif
-            )
+        if (type.isSizedArray() && !type.getQualifier().isPerView())
             return type.getOuterArraySize() * computeTypeLocationSize(elementType, stage);
         else {
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
             // unset perViewNV attributes for arrayed per-view outputs: "perviewNV vec4 v[MAX_VIEWS][3];"
             elementType.getQualifier().perViewNV = false;
 #endif
@@ -1273,6 +1277,7 @@ int TIntermediate::computeTypeUniformLocationSize(const TType& type)
     return 1;
 }
 
+#ifndef GLSLANG_WEB
 // Accumulate xfb buffer ranges and check for collisions as the accumulation is done.
 //
 // Returns < 0 if no collision, >= 0 if collision and the value returned is a colliding value.
@@ -1285,11 +1290,7 @@ int TIntermediate::addXfbBufferOffset(const TType& type)
     TXfbBuffer& buffer = xfbBuffers[qualifier.layoutXfbBuffer];
 
     // compute the range
-#ifdef AMD_EXTENSIONS
     unsigned int size = computeTypeXfbSize(type, buffer.contains64BitType, buffer.contains32BitType, buffer.contains16BitType);
-#else
-    unsigned int size = computeTypeXfbSize(type, buffer.contains64BitType);
-#endif
     buffer.implicitStride = std::max(buffer.implicitStride, qualifier.layoutXfbOffset + size);
     TRange range(qualifier.layoutXfbOffset, qualifier.layoutXfbOffset + size - 1);
 
@@ -1309,15 +1310,10 @@ int TIntermediate::addXfbBufferOffset(const TType& type)
 // Recursively figure out how many bytes of xfb buffer are used by the given type.
 // Return the size of type, in bytes.
 // Sets contains64BitType to true if the type contains a 64-bit data type.
-#ifdef AMD_EXTENSIONS
 // Sets contains32BitType to true if the type contains a 32-bit data type.
 // Sets contains16BitType to true if the type contains a 16-bit data type.
 // N.B. Caller must set contains64BitType, contains32BitType, and contains16BitType to false before calling.
 unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains64BitType, bool& contains32BitType, bool& contains16BitType) const
-#else
-// N.B. Caller must set contains64BitType to false before calling.
-unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains64BitType) const
-#endif
 {
     // "...if applied to an aggregate containing a double or 64-bit integer, the offset must also be a multiple of 8,
     // and the space taken in the buffer will be a multiple of 8.
@@ -1330,44 +1326,32 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
         // TODO: perf: this can be flattened by using getCumulativeArraySize(), and a deref that discards all arrayness
         assert(type.isSizedArray());
         TType elementType(type, 0);
-#ifdef AMD_EXTENSIONS
         return type.getOuterArraySize() * computeTypeXfbSize(elementType, contains64BitType, contains16BitType, contains16BitType);
-#else
-        return type.getOuterArraySize() * computeTypeXfbSize(elementType, contains64BitType);
-#endif
     }
 
     if (type.isStruct()) {
         unsigned int size = 0;
         bool structContains64BitType = false;
-#ifdef AMD_EXTENSIONS
         bool structContains32BitType = false;
         bool structContains16BitType = false;
-#endif
         for (int member = 0; member < (int)type.getStruct()->size(); ++member) {
             TType memberType(type, member);
             // "... if applied to
             // an aggregate containing a double or 64-bit integer, the offset must also be a multiple of 8,
             // and the space taken in the buffer will be a multiple of 8."
             bool memberContains64BitType = false;
-#ifdef AMD_EXTENSIONS
             bool memberContains32BitType = false;
             bool memberContains16BitType = false;
             int memberSize = computeTypeXfbSize(memberType, memberContains64BitType, memberContains32BitType, memberContains16BitType);
-#else
-            int memberSize = computeTypeXfbSize(memberType, memberContains64BitType);
-#endif
             if (memberContains64BitType) {
                 structContains64BitType = true;
                 RoundToPow2(size, 8);
-#ifdef AMD_EXTENSIONS
             } else if (memberContains32BitType) {
                 structContains32BitType = true;
                 RoundToPow2(size, 4);
             } else if (memberContains16BitType) {
                 structContains16BitType = true;
                 RoundToPow2(size, 2);
-#endif
             }
             size += memberSize;
         }
@@ -1375,14 +1359,12 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
         if (structContains64BitType) {
             contains64BitType = true;
             RoundToPow2(size, 8);
-#ifdef AMD_EXTENSIONS
         } else if (structContains32BitType) {
             contains32BitType = true;
             RoundToPow2(size, 4);
         } else if (structContains16BitType) {
             contains16BitType = true;
             RoundToPow2(size, 2);
-#endif
         }
         return size;
     }
@@ -1402,7 +1384,6 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
     if (type.getBasicType() == EbtDouble || type.getBasicType() == EbtInt64 || type.getBasicType() == EbtUint64) {
         contains64BitType = true;
         return 8 * numComponents;
-#ifdef AMD_EXTENSIONS
     } else if (type.getBasicType() == EbtFloat16 || type.getBasicType() == EbtInt16 || type.getBasicType() == EbtUint16) {
         contains16BitType = true;
         return 2 * numComponents;
@@ -1412,11 +1393,8 @@ unsigned int TIntermediate::computeTypeXfbSize(const TType& type, bool& contains
         contains32BitType = true;
         return 4 * numComponents;
     }
-#else
-    } else
-        return 4 * numComponents;
-#endif
 }
+#endif
 
 const int baseAlignmentVec4Std140 = 16;
 
@@ -1425,7 +1403,9 @@ const int baseAlignmentVec4Std140 = 16;
 // Return value is the alignment..
 int TIntermediate::getBaseAlignmentScalar(const TType& type, int& size)
 {
+#ifndef GLSLANG_WEB
     switch (type.getBasicType()) {
+
     case EbtInt64:
     case EbtUint64:
     case EbtDouble:  size = 8; return 8;
@@ -1435,8 +1415,12 @@ int TIntermediate::getBaseAlignmentScalar(const TType& type, int& size)
     case EbtInt16:
     case EbtUint16:  size = 2; return 2;
     case EbtReference: size = 8; return 8;
-    default:         size = 4; return 4;
+    default:
+        break;
     }
+#endif
+
+    size = 4; return 4;
 }
 
 // Implement base-alignment and size rules from section 7.6.2.2 Standard Uniform Block Layout
@@ -1741,6 +1725,7 @@ int TIntermediate::getBlockSize(const TType& blockType)
 
 int TIntermediate::computeBufferReferenceTypeSize(const TType& type)
 {
+#ifndef GLSLANG_WEB
     assert(type.getBasicType() == EbtReference);
     int size = getBlockSize(*type.getReferentType());
 
@@ -1751,6 +1736,9 @@ int TIntermediate::computeBufferReferenceTypeSize(const TType& type)
     }
 
     return size;
+#endif
+
+    return 0;
 }
 
 } // end namespace glslang

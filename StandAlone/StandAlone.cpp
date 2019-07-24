@@ -188,6 +188,7 @@ std::array<std::array<unsigned int, EShLangCount>, glslang::EResCount> baseBindi
 std::array<std::array<TPerSetBaseBinding, EShLangCount>, glslang::EResCount> baseBindingForSet;
 std::array<std::vector<std::string>, EShLangCount> baseResourceSetBinding;
 
+#ifndef GLSLANG_WEB
 // Add things like "#define ..." to a preamble to use in the beginning of the shader.
 class TPreamble {
 public:
@@ -238,8 +239,8 @@ protected:
 
     std::string text;  // contents of preamble
 };
-
 TPreamble UserPreamble;
+#endif
 
 //
 // Create the default name for saving a binary if -o is not provided.
@@ -250,12 +251,12 @@ const char* GetBinaryName(EShLanguage stage)
     if (binaryFileName == nullptr) {
         switch (stage) {
         case EShLangVertex:          name = "vert.spv";    break;
+        case EShLangFragment:        name = "frag.spv";    break;
+#ifndef GLSLANG_WEB
+        case EShLangCompute:         name = "comp.spv";    break;
         case EShLangTessControl:     name = "tesc.spv";    break;
         case EShLangTessEvaluation:  name = "tese.spv";    break;
         case EShLangGeometry:        name = "geom.spv";    break;
-        case EShLangFragment:        name = "frag.spv";    break;
-        case EShLangCompute:         name = "comp.spv";    break;
-#ifdef NV_EXTENSIONS
         case EShLangRayGenNV:        name = "rgen.spv";    break;
         case EShLangIntersectNV:     name = "rint.spv";    break;
         case EShLangAnyHitNV:        name = "rahit.spv";   break;
@@ -305,6 +306,7 @@ void Error(const char* message)
 
 // Where stage is one of the forms accepted by FindLanguage, and base is an integer
 //
+#ifndef GLSLANG_WEB
 void ProcessBindingBase(int& argc, char**& argv, glslang::TResourceType res)
 {
     if (argc < 2)
@@ -386,6 +388,7 @@ void ProcessResourceSetBindingBase(int& argc, char**& argv, std::array<std::vect
         argv++;
     }
 }
+#endif
 
 //
 // Do all command-line argument parsing.  This includes building up the work-items
@@ -542,6 +545,7 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
                         ReflectOptions |= EShReflectionAllBlockVariables;
                     } else if (lowerword == "reflect-unwrap-io-blocks") {
                         ReflectOptions |= EShReflectionUnwrapIOBlocks;
+#ifndef GLSLANG_WEB
                     } else if (lowerword == "resource-set-bindings" ||  // synonyms
                                lowerword == "resource-set-binding"  ||
                                lowerword == "rsb") {
@@ -573,6 +577,7 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
                                lowerword == "shift-ssbo-binding"  ||
                                lowerword == "sbb") {
                         ProcessBindingBase(argc, argv, glslang::EResSsbo);
+#endif
                     } else if (lowerword == "source-entrypoint" || // synonyms
                                lowerword == "sep") {
                         if (argc <= 1)
@@ -640,8 +645,10 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
             case 'D':
                 if (argv[0][2] == 0)
                     Options |= EOptionReadHlsl;
+#ifndef GLSLANG_WEB
                 else
                     UserPreamble.addDef(getStringOperand("-D<macro> macro name"));
+#endif
                 break;
             case 'u':
                 uniformLocationOverrides.push_back(getUniformOverride());
@@ -684,7 +691,9 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
                 bumpArg();
                 break;
             case 'U':
+#ifndef GLSLANG_WEB
                 UserPreamble.addUndef(getStringOperand("-U<macro>: macro name"));
+#endif
                 break;
             case 'V':
                 setVulkanSpv();
@@ -964,8 +973,10 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
                        "Use '-e <name>'.\n");
             shader->setSourceEntryPoint(sourceEntryPointName);
         }
+#ifndef GLSLANG_WEB
         if (UserPreamble.isSet())
             shader->setPreamble(UserPreamble.get());
+#endif
         shader->addProcesses(Processes);
 
         // Set IO mapper binding shift values
@@ -1023,6 +1034,7 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
         const int defaultVersion = Options & EOptionDefaultDesktop ? 110 : 100;
 
         DirStackFileIncluder includer;
+#ifndef GLSLANG_WEB
         std::for_each(IncludeDirectoryList.rbegin(), IncludeDirectoryList.rend(), [&includer](const std::string& dir) {
             includer.pushExternalLocalDirectory(dir); });
         if (Options & EOptionOutputPreprocessed) {
@@ -1036,6 +1048,7 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
             StderrIfNonEmpty(shader->getInfoDebugLog());
             continue;
         }
+#endif
 
         if (! shader->parse(&Resources, defaultVersion, false, messages, includer))
             CompileFailed = true;
@@ -1058,23 +1071,19 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
     if (! (Options & EOptionOutputPreprocessed) && ! program.link(messages))
         LinkFailed = true;
 
+#ifndef GLSLANG_WEB
     // Map IO
     if (Options & EOptionSpv) {
         if (!program.mapIO())
             LinkFailed = true;
     }
+#endif
 
     // Report
     if (! (Options & EOptionSuppressInfolog) &&
         ! (Options & EOptionMemoryLeakMode)) {
         PutsIfNonEmpty(program.getInfoLog());
         PutsIfNonEmpty(program.getInfoDebugLog());
-    }
-
-    // Reflect
-    if (Options & EOptionDumpReflection) {
-        program.buildReflection(ReflectOptions);
-        program.dumpReflection();
     }
 
     // Dump SPIR-V
@@ -1100,13 +1109,12 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
                     // memory/perf testing, as it's not internal to programmatic use.
                     if (! (Options & EOptionMemoryLeakMode)) {
                         printf("%s", logger.getAllMessages().c_str());
-                        if (Options & EOptionOutputHexadecimal) {
+#ifndef GLSLANG_WEB
+                        if (Options & EOptionOutputHexadecimal)
                             glslang::OutputSpvHex(spirv, GetBinaryName((EShLanguage)stage), variableName);
-                        } else {
+                        else
+#endif
                             glslang::OutputSpvBin(spirv, GetBinaryName((EShLanguage)stage));
-                        }
-                        if (!SpvToolsDisassembler && (Options & EOptionHumanReadableSpv))
-                            spv::Disassemble(std::cout, spirv);
                     }
                 }
             }
@@ -1194,11 +1202,13 @@ int singleMain()
         workList.add(item.get());
     });
 
+#ifndef GLSLANG_WEB
     if (Options & EOptionDumpConfig) {
         printf("%s", glslang::GetDefaultTBuiltInResourceString().c_str());
         if (workList.empty())
             return ESuccess;
     }
+#endif
 
     if (Options & EOptionDumpBareVersion) {
         printf("%d.%d.%d\n",
@@ -1360,17 +1370,17 @@ EShLanguage FindLanguage(const std::string& name, bool parseStageName)
 
     if (stageName == "vert")
         return EShLangVertex;
+    else if (stageName == "frag")
+        return EShLangFragment;
+    else if (stageName == "comp")
+        return EShLangCompute;
+#ifndef GLSLANG_WEB
     else if (stageName == "tesc")
         return EShLangTessControl;
     else if (stageName == "tese")
         return EShLangTessEvaluation;
     else if (stageName == "geom")
         return EShLangGeometry;
-    else if (stageName == "frag")
-        return EShLangFragment;
-    else if (stageName == "comp")
-        return EShLangCompute;
-#ifdef NV_EXTENSIONS
     else if (stageName == "rgen")
         return EShLangRayGenNV;
     else if (stageName == "rint")
@@ -1416,8 +1426,10 @@ void CompileFile(const char* fileName, ShHandle compiler)
     EShMessages messages = EShMsgDefault;
     SetMessageOptions(messages);
 
+#ifndef GLSLANG_WEB
     if (UserPreamble.isSet())
         Error("-D and -U options require -l (linking)\n");
+#endif
 
     for (int i = 0; i < ((Options & EOptionMemoryLeakMode) ? 100 : 1); ++i) {
         for (int j = 0; j < ((Options & EOptionMemoryLeakMode) ? 100 : 1); ++j) {
@@ -1446,6 +1458,7 @@ void CompileFile(const char* fileName, ShHandle compiler)
 //
 void usage()
 {
+#ifndef GLSLANG_WEB
     printf("Usage: glslangValidator [option]... [file]...\n"
            "\n"
            "'file' can end in .<stage> for auto-stage classification, where <stage> is:\n"
@@ -1457,7 +1470,6 @@ void usage()
            "    .geom   for a geometry shader\n"
            "    .frag   for a fragment shader\n"
            "    .comp   for a compute shader\n"
-#ifdef NV_EXTENSIONS
            "    .mesh   for a mesh shader\n"
            "    .task   for a task shader\n"
            "    .rgen    for a ray generation shader\n"
@@ -1466,7 +1478,6 @@ void usage()
            "    .rchit   for a ray closest hit shader\n"
            "    .rmiss   for a ray miss shader\n"
            "    .rcall   for a ray callable shader\n"
-#endif
            "    .glsl   for .vert.glsl, .tesc.glsl, ..., .comp.glsl compound suffixes\n"
            "    .hlsl   for .vert.hlsl, .tesc.hlsl, ..., .comp.hlsl compound suffixes\n"
            "\n"
@@ -1611,7 +1622,7 @@ void usage()
            "                                    uint32_t array named <name>\n"
            "                                    initialized with the shader binary code\n"
            );
-
+#endif
     exit(EFailUsage);
 }
 

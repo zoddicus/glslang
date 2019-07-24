@@ -147,23 +147,20 @@ struct TOffsetRange {
     TRange offset;
 };
 
+#ifndef GLSLANG_WEB
 // Things that need to be tracked per xfb buffer.
 struct TXfbBuffer {
-#ifdef AMD_EXTENSIONS
     TXfbBuffer() : stride(TQualifier::layoutXfbStrideEnd), implicitStride(0), contains64BitType(false),
                    contains32BitType(false), contains16BitType(false) { }
-#else
-    TXfbBuffer() : stride(TQualifier::layoutXfbStrideEnd), implicitStride(0), contains64BitType(false) { }
-#endif
     std::vector<TRange> ranges;  // byte offsets that have already been assigned
     unsigned int stride;
     unsigned int implicitStride;
+
     bool contains64BitType;
-#ifdef AMD_EXTENSIONS
     bool contains32BitType;
     bool contains16BitType;
-#endif
 };
+#endif
 
 // Track a set of strings describing how the module was processed.
 // Using the form:
@@ -217,7 +214,7 @@ class TSymbolTable;
 class TSymbol;
 class TVariable;
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
 //
 // Texture and Sampler transformation mode.
 //
@@ -236,15 +233,19 @@ public:
     explicit TIntermediate(EShLanguage l, int v = 0, EProfile p = ENoProfile) :
         implicitThisName("@this"), implicitCounterName("@count"),
         language(l), source(EShSourceNone), profile(p), version(v), treeRoot(0),
-        numEntryPoints(0), numErrors(0), numPushConstants(0), recursive(false),
+        numEntryPoints(0), numErrors(0), recursive(false),
         invocations(TQualifier::layoutNotSet), vertices(TQualifier::layoutNotSet),
         inputPrimitive(ElgNone), outputPrimitive(ElgNone),
         pixelCenterInteger(false), originUpperLeft(false),
-        vertexSpacing(EvsNone), vertexOrder(EvoNone), interlockOrdering(EioNone), pointMode(false), earlyFragmentTests(false),
-        postDepthCoverage(false), depthLayout(EldNone), depthReplacing(false),
+        vertexSpacing(EvsNone), vertexOrder(EvoNone), interlockOrdering(EioNone),
+        depthReplacing(false),
+#ifndef GLSLANG_WEB
+        numPushConstants(0),
+        pointMode(false),
+        earlyFragmentTests(false),
+        postDepthCoverage(false), depthLayout(EldNone),
         hlslFunctionality1(false),
         blendEquations(0), xfbMode(false), multiStream(false),
-#ifdef NV_EXTENSIONS
         layoutOverrideCoverage(false),
         geoPassthroughEXT(false),
         numShaderRecordNVBlocks(0),
@@ -269,6 +270,7 @@ public:
         uniformLocationBase(0),
         nanMinMaxClamp(false)
     {
+#ifndef GLSLANG_WEB
         localSize[0] = 1;
         localSize[1] = 1;
         localSize[2] = 1;
@@ -276,17 +278,22 @@ public:
         localSizeSpecId[1] = TQualifier::layoutNotSet;
         localSizeSpecId[2] = TQualifier::layoutNotSet;
         xfbBuffers.resize(TQualifier::layoutXfbBufferEnd);
+#endif
 
         shiftBinding.fill(0);
     }
     void setLimits(const TBuiltInResource& r) { resources = r; }
 
     bool postProcess(TIntermNode*, EShLanguage);
-    void output(TInfoSink&, bool tree);
     void removeTree();
 
     void setSource(EShSource s) { source = s; }
     EShSource getSource() const { return source; }
+#ifdef GLSLANG_WEB
+    bool isSourceHlsl() const { return false; }
+#else
+    bool isSourceHlsl() const { return source == EShSourceHlsl; }
+#endif
     void setEntryPointName(const char* ep)
     {
         entryPointName = ep;
@@ -484,8 +491,8 @@ public:
     void incrementEntryPointCount() { ++numEntryPoints; }
     int getNumEntryPoints() const { return numEntryPoints; }
     int getNumErrors() const { return numErrors; }
+#ifndef GLSLANG_WEB
     void addPushConstantCount() { ++numPushConstants; }
-#ifdef NV_EXTENSIONS
     void addShaderRecordNVCount() { ++numShaderRecordNVBlocks; }
     void addTaskNVCount() { ++numTaskNVBlocks; }
 #endif
@@ -606,8 +613,11 @@ public:
         return true;
     }
     TVertexOrder getVertexOrder() const { return vertexOrder; }
+
+#ifndef GLSLANG_WEB
     void setPointMode() { pointMode = true; }
     bool getPointMode() const { return pointMode; }
+#endif
 
     bool setInterlockOrdering(TInterlockOrdering o)
     {
@@ -617,7 +627,12 @@ public:
         return true;
     }
     TInterlockOrdering getInterlockOrdering() const { return interlockOrdering; }
+    void setDepthReplacing() { depthReplacing = true; }
+    bool isDepthReplacing() const { return depthReplacing; }
+    void setOriginUpperLeft() { originUpperLeft = true; }
+    bool getOriginUpperLeft() const { return originUpperLeft; }
 
+#ifndef GLSLANG_WEB
     bool setLocalSize(int dim, int size)
     {
         if (localSize[dim] > 1)
@@ -648,8 +663,6 @@ public:
         return true;
     }
     TLayoutGeometry getOutputPrimitive() const { return outputPrimitive; }
-    void setOriginUpperLeft() { originUpperLeft = true; }
-    bool getOriginUpperLeft() const { return originUpperLeft; }
     void setPixelCenterInteger() { pixelCenterInteger = true; }
     bool getPixelCenterInteger() const { return pixelCenterInteger; }
     void setEarlyFragmentTests() { earlyFragmentTests = true; }
@@ -664,14 +677,13 @@ public:
         return true;
     }
     TLayoutDepth getDepth() const { return depthLayout; }
-    void setDepthReplacing() { depthReplacing = true; }
-    bool isDepthReplacing() const { return depthReplacing; }
 
     void setHlslFunctionality1() { hlslFunctionality1 = true; }
     bool getHlslFunctionality1() const { return hlslFunctionality1; }
 
     void addBlendEquation(TBlendEquationShift b) { blendEquations |= (1 << b); }
     unsigned int getBlendEquations() const { return blendEquations; }
+#endif
 
     void addToCallGraph(TInfoSink&, const TString& caller, const TString& callee);
     void merge(TInfoSink&, TIntermediate&);
@@ -686,7 +698,7 @@ public:
     bool addUsedConstantId(int id);
     static int computeTypeLocationSize(const TType&, EShLanguage);
     static int computeTypeUniformLocationSize(const TType&);
-
+#ifndef GLSLANG_WEB
     bool setXfbBufferStride(int buffer, unsigned stride)
     {
         if (xfbBuffers[buffer].stride != TQualifier::layoutXfbStrideEnd)
@@ -696,10 +708,7 @@ public:
     }
     unsigned getXfbStride(int buffer) const { return xfbBuffers[buffer].stride; }
     int addXfbBufferOffset(const TType&);
-#ifdef AMD_EXTENSIONS
     unsigned int computeTypeXfbSize(const TType&, bool& contains64BitType, bool& contains32BitType, bool& contains16BitType) const;
-#else
-    unsigned int computeTypeXfbSize(const TType&, bool& contains64BitType) const;
 #endif
     static int getBaseAlignmentScalar(const TType&, int& size);
     static int getBaseAlignment(const TType&, int& size, int& stride, TLayoutPacking layoutPacking, bool rowMajor);
@@ -712,7 +721,7 @@ public:
     static int computeBufferReferenceTypeSize(const TType&);
     bool promote(TIntermOperator*);
 
-#ifdef NV_EXTENSIONS
+#ifndef GLSLANG_WEB
     void setLayoutOverrideCoverage() { layoutOverrideCoverage = true; }
     bool getLayoutOverrideCoverage() const { return layoutOverrideCoverage; }
     void setGeoPassthroughEXT() { geoPassthroughEXT = true; }
@@ -727,12 +736,11 @@ public:
         return true;
     }
     int getPrimitives() const { return primitives; }
-#endif
-
     const char* addSemanticName(const TString& name)
     {
         return semanticNameSet.insert(name).first->c_str();
     }
+#endif
 
     void setSourceFile(const char* file) { if (file != nullptr) sourceFile = file; }
     const std::string& getSourceFile() const { return sourceFile; }
@@ -774,16 +782,20 @@ public:
     void setNeedsLegalization() { needToLegalize = true; }
     bool needsLegalization() const { return needToLegalize; }
 
+#ifndef GLSLANG_WEB
     void setBinaryDoubleOutput() { binaryDoubleOutput = true; }
     bool getBinaryDoubleOutput() { return binaryDoubleOutput; }
+#endif
 
     const char* const implicitThisName;
     const char* const implicitCounterName;
 
 protected:
     TIntermSymbol* addSymbol(int Id, const TString&, const TType&, const TConstUnionArray&, TIntermTyped* subtree, const TSourceLoc&);
+#ifndef GLSLANG_WEB
     void error(TInfoSink& infoSink, const char*);
     void warn(TInfoSink& infoSink, const char*);
+#endif
     void mergeCallGraphs(TInfoSink&, TIntermediate&);
     void mergeModes(TInfoSink&, TIntermediate&);
     void mergeTrees(TInfoSink&, TIntermediate&);
@@ -829,7 +841,6 @@ protected:
     TBuiltInResource resources;
     int numEntryPoints;
     int numErrors;
-    int numPushConstants;
     bool recursive;
     int invocations;
     int vertices;
@@ -840,20 +851,21 @@ protected:
     TVertexSpacing vertexSpacing;
     TVertexOrder vertexOrder;
     TInterlockOrdering interlockOrdering;
+    bool depthReplacing;
+
+#ifndef GLSLANG_WEB
+    int numPushConstants;
     bool pointMode;
     int localSize[3];
     int localSizeSpecId[3];
     bool earlyFragmentTests;
     bool postDepthCoverage;
     TLayoutDepth depthLayout;
-    bool depthReplacing;
     bool hlslFunctionality1;
     int blendEquations;        // an 'or'ing of masks of shifts of TBlendEquationShift
     bool xfbMode;
     std::vector<TXfbBuffer> xfbBuffers;     // all the data we need to track per xfb buffer
     bool multiStream;
-
-#ifdef NV_EXTENSIONS
     bool layoutOverrideCoverage;
     bool geoPassthroughEXT;
     int numShaderRecordNVBlocks;
@@ -882,9 +894,11 @@ protected:
 
     std::set<TString> ioAccessed;           // set of names of statically read/written I/O that might need extra checking
     std::vector<TIoRange> usedIo[4];        // sets of used locations, one for each of in, out, uniform, and buffers
-    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters
     std::unordered_set<int> usedConstantId; // specialization constant ids used
+#ifndef GLSLANG_WEB
+    std::vector<TOffsetRange> usedAtomics;  // sets of bindings used by atomic counters
     std::set<TString> semanticNameSet;
+#endif
 
     EShTextureSamplerTransformMode textureSamplerTransformMode;
 

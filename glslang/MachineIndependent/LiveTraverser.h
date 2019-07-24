@@ -36,7 +36,6 @@
 #pragma once
 
 #include "../Include/Common.h"
-#include "reflection.h"
 #include "localintermediate.h"
 
 #include "gl_types.h"

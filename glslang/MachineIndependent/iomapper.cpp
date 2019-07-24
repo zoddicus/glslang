@@ -44,6 +44,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#ifndef GLSLANG_WEB
+
 //
 // Map IO bindings.
 //
@@ -189,10 +191,12 @@ public:
             base->getWritableType().getQualifier().layoutSet = at->newSet;
         if (at->newLocation != -1)
             base->getWritableType().getQualifier().layoutLocation = at->newLocation;
+#ifndef GLSLANG_WEB
         if (at->newComponent != -1)
             base->getWritableType().getQualifier().layoutComponent = at->newComponent;
         if (at->newIndex != -1)
             base->getWritableType().getQualifier().layoutIndex = at->newIndex;
+#endif
     }
 
   private:
@@ -494,14 +498,15 @@ struct TDefaultIoResolverBase : public glslang::TIoMapResolver
         // work with mixed location/no-location declarations.
         int location = nextLocation;
         int typeLocationSize;
+
         // Don’t take into account the outer-most array if the stage’s
         // interface is automatically an array.
         if (type.getQualifier().isArrayedIo(stage)) {
-                TType elementType(type, 0);
-                typeLocationSize = TIntermediate::computeTypeLocationSize(elementType, stage);
-        } else {
-                typeLocationSize = TIntermediate::computeTypeLocationSize(type, stage);
-        }
+            TType elementType(type, 0);
+            typeLocationSize = TIntermediate::computeTypeLocationSize(elementType, stage);
+        } else
+            typeLocationSize = TIntermediate::computeTypeLocationSize(type, stage);
+
         nextLocation += typeLocationSize;
 
         return location;
@@ -544,12 +549,20 @@ protected:
     }
 
     static bool isSamplerType(const glslang::TType& type) {
-        return type.getBasicType() == glslang::EbtSampler && type.getSampler().isPureSampler();
+        return type.getBasicType() == glslang::EbtSampler
+#ifndef GLSLANG_WEB
+            && type.getSampler().isPureSampler()
+#endif
+            ;
     }
 
     static bool isTextureType(const glslang::TType& type) {
         return (type.getBasicType() == glslang::EbtSampler && 
-                (type.getSampler().isTexture() || type.getSampler().isSubpass()));
+                (type.getSampler().isTexture()
+#ifndef GLSLANG_WEB
+                || type.getSampler().isSubpass()
+#endif
+                ));
     }
 
     static bool isUboType(const glslang::TType& type) {
@@ -726,8 +739,10 @@ protected:
 
     // Return true if this is a UAV (unordered access view) type:
     static bool isUavType(const glslang::TType& type) {
+#ifndef GLSLANG_WEB
         if (type.getQualifier().readonly)
             return false;
+#endif
 
         return (type.getBasicType() == glslang::EbtSampler && type.getSampler().isImage()) ||
             (type.getQualifier().storage == EvqBuffer);
@@ -816,3 +831,5 @@ bool TIoMapper::addStage(EShLanguage stage, TIntermediate &intermediate, TInfoSi
 }
 
 } // end namespace glslang
+
+#endif

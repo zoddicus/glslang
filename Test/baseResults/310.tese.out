@@ -7,14 +7,51 @@ ERROR: 0:16: 'equal_spacing' : cannot change previously set vertex spacing
 ERROR: 0:17: 'fractional_even_spacing' : cannot change previously set vertex spacing 
 ERROR: 0:22: 'patch' : can only use on input in tessellation-evaluation shader 
 ERROR: 0:26: 'barrier' : no matching overloaded function found 
-ERROR: 0:37: 'gl_PointSize' : required extension not requested: Possible extensions include:
-GL_EXT_tessellation_point_size
-GL_OES_tessellation_point_size
-ERROR: 0:38: 'gl_ClipDistance' : no such field in structure 
+ERROR: 0:28: 'gl_MaxTessEvaluationInputComponents' : undeclared identifier 
+ERROR: 0:29: 'gl_MaxTessEvaluationOutputComponents' : undeclared identifier 
+ERROR: 0:30: 'gl_MaxTessEvaluationTextureImageUnits' : undeclared identifier 
+ERROR: 0:31: 'gl_MaxTessEvaluationUniformComponents' : undeclared identifier 
+ERROR: 0:32: 'gl_MaxTessPatchComponents' : undeclared identifier 
+ERROR: 0:33: 'gl_MaxPatchVertices' : undeclared identifier 
+ERROR: 0:34: 'gl_MaxTessGenLevel' : undeclared identifier 
+ERROR: 0:28: '=' :  cannot convert from ' temp float' to ' temp highp int'
+ERROR: 0:36: 'gl_in' : undeclared identifier 
+ERROR: 0:36: 'gl_in' :  left of '[' is not of type array, matrix, or vector  
+ERROR: 0:36: 'scalar swizzle' : not supported with this profile: es
+ERROR: 0:36: 'gl_Position' : vector swizzle too long 
+ERROR: 0:36: 'gl_Position' : unknown swizzle selection 
+ERROR: 0:36: 'gl_Position' : unknown swizzle selection 
+ERROR: 0:36: 'gl_Position' : unknown swizzle selection 
+ERROR: 0:36: 'gl_Position' : vector swizzle selection out of range 
+ERROR: 0:36: '=' :  cannot convert from ' const float' to ' temp highp 4-component vector of float'
+ERROR: 0:37: 'gl_in' :  left of '[' is not of type array, matrix, or vector  
+ERROR: 0:37: 'scalar swizzle' : not supported with this profile: es
+ERROR: 0:37: 'gl_PointSize' : vector swizzle too long 
+ERROR: 0:37: 'gl_PointSize' : unknown swizzle selection 
+ERROR: 0:37: 'gl_PointSize' : unknown swizzle selection 
+ERROR: 0:37: 'gl_PointSize' : unknown swizzle selection 
+ERROR: 0:37: 'gl_PointSize' : vector swizzle selection out of range 
+ERROR: 0:38: 'gl_in' :  left of '[' is not of type array, matrix, or vector  
+ERROR: 0:38: 'scalar swizzle' : not supported with this profile: es
+ERROR: 0:38: 'gl_ClipDistance' : vector swizzle too long 
+ERROR: 0:38: 'gl_ClipDistance' : unknown swizzle selection 
+ERROR: 0:38: 'gl_ClipDistance' : unknown swizzle selection 
+ERROR: 0:38: 'gl_ClipDistance' : unknown swizzle selection 
+ERROR: 0:38: 'gl_ClipDistance' : vector swizzle selection out of range 
 ERROR: 0:38: 'expression' :  left of '[' is not of type array, matrix, or vector  
-ERROR: 0:47: 'gl_PointSize' : required extension not requested: Possible extensions include:
-GL_EXT_tessellation_point_size
-GL_OES_tessellation_point_size
+ERROR: 0:40: 'gl_PatchVerticesIn' : undeclared identifier 
+ERROR: 0:40: '=' :  cannot convert from ' temp float' to ' temp highp int'
+ERROR: 0:41: 'gl_PrimitiveID' : undeclared identifier 
+ERROR: 0:41: '=' :  cannot convert from ' temp float' to ' temp highp int'
+ERROR: 0:42: 'gl_TessCoord' : undeclared identifier 
+ERROR: 0:42: '=' :  cannot convert from ' temp float' to ' temp highp 3-component vector of float'
+ERROR: 0:43: 'gl_TessLevelOuter' : undeclared identifier 
+ERROR: 0:43: 'gl_TessLevelOuter' :  left of '[' is not of type array, matrix, or vector  
+ERROR: 0:44: 'gl_TessLevelInner' : undeclared identifier 
+ERROR: 0:44: 'gl_TessLevelInner' :  left of '[' is not of type array, matrix, or vector  
+ERROR: 0:46: 'gl_Position' : undeclared identifier 
+ERROR: 0:46: 'assign' :  cannot convert from ' temp highp 4-component vector of float' to ' temp float'
+ERROR: 0:47: 'gl_PointSize' : undeclared identifier 
 ERROR: 0:48: 'gl_ClipDistance' : undeclared identifier 
 ERROR: 0:48: 'gl_ClipDistance' :  left of '[' is not of type array, matrix, or vector  
 ERROR: 0:48: 'assign' :  l-value required (can't modify a const)
@@ -25,7 +62,8 @@ ERROR: 0:53: 'noperspective' : not supported for this version or the enabled ext
 ERROR: 0:53: 'patch' : cannot use interpolation qualifiers with patch 
 ERROR: 0:54: 'sample' : Reserved word. 
 ERROR: 0:54: '' : can only have one auxiliary qualifier (centroid, patch, and sample) 
-ERROR: 0:63: 'gl_PerVertex' : can only redeclare a built-in block once, and before any use 
+ERROR: 0:58: 'gl_in' : no declaration found for redeclaration 
+ERROR: 0:63: 'gl_in' : no declaration found for redeclaration 
 ERROR: 0:68: 'quads' : cannot apply to 'out' 
 ERROR: 0:68: 'cw' : can only apply to 'in' 
 ERROR: 0:69: 'triangles' : cannot apply to 'out' 
@@ -37,16 +75,29 @@ ERROR: 0:74: 'fractional_even_spacing' : can only apply to 'in'
 ERROR: 0:75: 'point_mode' : can only apply to 'in' 
 ERROR: 0:77: 'in' : type must be an array: ina
 ERROR: 0:79: '[]' : tessellation input array size must be gl_MaxPatchVertices or implicitly sized 
+ERROR: 0:80: 'gl_MaxPatchVertices' : undeclared identifier 
+ERROR: 0:80: '' : array size must be a constant integer expression
+ERROR: 0:80: '[]' : tessellation input array size must be gl_MaxPatchVertices or implicitly sized 
 ERROR: 0:82: 'in' : type must be an array: bla
 ERROR: 0:90: '[]' : tessellation input array size must be gl_MaxPatchVertices or implicitly sized 
+ERROR: 0:96: '' : array size must be a constant integer expression
+ERROR: 0:94: '[]' : tessellation input array size must be gl_MaxPatchVertices or implicitly sized 
 ERROR: 0:100: 'location' : overlapping use of location 24
 ERROR: 0:103: 'location' : overlapping use of location 24
 ERROR: 0:105: 'gl_TessLevelOuter' : identifiers starting with "gl_" are reserved 
+ERROR: 0:105: '[]' : tessellation input array size must be gl_MaxPatchVertices or implicitly sized 
 ERROR: 0:113: 'sample' : Reserved word. 
-ERROR: 0:119: 'gl_PointSize' : no such field in structure 
-ERROR: 0:119: '=' :  cannot convert from ' temp block{ in highp 4-component vector of float Position gl_Position}' to ' temp highp float'
+ERROR: 0:119: 'gl_in' : undeclared identifier 
+ERROR: 0:119: 'gl_in' :  left of '[' is not of type array, matrix, or vector  
+ERROR: 0:119: 'scalar swizzle' : not supported with this profile: es
+ERROR: 0:119: 'gl_PointSize' : vector swizzle too long 
+ERROR: 0:119: 'gl_PointSize' : unknown swizzle selection 
+ERROR: 0:119: 'gl_PointSize' : unknown swizzle selection 
+ERROR: 0:119: 'gl_PointSize' : unknown swizzle selection 
+ERROR: 0:119: 'gl_PointSize' : vector swizzle selection out of range 
+ERROR: 0:120: 'gl_PointSize' : undeclared identifier 
 ERROR: 0:127: 'gl_BoundingBoxOES' : undeclared identifier 
-ERROR: 43 compilation errors.  No code generated.
+ERROR: 98 compilation errors.  No code generated.
 
 
 Shader version: 310
@@ -67,73 +118,29 @@ ERROR: node is still EOpNull!
 0:26    Sequence
 0:26      Constant:
 0:26        0.000000
-0:28      Sequence
-0:28        move second child to first child ( temp highp int)
-0:28          'a' ( temp highp int)
-0:28          Constant:
-0:28            1512 (const int)
-0:36      Sequence
-0:36        move second child to first child ( temp highp 4-component vector of float)
-0:36          'p' ( temp highp 4-component vector of float)
-0:36          gl_Position: direct index for structure ( in highp 4-component vector of float Position)
-0:36            direct index ( temp block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in unsized 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:36              'gl_in' ( in 32-element array of block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in unsized 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:36              Constant:
-0:36                1 (const int)
-0:36            Constant:
-0:36              0 (const int)
 0:37      Sequence
 0:37        move second child to first child ( temp highp float)
 0:37          'ps' ( temp highp float)
-0:37          gl_PointSize: direct index for structure ( in highp float PointSize)
-0:37            direct index ( temp block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in unsized 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:37              'gl_in' ( in 32-element array of block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in unsized 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:37              Constant:
-0:37                1 (const int)
-0:37            Constant:
-0:37              1 (const int)
+0:37          Constant:
+0:37            0.000000
 0:38      Sequence
 0:38        move second child to first child ( temp highp float)
 0:38          'cd' ( temp highp float)
 0:38          Constant:
 0:38            0.000000
-0:40      Sequence
-0:40        move second child to first child ( temp highp int)
-0:40          'pvi' ( temp highp int)
-0:40          'gl_PatchVerticesIn' ( in highp int PatchVertices)
-0:41      Sequence
-0:41        move second child to first child ( temp highp int)
-0:41          'pid' ( temp highp int)
-0:41          'gl_PrimitiveID' ( in highp int PrimitiveID)
-0:42      Sequence
-0:42        move second child to first child ( temp highp 3-component vector of float)
-0:42          'tc' ( temp highp 3-component vector of float)
-0:42          'gl_TessCoord' ( in highp 3-component vector of float TessCoord)
 0:43      Sequence
 0:43        move second child to first child ( temp highp float)
 0:43          'tlo' ( temp highp float)
-0:43          direct index ( patch temp highp float TessLevelOuter)
-0:43            'gl_TessLevelOuter' ( patch in 4-element array of highp float TessLevelOuter)
-0:43            Constant:
-0:43              3 (const int)
+0:43          Constant:
+0:43            0.000000
 0:44      Sequence
 0:44        move second child to first child ( temp highp float)
 0:44          'tli' ( temp highp float)
-0:44          direct index ( patch temp highp float TessLevelInner)
-0:44            'gl_TessLevelInner' ( patch in 2-element array of highp float TessLevelInner)
-0:44            Constant:
-0:44              1 (const int)
-0:46      move second child to first child ( temp highp 4-component vector of float)
-0:46        gl_Position: direct index for structure ( gl_Position highp 4-component vector of float Position)
-0:46          'anon@1' ( out block{ gl_Position highp 4-component vector of float Position gl_Position,  gl_PointSize highp float PointSize gl_PointSize})
-0:46          Constant:
-0:46            0 (const uint)
-0:46        'p' ( temp highp 4-component vector of float)
+0:44          Constant:
+0:44            0.000000
+0:46      'gl_Position' ( temp float)
 0:47      move second child to first child ( temp highp float)
-0:47        gl_PointSize: direct index for structure ( gl_PointSize highp float PointSize)
-0:47          'anon@1' ( out block{ gl_Position highp 4-component vector of float Position gl_Position,  gl_PointSize highp float PointSize gl_PointSize})
-0:47          Constant:
-0:47            1 (const uint)
+0:47        'gl_PointSize' ( temp highp float)
 0:47        'ps' ( temp highp float)
 0:48      move second child to first child ( temp highp float)
 0:48        Constant:
@@ -141,12 +148,14 @@ ERROR: node is still EOpNull!
 0:48        'cd' ( temp highp float)
 0:117  Function Definition: pointSize2( ( global void)
 0:117    Function Parameters: 
-0:?     Sequence
+0:119    Sequence
+0:119      Sequence
+0:119        move second child to first child ( temp highp float)
+0:119          'ps' ( temp highp float)
+0:119          Constant:
+0:119            0.000000
 0:120      move second child to first child ( temp highp float)
-0:120        gl_PointSize: direct index for structure ( gl_PointSize highp float PointSize)
-0:120          'anon@1' ( out block{ gl_Position highp 4-component vector of float Position gl_Position,  gl_PointSize highp float PointSize gl_PointSize})
-0:120          Constant:
-0:120            1 (const uint)
+0:120        'gl_PointSize' ( temp highp float)
 0:120        'ps' ( temp highp float)
 0:125  Function Definition: bbbad( ( global void)
 0:125    Function Parameters: 
@@ -159,7 +168,6 @@ ERROR: node is still EOpNull!
 0:?     'badp2' ( flat patch in highp 4-component vector of float)
 0:?     'badp3' ( noperspective patch in highp 4-component vector of float)
 0:?     'badp4' ( patch sample in highp 3-component vector of float)
-0:?     'gl_in' ( in 32-element array of block{ in highp 4-component vector of float Position gl_Position})
 0:?     'ina' ( in highp 2-component vector of float)
 0:?     'inb' ( in 32-element array of highp 2-component vector of float)
 0:?     'inc' ( in 32-element array of highp 2-component vector of float)
@@ -173,6 +181,7 @@ ERROR: node is still EOpNull!
 0:?     'ivlc' (layout( location=24) in 32-element array of highp 4-component vector of float)
 0:?     'ovla' (layout( location=23) out 2-element array of highp 4-component vector of float)
 0:?     'ovlb' (layout( location=24) out 2-element array of highp 4-component vector of float)
+0:?     'gl_TessLevelOuter' ( in 32-element array of highp float)
 0:?     'pinbi' ( patch in block{ in highp int a})
 0:?     'myColor2' ( centroid out highp 3-component vector of float)
 0:?     'centr' ( centroid in 32-element array of highp 3-component vector of float)
@@ -200,73 +209,29 @@ ERROR: node is still EOpNull!
 0:26    Sequence
 0:26      Constant:
 0:26        0.000000
-0:28      Sequence
-0:28        move second child to first child ( temp highp int)
-0:28          'a' ( temp highp int)
-0:28          Constant:
-0:28            1512 (const int)
-0:36      Sequence
-0:36        move second child to first child ( temp highp 4-component vector of float)
-0:36          'p' ( temp highp 4-component vector of float)
-0:36          gl_Position: direct index for structure ( in highp 4-component vector of float Position)
-0:36            direct index ( temp block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:36              'gl_in' ( in 32-element array of block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:36              Constant:
-0:36                1 (const int)
-0:36            Constant:
-0:36              0 (const int)
 0:37      Sequence
 0:37        move second child to first child ( temp highp float)
 0:37          'ps' ( temp highp float)
-0:37          gl_PointSize: direct index for structure ( in highp float PointSize)
-0:37            direct index ( temp block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:37              'gl_in' ( in 32-element array of block{ in highp 4-component vector of float Position gl_Position,  in highp float PointSize gl_PointSize,  in highp 4-component vector of float gl_SecondaryPositionNV,  in 1-element array of highp 4-component vector of float gl_PositionPerViewNV})
-0:37              Constant:
-0:37                1 (const int)
-0:37            Constant:
-0:37              1 (const int)
+0:37          Constant:
+0:37            0.000000
 0:38      Sequence
 0:38        move second child to first child ( temp highp float)
 0:38          'cd' ( temp highp float)
 0:38          Constant:
 0:38            0.000000
-0:40      Sequence
-0:40        move second child to first child ( temp highp int)
-0:40          'pvi' ( temp highp int)
-0:40          'gl_PatchVerticesIn' ( in highp int PatchVertices)
-0:41      Sequence
-0:41        move second child to first child ( temp highp int)
-0:41          'pid' ( temp highp int)
-0:41          'gl_PrimitiveID' ( in highp int PrimitiveID)
-0:42      Sequence
-0:42        move second child to first child ( temp highp 3-component vector of float)
-0:42          'tc' ( temp highp 3-component vector of float)
-0:42          'gl_TessCoord' ( in highp 3-component vector of float TessCoord)
 0:43      Sequence
 0:43        move second child to first child ( temp highp float)
 0:43          'tlo' ( temp highp float)
-0:43          direct index ( patch temp highp float TessLevelOuter)
-0:43            'gl_TessLevelOuter' ( patch in 4-element array of highp float TessLevelOuter)
-0:43            Constant:
-0:43              3 (const int)
+0:43          Constant:
+0:43            0.000000
 0:44      Sequence
 0:44        move second child to first child ( temp highp float)
 0:44          'tli' ( temp highp float)
-0:44          direct index ( patch temp highp float TessLevelInner)
-0:44            'gl_TessLevelInner' ( patch in 2-element array of highp float TessLevelInner)
-0:44            Constant:
-0:44              1 (const int)
-0:46      move second child to first child ( temp highp 4-component vector of float)
-0:46        gl_Position: direct index for structure ( gl_Position highp 4-component vector of float Position)
-0:46          'anon@1' ( out block{ gl_Position highp 4-component vector of float Position gl_Position,  gl_PointSize highp float PointSize gl_PointSize})
-0:46          Constant:
-0:46            0 (const uint)
-0:46        'p' ( temp highp 4-component vector of float)
+0:44          Constant:
+0:44            0.000000
+0:46      'gl_Position' ( temp float)
 0:47      move second child to first child ( temp highp float)
-0:47        gl_PointSize: direct index for structure ( gl_PointSize highp float PointSize)
-0:47          'anon@1' ( out block{ gl_Position highp 4-component vector of float Position gl_Position,  gl_PointSize highp float PointSize gl_PointSize})
-0:47          Constant:
-0:47            1 (const uint)
+0:47        'gl_PointSize' ( temp highp float)
 0:47        'ps' ( temp highp float)
 0:48      move second child to first child ( temp highp float)
 0:48        Constant:
@@ -279,7 +244,6 @@ ERROR: node is still EOpNull!
 0:?     'badp2' ( flat patch in highp 4-component vector of float)
 0:?     'badp3' ( noperspective patch in highp 4-component vector of float)
 0:?     'badp4' ( patch sample in highp 3-component vector of float)
-0:?     'gl_in' ( in 32-element array of block{ in highp 4-component vector of float Position gl_Position})
 0:?     'ina' ( in highp 2-component vector of float)
 0:?     'inb' ( in 32-element array of highp 2-component vector of float)
 0:?     'inc' ( in 32-element array of highp 2-component vector of float)
@@ -293,6 +257,7 @@ ERROR: node is still EOpNull!
 0:?     'ivlc' (layout( location=24) in 32-element array of highp 4-component vector of float)
 0:?     'ovla' (layout( location=23) out 2-element array of highp 4-component vector of float)
 0:?     'ovlb' (layout( location=24) out 2-element array of highp 4-component vector of float)
+0:?     'gl_TessLevelOuter' ( in 32-element array of highp float)
 0:?     'pinbi' ( patch in block{ in highp int a})
 0:?     'myColor2' ( centroid out highp 3-component vector of float)
 0:?     'centr' ( centroid in 32-element array of highp 3-component vector of float)

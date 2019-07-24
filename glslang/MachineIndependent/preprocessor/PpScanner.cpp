@@ -143,7 +143,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
         int firstDecimal = len;
 
         // 1.#INF or -1.#INF
-        if (ch == '#' && (ifdepth > 0 || parseContext.intermediate.getSource() == EShSourceHlsl)) {
+        if (ch == '#' && (ifdepth > 0 || parseContext.intermediate.isSourceHlsl())) {
             if ((len <  2) ||
                 (len == 2 && ppToken->name[0] != '1') ||
                 (len == 3 && ppToken->name[1] != '1' && !(ppToken->name[0] == '-' || ppToken->name[0] == '+')) ||
@@ -257,6 +257,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
     // Suffix:
     bool isDouble = false;
     bool isFloat16 = false;
+#ifndef GLSLANG_WEB
     if (ch == 'l' || ch == 'L') {
         if (ifdepth == 0 && parseContext.intermediate.getSource() == EShSourceGlsl)
             parseContext.doubleCheck(ppToken->loc, "double floating-point suffix");
@@ -272,7 +273,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
                 saveName(ch2);
                 isDouble = true;
             }
-        } else if (parseContext.intermediate.getSource() == EShSourceHlsl) {
+        } else if (parseContext.intermediate.isSourceHlsl()) {
             saveName(ch);
             isDouble = true;
         }
@@ -291,15 +292,19 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
                 saveName(ch2);
                 isFloat16 = true;
             }
-        } else if (parseContext.intermediate.getSource() == EShSourceHlsl) {
+        } else if (parseContext.intermediate.isSourceHlsl()) {
             saveName(ch);
             isFloat16 = true;
         }
-    } else if (ch == 'f' || ch == 'F') {
+    } else
+#endif
+    if (ch == 'f' || ch == 'F') {
+#ifndef GLSLANG_WEB
         if (ifdepth == 0)
             parseContext.profileRequires(ppToken->loc,  EEsProfile, 300, nullptr, "floating-point suffix");
         if (ifdepth == 0 && !parseContext.relaxedErrors())
             parseContext.profileRequires(ppToken->loc, ~EEsProfile, 120, nullptr, "floating-point suffix");
+#endif
         if (ifdepth == 0 && !hasDecimalOrExponent)
             parseContext.ppError(ppToken->loc, "float literal needs a decimal point or exponent", "", "");
         saveName(ch);
@@ -374,7 +379,7 @@ int TPpContext::characterLiteral(TPpToken* ppToken)
     ppToken->name[0] = 0;
     ppToken->ival = 0;
 
-    if (parseContext.intermediate.getSource() != EShSourceHlsl) {
+    if (!parseContext.intermediate.isSourceHlsl()) {
         // illegal, except in macro definition, for which case we report the character
         return '\'';
     }
@@ -461,6 +466,7 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                                                                      ch == 'f' || ch == 'F' ||
                                                                      ch == 'h' || ch == 'H'; };
 
+#ifndef GLSLANG_WEB
     static const char* const Int64_Extensions[] = {
         E_GL_ARB_gpu_shader_int64,
         E_GL_EXT_shader_explicit_arithmetic_types,
@@ -468,12 +474,11 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
     static const int Num_Int64_Extensions = sizeof(Int64_Extensions) / sizeof(Int64_Extensions[0]);
 
     static const char* const Int16_Extensions[] = {
-#ifdef AMD_EXTENSIONS
         E_GL_AMD_gpu_shader_int16,
-#endif
         E_GL_EXT_shader_explicit_arithmetic_types,
         E_GL_EXT_shader_explicit_arithmetic_types_int16 };
     static const int Num_Int16_Extensions = sizeof(Int16_Extensions) / sizeof(Int16_Extensions[0]);
+#endif
 
     ppToken->ival = 0;
     ppToken->i64val = 0;
@@ -587,7 +592,7 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                     } else
                         ungetch();
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                     nextCh = getch();
                     if ((nextCh == 's' || nextCh == 'S') &&
                             pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
@@ -596,12 +601,10 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                         isInt16 = true;
                     } else
                         ungetch();
-#endif
                 } else if (ch == 'l' || ch == 'L') {
                     if (len < MaxTokenLength)
                         ppToken->name[len++] = (char)ch;
                     isInt64 = true;
-#ifdef AMD_EXTENSIONS
                 } else if ((ch == 's' || ch == 'S') &&
                            pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
                     if (len < MaxTokenLength)
@@ -612,6 +615,7 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                     ungetch();
                 ppToken->name[len] = '\0';
 
+#ifndef GLSLANG_WEB
                 if (isInt64 && pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
                     if (pp->ifdepth == 0) {
                         pp->parseContext.requireProfile(ppToken->loc, ~EEsProfile,
@@ -632,7 +636,9 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                     }
                     ppToken->ival = (int)ival;
                     return isUnsigned ? PpAtomConstUint16 : PpAtomConstInt16;
-                } else {
+                } else
+#endif
+                {
                     if (ival > 0xffffffffu && !AlreadyComplained)
                         pp->parseContext.ppError(ppToken->loc, "hexadecimal literal too big", "", "");
                     ppToken->ival = (int)ival;
@@ -697,7 +703,7 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                     } else
                         ungetch();
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                     nextCh = getch();
                     if ((nextCh == 's' || nextCh == 'S') && 
                                 pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
@@ -706,12 +712,10 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                         isInt16 = true;
                     } else
                         ungetch();
-#endif
                 } else if (ch == 'l' || ch == 'L') {
                     if (len < MaxTokenLength)
                         ppToken->name[len++] = (char)ch;
                     isInt64 = true;
-#ifdef AMD_EXTENSIONS
                 } else if ((ch == 's' || ch == 'S') && 
                                 pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
                     if (len < MaxTokenLength)
@@ -728,6 +732,7 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                 if (octalOverflow)
                     pp->parseContext.ppError(ppToken->loc, "octal literal too big", "", "");
 
+#ifndef GLSLANG_WEB
                 if (isInt64 && pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
                     if (pp->ifdepth == 0) {
                         pp->parseContext.requireProfile(ppToken->loc, ~EEsProfile,
@@ -748,7 +753,9 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                     }
                     ppToken->ival = (int)ival;
                     return isUnsigned ? PpAtomConstUint16 : PpAtomConstInt16;
-                } else {
+                } else
+#endif
+                {
                     ppToken->ival = (int)ival;
                     return isUnsigned ? PpAtomConstUint : PpAtomConstInt;
                 }
@@ -788,7 +795,7 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                     } else
                         ungetch();
 
-#ifdef AMD_EXTENSIONS
+#ifndef GLSLANG_WEB
                     nextCh = getch();
                     if ((nextCh == 's' || nextCh == 'S') &&
                                 pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
@@ -797,12 +804,10 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                         isInt16 = true;
                     } else
                         ungetch();
-#endif
                 } else if (ch == 'l' || ch == 'L') {
                     if (len < MaxTokenLength)
                         ppToken->name[len++] = (char)ch;
                     isInt64 = true;
-#ifdef AMD_EXTENSIONS
                 } else if ((ch == 's' || ch == 'S') &&
                                 pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
                     if (len < MaxTokenLength)
@@ -837,6 +842,7 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                         ival = ival * 10 + ch;
                 }
 
+#ifndef GLSLANG_WEB
                 if (isInt64 && pp->parseContext.intermediate.getSource() == EShSourceGlsl) {
                     if (pp->ifdepth == 0) {
                         pp->parseContext.requireProfile(ppToken->loc, ~EEsProfile,
@@ -855,7 +861,9 @@ int TPpContext::tStringInput::scan(TPpToken* ppToken)
                     }
                     ppToken->ival = (int)ival;
                     return isUnsigned ? PpAtomConstUint16 : PpAtomConstInt16;
-                } else {
+                } else
+#endif
+                {
                     ppToken->ival = (int)ival;
                     return isUnsigned ? PpAtomConstUint : PpAtomConstInt;
                 }
@@ -1121,7 +1129,7 @@ int TPpContext::tokenize(TPpToken& ppToken)
                 continue;
             break;
         case PpAtomConstString:
-            if (ifdepth == 0 && parseContext.intermediate.getSource() != EShSourceHlsl) {
+            if (ifdepth == 0 && !parseContext.intermediate.isSourceHlsl()) {
                 // HLSL allows string literals.
                 parseContext.ppError(ppToken.loc, "string literals not supported", "\"\"", "");
                 continue;

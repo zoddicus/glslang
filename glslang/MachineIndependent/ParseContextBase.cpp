@@ -67,6 +67,8 @@ void TParseContextBase::outputMessage(const TSourceLoc& loc, const char* szReaso
     }
 }
 
+#ifndef GLSLANG_WEB
+
 void C_DECL TParseContextBase::error(const TSourceLoc& loc, const char* szReason, const char* szToken,
                                      const char* szExtraInfoFormat, ...)
 {
@@ -113,6 +115,8 @@ void C_DECL TParseContextBase::ppWarn(const TSourceLoc& loc, const char* szReaso
     va_end(args);
 }
 
+#endif
+
 //
 // Both test and if necessary, spit out an error, to see if the node is really
 // an l-value that can be operated on this way.
@@ -134,7 +138,7 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
         default:
             break;
         }
-        error(loc, " l-value required", op, "", "");
+        error(loc, " l-value required", op, "");
 
         return true;
     }
@@ -150,14 +154,12 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
     case EvqConstReadOnly:  message = "can't modify a const";        break;
     case EvqUniform:        message = "can't modify a uniform";      break;
     case EvqBuffer:
+#ifndef GLSLANG_WEB
         if (node->getQualifier().readonly)
             message = "can't modify a readonly buffer";
-#ifdef NV_EXTENSIONS
         if (node->getQualifier().layoutShaderRecordNV)
             message = "can't modify a shaderrecordnv qualified buffer";
-#endif
         break;
-#ifdef NV_EXTENSIONS
     case EvqHitAttrNV:
         if (language != EShLangIntersectNV)
             message = "cannot modify hitAttributeNV in this stage";
@@ -172,24 +174,24 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
         case EbtSampler:
             message = "can't modify a sampler";
             break;
+#ifndef GLSLANG_WEB
         case EbtAtomicUint:
             message = "can't modify an atomic_uint";
             break;
-        case EbtVoid:
-            message = "can't modify void";
-            break;
-#ifdef NV_EXTENSIONS
         case EbtAccStructNV:
             message = "can't modify accelerationStructureNV";
             break;
 #endif
+        case EbtVoid:
+            message = "can't modify void";
+            break;
         default:
             break;
         }
     }
 
     if (message == nullptr && binaryNode == nullptr && symNode == nullptr) {
-        error(loc, " l-value required", op, "", "");
+        error(loc, " l-value required", op, "");
 
         return true;
     }
@@ -204,9 +206,9 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
     // If we get here, we have an error and a message.
     //
     if (symNode)
-        error(loc, " l-value required", op, "\"%s\" (%s)", symbol, message);
+        error6(loc, " l-value required", op, "\"%s\" (%s)", symbol, message);
     else
-        error(loc, " l-value required", op, "(%s)", message);
+        error5(loc, " l-value required", op, "(%s)", message);
 
     return true;
 }
@@ -234,8 +236,10 @@ void TParseContextBase::rValueErrorCheck(const TSourceLoc& loc, const char* op, 
     }
 
     TIntermSymbol* symNode = node->getAsSymbolNode();
+#ifndef GLSLANG_WEB
     if (symNode && symNode->getQualifier().writeonly)
         error(loc, "can't read from writeonly object: ", op, symNode->getName().c_str());
+#endif
 }
 
 // Add 'symbol' to the list of deferred linkage symbols, which
@@ -255,21 +259,21 @@ void TParseContextBase::trackLinkage(TSymbol& symbol)
 void TParseContextBase::checkIndex(const TSourceLoc& loc, const TType& type, int& index)
 {
     if (index < 0) {
-        error(loc, "", "[", "index out of range '%d'", index);
+        error5(loc, "", "[", "index out of range '%d'", index);
         index = 0;
     } else if (type.isArray()) {
         if (type.isSizedArray() && index >= type.getOuterArraySize()) {
-            error(loc, "", "[", "array index out of range '%d'", index);
+            error5(loc, "", "[", "array index out of range '%d'", index);
             index = type.getOuterArraySize() - 1;
         }
     } else if (type.isVector()) {
         if (index >= type.getVectorSize()) {
-            error(loc, "", "[", "vector index out of range '%d'", index);
+            error5(loc, "", "[", "vector index out of range '%d'", index);
             index = type.getVectorSize() - 1;
         }
     } else if (type.isMatrix()) {
         if (index >= type.getMatrixCols()) {
-            error(loc, "", "[", "matrix index out of range '%d'", index);
+            error5(loc, "", "[", "matrix index out of range '%d'", index);
             index = type.getMatrixCols() - 1;
         }
     }
@@ -567,7 +571,7 @@ void TParseContextBase::parseSwizzleSelector(const TSourceLoc& loc, const TStrin
     if (selector.size() == 0)
         selector.push_back(0);
 }
-
+#ifndef GLSLANG_WEB
 //
 // Make the passed-in variable information become a member of the
 // global uniform block.  If this doesn't exist yet, make it.
@@ -612,6 +616,7 @@ void TParseContextBase::growGlobalUniformBlock(const TSourceLoc& loc, TType& mem
 
     ++firstNewMember;
 }
+#endif
 
 void TParseContextBase::finish()
 {

@@ -1,6 +1,6 @@
 #version 310 es
 
-in mediump float ps;
+layout(location = 0) in mediump float ps;
 
 invariant gl_Position;
 

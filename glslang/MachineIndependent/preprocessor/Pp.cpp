@@ -148,7 +148,9 @@ int TPpContext::CPPdefine(TPpToken* ppToken)
 
         token = scanToken(ppToken);
     } else if (token != '\n' && token != EndOfInput && !ppToken->space) {
+#ifndef GLSLANG_WEB
         parseContext.ppWarn(ppToken->loc, "missing space after macro name", "#define", "");
+#endif
 
         return token;
     }
@@ -335,10 +337,12 @@ int TPpContext::extraTokenCheck(int contextAtom, TPpToken* ppToken, int token)
         else
             label = "";
 
+#ifndef GLSLANG_WEB
         if (parseContext.relaxedErrors())
             parseContext.ppWarn(ppToken->loc, message, label, "");
         else
             parseContext.ppError(ppToken->loc, message, label, "");
+#endif
 
         while (token != '\n' && token != EndOfInput)
             token = scanToken(ppToken);
@@ -419,6 +423,7 @@ int TPpContext::eval(int token, int precedence, bool shortCircuit, int& res, boo
     TSourceLoc loc = ppToken->loc;  // because we sometimes read the newline before reporting the error
     if (token == PpAtomIdentifier) {
         if (strcmp("defined", ppToken->name) == 0) {
+#ifndef GLSLANG_WEB
             if (! parseContext.isReadingHLSL() && isMacroInput()) {
                 if (parseContext.relaxedErrors())
                     parseContext.ppWarn(ppToken->loc, "nonportable when expanded from macros for preprocessor expression",
@@ -427,6 +432,7 @@ int TPpContext::eval(int token, int precedence, bool shortCircuit, int& res, boo
                     parseContext.ppError(ppToken->loc, "cannot use in preprocessor expression when expanded from macros",
                                                        "defined", "");
             }
+#endif
             bool needclose = 0;
             token = scanToken(ppToken);
             if (token == '(') {
@@ -547,10 +553,12 @@ int TPpContext::evalToToken(int token, bool shortCircuit, int& res, bool& err, T
         case MacroExpandUndef:
             if (! shortCircuit && parseContext.profile == EEsProfile) {
                 const char* message = "undefined macro in expression not allowed in es profile";
+#ifndef GLSLANG_WEB
                 if (parseContext.relaxedErrors())
                     parseContext.ppWarn(ppToken->loc, message, "preprocessor evaluation", ppToken->name);
                 else
                     parseContext.ppError(ppToken->loc, message, "preprocessor evaluation", ppToken->name);
+#endif
             }
             break;
         }
@@ -614,6 +622,8 @@ int TPpContext::CPPifdef(int defined, TPpToken* ppToken)
 
     return token;
 }
+
+#ifndef GLSLANG_WEB
 
 // Handle #include ...
 // TODO: Handle macro expansions for the header name
@@ -690,6 +700,8 @@ int TPpContext::CPPinclude(TPpToken* ppToken)
     return token;
 }
 
+#endif
+
 // Handle #line
 int TPpContext::CPPline(TPpToken* ppToken)
 {
@@ -722,6 +734,7 @@ int TPpContext::CPPline(TPpToken* ppToken)
         parseContext.setCurrentLine(lineRes);
 
         if (token != '\n') {
+#ifndef GLSLANG_WEB
             if (token == PpAtomConstString) {
                 parseContext.ppRequireExtensions(directiveLoc, 1, &E_GL_GOOGLE_cpp_style_line_directive, "filename-based #line");
                 // We need to save a copy of the string instead of pointing
@@ -731,7 +744,9 @@ int TPpContext::CPPline(TPpToken* ppToken)
                 parseContext.setCurrentSourceName(sourceName);
                 hasFile = true;
                 token = scanToken(ppToken);
-            } else {
+            } else
+#endif
+            {
                 token = eval(token, MIN_PRECEDENCE, false, fileRes, fileErr, ppToken);
                 if (! fileErr) {
                     parseContext.setCurrentString(fileRes);
@@ -792,10 +807,8 @@ int TPpContext::CPPpragma(TPpToken* ppToken)
         case PpAtomConstUint:
         case PpAtomConstInt64:
         case PpAtomConstUint64:
-#ifdef AMD_EXTENSIONS
         case PpAtomConstInt16:
         case PpAtomConstUint16:
-#endif
         case PpAtomConstFloat:
         case PpAtomConstDouble:
         case PpAtomConstFloat16:
@@ -955,10 +968,12 @@ int TPpContext::readCPPline(TPpToken* ppToken)
             token = CPPifdef(0, ppToken);
             break;
         case PpAtomInclude:
+#ifndef GLSLANG_WEB
             if(!parseContext.isReadingHLSL()) {
                 parseContext.ppRequireExtensions(ppToken->loc, 1, &E_GL_GOOGLE_include_directive, "#include");
             }
             token = CPPinclude(ppToken);
+#endif
             break;
         case PpAtomLine:
             token = CPPline(ppToken);
@@ -991,6 +1006,7 @@ int TPpContext::readCPPline(TPpToken* ppToken)
     return token;
 }
 
+#ifndef GLSLANG_WEB
 // Context-dependent parsing of a #include <header-name>.
 // Assumes no macro expansions etc. are being done; the name is just on the current input.
 // Always creates a name and returns PpAtomicConstString, unless we run out of input.
@@ -1022,6 +1038,7 @@ int TPpContext::scanHeaderName(TPpToken* ppToken, char delimit)
             tooLong = true;
     } while (true);
 }
+#endif
 
 // Macro-expand a macro argument 'arg' to create 'expandedArg'.
 // Does not replace 'arg'.
@@ -1172,8 +1189,10 @@ MacroExpandResult TPpContext::MacroExpand(TPpToken* ppToken, bool expandUndef, b
         return MacroExpandStarted;
 
     case PpAtomFileMacro: {
+#ifndef GLSLANG_WEB
         if (parseContext.getCurrentLoc().name)
             parseContext.ppRequireExtensions(ppToken->loc, 1, &E_GL_GOOGLE_cpp_style_line_directive, "filename-based __FILE__");
+#endif
         ppToken->ival = parseContext.getCurrentLoc().string;
         snprintf(ppToken->name, sizeof(ppToken->name), "%s", ppToken->loc.getStringNameOrNum().c_str());
         UngetToken(PpAtomConstInt, ppToken);
