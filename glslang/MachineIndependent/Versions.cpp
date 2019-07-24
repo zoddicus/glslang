@@ -703,6 +703,7 @@ void TParseVersions::ppRequireExtensions(const TSourceLoc& loc, int numExtension
         return;
 
     // If we get this far, give errors explaining what extensions are needed
+#ifndef GLSLANG_WEB
     if (numExtensions == 1)
         ppError(loc, "required extension not requested:", featureDesc, extensions[0]);
     else {
@@ -710,6 +711,7 @@ void TParseVersions::ppRequireExtensions(const TSourceLoc& loc, int numExtension
         for (int i = 0; i < numExtensions; ++i)
             infoSink.info.message(EPrefixNone, extensions[i]);
     }
+#endif
 }
 
 TExtensionBehavior TParseVersions::getExtensionBehavior(const char* extension)
