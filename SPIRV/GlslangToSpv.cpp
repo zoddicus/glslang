@@ -3708,13 +3708,15 @@ void TGlslangToSpvTraverser::decorateStructType(const glslang::TType& type,
 #ifndef GLSLANG_WEB
         // nonuniform
         builder.addMemberDecoration(spvType, member, TranslateNonUniformDecoration(glslangMember.getQualifier()));
-
+#endif
+#ifdef ENABLE_HLSL
         if (glslangIntermediate->getHlslFunctionality1() && memberQualifier.semanticName != nullptr) {
             builder.addExtension("SPV_GOOGLE_hlsl_functionality1");
             builder.addMemberDecoration(spvType, member, (spv::Decoration)spv::DecorationHlslSemanticGOOGLE,
                                         memberQualifier.semanticName);
         }
-
+#endif
+#ifndef GLSLANG_WEB
         if (builtIn == spv::BuiltInLayer) {
             // SPV_NV_viewport_array2 extension
             if (glslangMember.getQualifier().layoutViewportRelative){
@@ -4025,7 +4027,7 @@ void TGlslangToSpvTraverser::updateMemberOffset(const glslang::TType& structType
     int dummyStride;
     int memberAlignment = glslangIntermediate->getMemberAlignment(memberType, memberSize, dummyStride, explicitLayout, matrixLayout == glslang::ElmRowMajor);
 
-#ifndef GLSLANG_WEB
+#ifdef ENABLE_HLSL
     // Adjust alignment for HLSL rules
     // TODO: make this consistent in early phases of code:
     //       adjusting this late means inconsistencies with earlier code, which for reflection is an issue
@@ -7458,6 +7460,7 @@ spv::Id TGlslangToSpvTraverser::createMiscOperation(glslang::TOperator op, spv::
         }
     }
 
+#ifndef GLSLANG_WEB
     // Decode the return types that were structures
     switch (op) {
     case glslang::EOpAddCarry:
@@ -7487,6 +7490,7 @@ spv::Id TGlslangToSpvTraverser::createMiscOperation(glslang::TOperator op, spv::
     default:
         break;
     }
+#endif
 
     return builder.setPrecision(id, precision);
 }

@@ -144,7 +144,9 @@ int MapVersionToIndex(int version)
     case 440: index = 12; break;
     case 310: index = 13; break;
     case 450: index = 14; break;
+#ifdef ENABLE_HLSL
     case 500: index =  0; break; // HLSL
+#endif
     case 320: index = 15; break;
     case 460: index = 16; break;
     default:  assert(0);  break;
@@ -194,17 +196,21 @@ const int SourceCount = 2;
 
 int MapSourceToIndex(EShSource source)
 {
+#ifdef ENABLE_HLSL
     int index = 0;
-
     switch (source) {
     case EShSourceGlsl: index = 0; break;
     case EShSourceHlsl: index = 1; break;
     default:                       break;
     }
-
     assert(index < SourceCount);
 
     return index;
+#else
+
+    return 0;
+
+#endif
 }
 
 // only one of these needed for non-ES; ES needs 2 for different precision defaults of built-ins
@@ -492,11 +498,13 @@ bool DeduceVersionProfile(TInfoSink& infoSink, EShLanguage stage, bool versionNo
     const int FirstProfileVersion = 150;
     bool correct = true;
 
+#ifdef ENABLE_HLSL
     if (source == EShSourceHlsl) {
         version = 500;          // shader model; currently a characteristic of glslang, not the input
         profile = ECoreProfile; // allow doubles in prototype parsing
         return correct;
     }
+#endif
 
     // Get a version...
     if (version == 0) {
@@ -836,11 +844,15 @@ bool ProcessDeferred(
 
     // Get all the stages, languages, clients, and other environment
     // stuff sorted out.
+#ifdef ENABLE_HLSL
     EShSource source = (messages & EShMsgReadHlsl) != 0 ? EShSourceHlsl : EShSourceGlsl;
+#else
+    EShSource source = EShSourceGlsl;
+#endif
     SpvVersion spvVersion;
     EShLanguage stage = compiler->getLanguage();
     TranslateEnvironment(environment, messages, source, stage, spvVersion);
-#ifndef GLSLANG_WEB
+#ifdef ENABLE_HLSL
     if (environment != nullptr && environment->target.hlslFunctionality1)
         intermediate.setHlslFunctionality1();
 #endif
@@ -1802,7 +1814,9 @@ void TShader::setUniformLocationBase(int base)
     intermediate->setUniformLocationBase(base);
 }
 // See comment above TDefaultHlslIoMapper in iomapper.cpp:
+#ifdef ENABLE_HLSL
 void TShader::setHlslIoMapping(bool hlslIoMap)          { intermediate->setHlslIoMapping(hlslIoMap); }
+#endif
 void TShader::setFlattenUniformArrays(bool flatten)     { intermediate->setFlattenUniformArrays(flatten); }
 void TShader::setNoStorageFormat(bool useUnknownFormat) { intermediate->setNoStorageFormat(useUnknownFormat); }
 void TShader::setNanMinMaxClamp(bool useNonNan)         { intermediate->setNanMinMaxClamp(useNonNan); }

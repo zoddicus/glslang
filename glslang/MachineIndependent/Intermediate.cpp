@@ -1230,14 +1230,6 @@ TIntermTyped* TIntermediate::addUniShapeConversion(TOperator op, const TType& ty
     if (!isSourceHlsl())
         return node;
 
-    switch (source) {
-    case EShSourceHlsl:
-        break;
-    case EShSourceGlsl:
-    default:
-        return node;
-    }
-
     // some operations don't do this
     switch (op) {
     case EOpFunctionCall:
@@ -1547,7 +1539,6 @@ bool TIntermediate::isIntegralConversion(TBasicType from, TBasicType to) const
             return true;
         }
         break;
-#endif
     case EbtInt:
         switch(to) {
         case EbtUint:
@@ -1559,6 +1550,7 @@ bool TIntermediate::isIntegralConversion(TBasicType from, TBasicType to) const
             break;
         }
         break;
+#endif
     case EbtUint:
         switch(to) {
         case EbtInt64:

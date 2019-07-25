@@ -324,7 +324,9 @@ struct str_hash
 // A single global usable by all threads, by all versions, by all languages.
 // After a single process-level initialization, this is read only and thread safe
 std::unordered_map<const char*, int, str_hash, str_eq>* KeywordMap = nullptr;
+#ifndef GLSLANG_WEB
 std::unordered_set<const char*, str_hash, str_eq>* ReservedSet = nullptr;
+#endif
 
 };
 
@@ -710,11 +712,9 @@ void TScanContext::fillInKeywordMap()
     (*KeywordMap)["perviewNV"] =               PERVIEWNV;
     (*KeywordMap)["taskNV"] =                  PERTASKNV;
     (*KeywordMap)["fcoopmatNV"] =              FCOOPMATNV;
-#endif
 
-    ReservedSet = new std::unordered_set<const char*, str_hash, str_eq>;  //?? all or nothing
+    ReservedSet = new std::unordered_set<const char*, str_hash, str_eq>;
 
-#ifndef GLSLANG_WEB
     ReservedSet->insert("common");
     ReservedSet->insert("partition");
     ReservedSet->insert("active");
@@ -759,8 +759,10 @@ void TScanContext::deleteKeywordMap()
 {
     delete KeywordMap;
     KeywordMap = nullptr;
+#ifndef GLSLANG_WEB
     delete ReservedSet;
     ReservedSet = nullptr;
+#endif
 }
 
 // Called by yylex to get the next token.
@@ -869,8 +871,10 @@ int TScanContext::tokenize(TPpContext* pp, TParserToken& token)
 
 int TScanContext::tokenizeIdentifier()
 {
+#ifndef GLSLANG_WEB
     if (ReservedSet->find(tokenText) != ReservedSet->end())
         return reservedWord();
+#endif
 
     auto it = KeywordMap->find(tokenText);
     if (it == KeywordMap->end()) {
@@ -936,12 +940,6 @@ int TScanContext::tokenizeIdentifier()
             parserToken->sType.lex.b = false;
         return keyword;
 
-    case ATTRIBUTE:
-    case VARYING:
-        if (parseContext.profile == EEsProfile && parseContext.version >= 300)
-            reservedWord();
-        return keyword;
-
     case BUFFER:
         afterBuffer = true;
         if ((parseContext.profile == EEsProfile && parseContext.version < 310) ||
@@ -950,6 +948,11 @@ int TScanContext::tokenizeIdentifier()
         return keyword;
 
 #ifndef GLSLANG_WEB
+    case ATTRIBUTE:
+    case VARYING:
+        if (parseContext.profile == EEsProfile && parseContext.version >= 300)
+            reservedWord();
+        return keyword;
     case NONUNIFORM:
         if (parseContext.extensionTurnedOn(E_GL_EXT_nonuniform_qualifier))
             return keyword;

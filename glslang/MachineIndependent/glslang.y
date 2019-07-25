@@ -1110,32 +1110,6 @@ storage_qualifier
         $$.init($1.loc);
         $$.qualifier.storage = EvqConst;  // will later turn into EvqConstReadOnly, if the initializer is not constant
     }
-    | ATTRIBUTE {
-        parseContext.requireStage($1.loc, EShLangVertex, "attribute");
-        parseContext.checkDeprecated($1.loc, ECoreProfile, 130, "attribute");
-        parseContext.checkDeprecated($1.loc, ENoProfile, 130, "attribute");
-        parseContext.requireNotRemoved($1.loc, ECoreProfile, 420, "attribute");
-        parseContext.requireNotRemoved($1.loc, EEsProfile, 300, "attribute");
-
-        parseContext.globalCheck($1.loc, "attribute");
-
-        $$.init($1.loc);
-        $$.qualifier.storage = EvqVaryingIn;
-    }
-    | VARYING {
-        parseContext.checkDeprecated($1.loc, ENoProfile, 130, "varying");
-        parseContext.checkDeprecated($1.loc, ECoreProfile, 130, "varying");
-        parseContext.requireNotRemoved($1.loc, ECoreProfile, 420, "varying");
-        parseContext.requireNotRemoved($1.loc, EEsProfile, 300, "varying");
-
-        parseContext.globalCheck($1.loc, "varying");
-
-        $$.init($1.loc);
-        if (parseContext.language == EShLangVertex)
-            $$.qualifier.storage = EvqVaryingOut;
-        else
-            $$.qualifier.storage = EvqVaryingIn;
-    }
     | INOUT {
         parseContext.globalCheck($1.loc, "inout");
         $$.init($1.loc);

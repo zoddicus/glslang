@@ -141,13 +141,15 @@ public:
     void getPreamble(std::string&);
 #ifdef GLSLANG_WEB
     bool relaxedErrors()    const { return true; }
+    bool isReadingHLSL()    const { return false; }
+    bool suppressWarnings() const { return true; }
 #else
     bool relaxedErrors()    const { return (messages & EShMsgRelaxedErrors) != 0; }
-#endif
-    bool suppressWarnings() const { return (messages & EShMsgSuppressWarnings) != 0; }
     bool isReadingHLSL()    const { return (messages & EShMsgReadHlsl) == EShMsgReadHlsl; }
+    bool suppressWarnings() const { return (messages & EShMsgSuppressWarnings) != 0; }
     bool hlslEnable16BitTypes() const { return (messages & EShMsgHlslEnable16BitTypes) != 0; }
     bool hlslDX9Compatible() const { return (messages & EShMsgHlslDX9Compatible) != 0; }
+#endif
 
     TInfoSink& infoSink;
 

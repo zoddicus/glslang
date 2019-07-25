@@ -459,8 +459,10 @@ public:
         environment.target.language = lang;
         environment.target.version = version;
     }
+#ifdef ENABLE_HLSL
     void setEnvTargetHlslFunctionality1() { environment.target.hlslFunctionality1 = true; }
     bool getEnvTargetHlslFunctionality1() const { return environment.target.hlslFunctionality1; }
+#endif
 
     // Interface to #include handlers.
     //

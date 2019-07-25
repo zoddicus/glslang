@@ -149,6 +149,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
                 (len == 3 && ppToken->name[1] != '1' && !(ppToken->name[0] == '-' || ppToken->name[0] == '+')) ||
                 (len >  3))
                 parseContext.ppError(ppToken->loc, "unexpected use of", "#", "");
+#ifdef ENABLE_HLSL
             else {
                 // we have 1.# or -1.# or +1.#, check for 'INF'
                 if ((ch = getChar()) != 'I' ||
@@ -168,6 +169,7 @@ int TPpContext::lFloatConst(int len, int ch, TPpToken* ppToken)
                     return PpAtomConstFloat;
                 }
             }
+#endif
         }
 
         // Consume leading-zero digits after the decimal point
