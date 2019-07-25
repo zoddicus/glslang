@@ -1847,15 +1847,15 @@ public:
     static const char* getBasicString(TBasicType t)
     {
         switch (t) {
-        case EbtVoid:              return "void";
         case EbtFloat:             return "float";
         case EbtInt:               return "int";
+#ifndef GLSLANG_WEB
+        case EbtVoid:              return "void";
         case EbtUint:              return "uint";
         case EbtBool:              return "bool";
         case EbtSampler:           return "sampler/image";
         case EbtStruct:            return "structure";
         case EbtBlock:             return "block";
-#ifndef GLSLANG_WEB
         case EbtAtomicUint:        return "atomic_uint";
         case EbtDouble:            return "double";
         case EbtFloat16:           return "float16_t";
