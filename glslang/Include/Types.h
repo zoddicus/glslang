@@ -971,6 +971,7 @@ public:
     bool hasAttachment() const { return layoutAttachment != layoutAttachmentEnd; }
     bool hasBufferReferenceAlign() const { return layoutBufferReferenceAlign != layoutBufferReferenceAlignEnd; }
     bool isNonUniform() const { return nonUniform; }
+    TLayoutFormat getFormat() const { return layoutFormat; }
 #else
     bool hasIndex() const { return false; }
     bool hasOffset() const { return false; }
@@ -978,6 +979,8 @@ public:
     bool isPushConstant() const { return false; }
     bool isShaderRecordNV() const { return false; }
     bool hasAttachment() const { return false; }
+    bool hasFormat() const { return false; }
+    TLayoutFormat getFormat() const { return ElfNone; }
 #endif
     bool hasSpecConstantId() const
     {
