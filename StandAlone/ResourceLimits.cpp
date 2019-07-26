@@ -147,7 +147,6 @@ const TBuiltInResource DefaultTBuiltInResource = {
         /* .generalConstantMatrixVectorIndexing = */ 1,
     }};
 
-#ifndef GLSLANG_WEB
 std::string GetDefaultTBuiltInResourceString()
 {
     std::ostringstream ostream;
@@ -257,7 +256,6 @@ std::string GetDefaultTBuiltInResourceString()
 
     return ostream.str();
 }
-#endif
 
 void DecodeResourceLimits(TBuiltInResource* resources, char* config)
 {

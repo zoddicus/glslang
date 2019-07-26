@@ -971,6 +971,7 @@ public:
     bool hasAttachment() const { return layoutAttachment != layoutAttachmentEnd; }
     bool hasBufferReferenceAlign() const { return layoutBufferReferenceAlign != layoutBufferReferenceAlignEnd; }
     bool isNonUniform() const { return nonUniform; }
+    TLayoutFormat getFormat() const { return layoutFormat; }
 #else
     bool hasIndex() const { return false; }
     bool hasOffset() const { return false; }
@@ -978,6 +979,8 @@ public:
     bool isPushConstant() const { return false; }
     bool isShaderRecordNV() const { return false; }
     bool hasAttachment() const { return false; }
+    bool hasFormat() const { return false; }
+    TLayoutFormat getFormat() const { return ElfNone; }
 #endif
     bool hasSpecConstantId() const
     {
@@ -1363,7 +1366,11 @@ public:
     // for "empty" type (no args) or simple scalar/vector/matrix
     explicit TType(TBasicType t = EbtVoid, TStorageQualifier q = EvqTemporary, int vs = 1, int mc = 0, int mr = 0,
                    bool isVector = false) :
-                            basicType(t), vectorSize(vs), matrixCols(mc), matrixRows(mr), vector1(isVector && vs == 1), coopmat(false),
+                            basicType(t), vectorSize(vs), matrixCols(mc), matrixRows(mr),
+#ifdef ENABLE_HLSL
+                            vector1(isVector && vs == 1),
+#endif
+                            coopmat(false),
                             arraySizes(nullptr), structure(nullptr), fieldName(nullptr), typeName(nullptr), typeParameters(nullptr)
                             {
                                 sampler.clear();
@@ -1374,7 +1381,11 @@ public:
     // for explicit precision qualifier
     TType(TBasicType t, TStorageQualifier q, TPrecisionQualifier p, int vs = 1, int mc = 0, int mr = 0,
           bool isVector = false) :
-                            basicType(t), vectorSize(vs), matrixCols(mc), matrixRows(mr), vector1(isVector && vs == 1), coopmat(false),
+                            basicType(t), vectorSize(vs), matrixCols(mc), matrixRows(mr),
+#ifdef ENABLE_HLSL
+                            vector1(isVector && vs == 1),
+#endif
+                            coopmat(false),
                             arraySizes(nullptr), structure(nullptr), fieldName(nullptr), typeName(nullptr), typeParameters(nullptr)
                             {
                                 sampler.clear();
@@ -1387,7 +1398,11 @@ public:
     // for turning a TPublicType into a TType, using a shallow copy
     explicit TType(const TPublicType& p) :
                             basicType(p.basicType),
-                            vectorSize(p.vectorSize), matrixCols(p.matrixCols), matrixRows(p.matrixRows), vector1(false), coopmat(p.coopmat),
+                            vectorSize(p.vectorSize), matrixCols(p.matrixCols), matrixRows(p.matrixRows),
+#ifdef ENABLE_HLSL
+                            vector1(false),
+#endif
+                            coopmat(p.coopmat),
                             arraySizes(p.arraySizes), structure(nullptr), fieldName(nullptr), typeName(nullptr), typeParameters(p.typeParameters)
                             {
                                 if (basicType == EbtSampler)
@@ -1418,7 +1433,11 @@ public:
                             }
     // for construction of sampler types
     TType(const TSampler& sampler, TStorageQualifier q = EvqUniform, TArraySizes* as = nullptr) :
-        basicType(EbtSampler), vectorSize(1), matrixCols(0), matrixRows(0), vector1(false), coopmat(false),
+        basicType(EbtSampler), vectorSize(1), matrixCols(0), matrixRows(0),
+#ifdef ENABLE_HLSL
+        vector1(false),
+#endif
+        coopmat(false),
         arraySizes(as), structure(nullptr), fieldName(nullptr), typeName(nullptr),
         sampler(sampler), typeParameters(nullptr)
     {
@@ -1455,12 +1474,16 @@ public:
                                             vectorSize = matrixRows;
                                         matrixCols = 0;
                                         matrixRows = 0;
+#ifdef ENABLE_HLSL
                                         if (vectorSize == 1)
                                             vector1 = true;
+#endif
                                     } else if (isVector()) {
                                         // dereference from vector to scalar
                                         vectorSize = 1;
+#ifdef ENABLE_HLSL
                                         vector1 = false;
+#endif
 #ifndef GLSLANG_WEB
                                     } else if (isCoopMat()) {
                                         coopmat = false;
@@ -1471,7 +1494,11 @@ public:
                             }
     // for making structures, ...
     TType(TTypeList* userDef, const TString& n) :
-                            basicType(EbtStruct), vectorSize(1), matrixCols(0), matrixRows(0), vector1(false), coopmat(false),
+                            basicType(EbtStruct), vectorSize(1), matrixCols(0), matrixRows(0),
+#ifdef ENABLE_HLSL
+                            vector1(false),
+#endif
+                            coopmat(false),
                             arraySizes(nullptr), structure(userDef), fieldName(nullptr), typeParameters(nullptr)
                             {
                                 sampler.clear();
@@ -1480,7 +1507,11 @@ public:
                             }
     // For interface blocks
     TType(TTypeList* userDef, const TString& n, const TQualifier& q) :
-                            basicType(EbtBlock), vectorSize(1), matrixCols(0), matrixRows(0), vector1(false), coopmat(false),
+                            basicType(EbtBlock), vectorSize(1), matrixCols(0), matrixRows(0),
+#ifdef ENABLE_HLSL
+                            vector1(false),
+#endif
+                            coopmat(false),
                             qualifier(q), arraySizes(nullptr), structure(userDef), fieldName(nullptr), typeParameters(nullptr)
                             {
                                 sampler.clear();
@@ -1488,7 +1519,10 @@ public:
                             }
     // for block reference (first parameter must be EbtReference)
     explicit TType(TBasicType t, const TType &p, const TString& n) :
-                            basicType(t), vectorSize(1), matrixCols(0), matrixRows(0), vector1(false),
+                            basicType(t), vectorSize(1), matrixCols(0), matrixRows(0),
+#ifdef ENABLE_HLSL
+                            vector1(false),
+#endif
                             arraySizes(nullptr), structure(nullptr), fieldName(nullptr), typeName(nullptr)
                             {
 #ifndef GLSLANG_WEB
@@ -1512,7 +1546,9 @@ public:
         vectorSize = copyOf.vectorSize;
         matrixCols = copyOf.matrixCols;
         matrixRows = copyOf.matrixRows;
+#ifdef ENABLE_HLSL
         vector1 = copyOf.vector1;
+#endif
         arraySizes = copyOf.arraySizes;  // copying the pointer only, not the contents
         fieldName = copyOf.fieldName;
         typeName = copyOf.typeName;
@@ -1550,7 +1586,9 @@ public:
         return newType;
     }
 
+#ifdef ENABLE_HLSL
     void makeVector() { vector1 = true; }
+#endif
 
     virtual void hideMember() { basicType = EbtVoid; vectorSize = 1; }
     virtual bool hiddenMember() const { return basicType == EbtVoid; }
@@ -1847,15 +1885,15 @@ public:
     static const char* getBasicString(TBasicType t)
     {
         switch (t) {
-        case EbtVoid:              return "void";
         case EbtFloat:             return "float";
         case EbtInt:               return "int";
+#ifndef GLSLANG_WEB
+        case EbtVoid:              return "void";
         case EbtUint:              return "uint";
         case EbtBool:              return "bool";
         case EbtSampler:           return "sampler/image";
         case EbtStruct:            return "structure";
         case EbtBlock:             return "block";
-#ifndef GLSLANG_WEB
         case EbtAtomicUint:        return "atomic_uint";
         case EbtDouble:            return "double";
         case EbtFloat16:           return "float16_t";
@@ -2235,11 +2273,11 @@ public:
         return    sampler == right.sampler    &&
                vectorSize == right.vectorSize &&
                matrixCols == right.matrixCols &&
-               matrixRows == right.matrixRows &&
-                  vector1 == right.vector1    &&
-                  coopmat == right.coopmat    &&
-               sameStructType(right)
+               matrixRows == right.matrixRows
+               && vector1 == right.vector1
+               && sameStructType(right)
 #ifndef GLSLANG_WEB
+               && coopmat == right.coopmat
                && sameReferenceType(right)
 #endif
                ;
@@ -2328,11 +2366,16 @@ protected:
     int vectorSize       : 4;  // 1 means either scalar or 1-component vector; see vector1 to disambiguate.
     int matrixCols       : 4;
     int matrixRows       : 4;
+
+#ifdef ENABLE_HLSL
     bool vector1         : 1;  // Backward-compatible tracking of a 1-component vector distinguished from a scalar.
                                // GLSL 4.5 never has a 1-component vector; so this will always be false until such
                                // functionality is added.
                                // HLSL does have a 1-component vectors, so this will be true to disambiguate
                                // from a scalar.
+#else
+    const bool vector1 = false;
+#endif
     bool coopmat         : 1;
     TQualifier qualifier;
 

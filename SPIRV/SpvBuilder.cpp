@@ -1910,13 +1910,14 @@ Id Builder::createTextureCall(Decoration precision, Id resultType, bool sparse, 
     // Set up the instruction
     //
     Op opCode = OpNop;  // All paths below need to set this
-#ifndef GLSLANG_WEB
     if (fetch) {
         if (sparse)
             opCode = OpImageSparseFetch;
         else
             opCode = OpImageFetch;
-    } else if (parameters.granularity && parameters.coarse) {
+    }
+#ifndef GLSLANG_WEB
+    else if (parameters.granularity && parameters.coarse) {
         opCode = OpImageSampleFootprintNV;
     } else if (gather) {
         if (parameters.Dref)
@@ -1929,9 +1930,9 @@ Id Builder::createTextureCall(Decoration precision, Id resultType, bool sparse, 
                 opCode = OpImageSparseGather;
             else
                 opCode = OpImageGather;
-    } else
+    }
 #endif
-    if (explicitLod) {
+    else if (explicitLod) {
         if (parameters.Dref) {
             if (proj)
                 if (sparse)
@@ -2101,6 +2102,7 @@ Id Builder::createTextureQueryCall(Op opCode, const TextureParameters& parameter
     if (parameters.lod)
         query->addIdOperand(parameters.lod);
     buildPoint->addInstruction(std::unique_ptr<Instruction>(query));
+    addCapability(CapabilityImageQuery);
 
     return query->getResultId();
 }

@@ -998,8 +998,10 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
         shader->setNanMinMaxClamp(NaNClamp);
         shader->setResourceSetBinding(baseResourceSetBinding[compUnit.stage]);
 
+#ifdef ENABLE_HLSL
         if (Options & EOptionHlslIoMapping)
             shader->setHlslIoMapping(true);
+#endif
 
         if (Options & EOptionAutoMapBindings)
             shader->setAutoMapBindings(true);
@@ -1025,8 +1027,10 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
                                 compUnit.stage, Client, ClientInputSemanticsVersion);
             shader->setEnvClient(Client, ClientVersion);
             shader->setEnvTarget(TargetLanguage, TargetVersion);
+#ifdef ENABLE_HLSL
             if (targetHlslFunctionality1)
                 shader->setEnvTargetHlslFunctionality1();
+#endif
         }
 
         shaders.push_back(shader);

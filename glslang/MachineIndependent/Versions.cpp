@@ -611,7 +611,6 @@ void TParseVersions::requireStage(const TSourceLoc& loc, EShLanguage stage, cons
 //
 void TParseVersions::checkDeprecated(const TSourceLoc& loc, int profileMask, int depVersion, const char* featureDesc)
 {
-#ifndef GLSLANG_WEB
     if (profile & profileMask) {
         if (version >= depVersion) {
             if (forwardCompatible)
@@ -621,7 +620,6 @@ void TParseVersions::checkDeprecated(const TSourceLoc& loc, int profileMask, int
                                                        String(depVersion) + "; may be removed in future release").c_str(), loc);
         }
     }
-#endif
 }
 
 //

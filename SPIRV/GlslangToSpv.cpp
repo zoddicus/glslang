@@ -994,9 +994,12 @@ spv::ImageFormat TGlslangToSpvTraverser::TranslateImageFormat(const glslang::TTy
 {
     assert(type.getBasicType() == glslang::EbtSampler);
 
-#ifndef GLSLANG_WEB
+#ifdef GLSLANG_WEB
+    return spv::ImageFormatUnknown;
+#endif
+
     // Check for capabilities
-    switch (type.getQualifier().layoutFormat) {
+    switch (type.getQualifier().getFormat()) {
     case glslang::ElfRg32f:
     case glslang::ElfRg16f:
     case glslang::ElfR11fG11fB10f:
@@ -1033,7 +1036,7 @@ spv::ImageFormat TGlslangToSpvTraverser::TranslateImageFormat(const glslang::TTy
     }
 
     // do the translation
-    switch (type.getQualifier().layoutFormat) {
+    switch (type.getQualifier().getFormat()) {
     case glslang::ElfNone:          return spv::ImageFormatUnknown;
     case glslang::ElfRgba32f:       return spv::ImageFormatRgba32f;
     case glslang::ElfRgba16f:       return spv::ImageFormatRgba16f;
@@ -1076,8 +1079,6 @@ spv::ImageFormat TGlslangToSpvTraverser::TranslateImageFormat(const glslang::TTy
     case glslang::ElfR8ui:          return spv::ImageFormatR8ui;
     default:                        break;
     }
-#endif
-    return spv::ImageFormatMax;
 }
 
 spv::SelectionControlMask TGlslangToSpvTraverser::TranslateSelectionControl(const glslang::TIntermSelection& selectionNode) const
@@ -1488,8 +1489,11 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion, const gl
             builder.addExecutionMode(shaderEntry, spv::ExecutionModeOriginUpperLeft);
         else
             builder.addExecutionMode(shaderEntry, spv::ExecutionModeOriginLowerLeft);
-#ifndef GLSLANG_WEB
         builder.addCapability(spv::CapabilityShader);
+#ifdef GLSLANG_WEB
+        if (glslangIntermediate->isDepthReplacing())
+            builder.addExecutionMode(shaderEntry, spv::ExecutionModeDepthReplacing);
+#else
         if (glslangIntermediate->getPixelCenterInteger())
             builder.addExecutionMode(shaderEntry, spv::ExecutionModePixelCenterInteger);
 
@@ -3708,13 +3712,15 @@ void TGlslangToSpvTraverser::decorateStructType(const glslang::TType& type,
 #ifndef GLSLANG_WEB
         // nonuniform
         builder.addMemberDecoration(spvType, member, TranslateNonUniformDecoration(glslangMember.getQualifier()));
-
+#endif
+#ifdef ENABLE_HLSL
         if (glslangIntermediate->getHlslFunctionality1() && memberQualifier.semanticName != nullptr) {
             builder.addExtension("SPV_GOOGLE_hlsl_functionality1");
             builder.addMemberDecoration(spvType, member, (spv::Decoration)spv::DecorationHlslSemanticGOOGLE,
                                         memberQualifier.semanticName);
         }
-
+#endif
+#ifndef GLSLANG_WEB
         if (builtIn == spv::BuiltInLayer) {
             // SPV_NV_viewport_array2 extension
             if (glslangMember.getQualifier().layoutViewportRelative){
@@ -4025,7 +4031,7 @@ void TGlslangToSpvTraverser::updateMemberOffset(const glslang::TType& structType
     int dummyStride;
     int memberAlignment = glslangIntermediate->getMemberAlignment(memberType, memberSize, dummyStride, explicitLayout, matrixLayout == glslang::ElmRowMajor);
 
-#ifndef GLSLANG_WEB
+#ifdef ENABLE_HLSL
     // Adjust alignment for HLSL rules
     // TODO: make this consistent in early phases of code:
     //       adjusting this late means inconsistencies with earlier code, which for reflection is an issue
@@ -4461,7 +4467,6 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
     glslang::TType returnType(node->getType().getBasicType(), glslang::EvqTemporary, components);
     auto resultType = [&returnType,this]{ return convertGlslangToSpvType(returnType); };
 
-#ifndef GLSLANG_WEB
     if (node->getOp() == glslang::EOpTextureFetch) {
         // These must produce 4 components, per SPIR-V spec.  We'll add a conversion constructor if needed.
         // This will only happen through the HLSL path for operator[], so we do not have to handle e.g.
@@ -4470,6 +4475,7 @@ spv::Id TGlslangToSpvTraverser::createImageTextureFunctionCall(glslang::TIntermO
         components = 4;
     }
     
+#ifndef GLSLANG_WEB
     // Check for image functions other than queries
     if (node->isImage()) {
         std::vector<spv::IdImmediate> operands;
@@ -7458,6 +7464,7 @@ spv::Id TGlslangToSpvTraverser::createMiscOperation(glslang::TOperator op, spv::
         }
     }
 
+#ifndef GLSLANG_WEB
     // Decode the return types that were structures
     switch (op) {
     case glslang::EOpAddCarry:
@@ -7487,6 +7494,7 @@ spv::Id TGlslangToSpvTraverser::createMiscOperation(glslang::TOperator op, spv::
     default:
         break;
     }
+#endif
 
     return builder.setPrecision(id, precision);
 }

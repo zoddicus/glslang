@@ -211,14 +211,6 @@ void Builder::postProcess(Instruction& inst)
         addCapability(CapabilityDerivativeControl);
         break;
 
-    case OpImageQueryLod:
-    case OpImageQuerySize:
-    case OpImageQuerySizeLod:
-    case OpImageQuerySamples:
-    case OpImageQueryLevels:
-        addCapability(CapabilityImageQuery);
-        break;
-
     case OpGroupNonUniformPartitionNV:
         addExtension(E_SPV_NV_shader_subgroup_partitioned);
         addCapability(CapabilityGroupNonUniformPartitionedNV);

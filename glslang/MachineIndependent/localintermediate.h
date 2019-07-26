@@ -396,6 +396,7 @@ public:
         processes.addProcess("use-storage-buffer");
     }
     bool usingStorageBuffer() const { return useStorageBuffer; }
+#ifdef ENABLE_HLSL
     void setHlslIoMapping(bool b)
     {
         hlslIoMapping = b;
@@ -403,6 +404,7 @@ public:
             processes.addProcess("hlsl-iomap");
     }
     bool usingHlslIoMapping() { return hlslIoMapping; }
+#endif
     void setUseVulkanMemoryModel()
     {
         useVulkanMemoryModel = true;
