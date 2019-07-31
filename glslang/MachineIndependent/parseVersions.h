@@ -45,14 +45,8 @@
 
 #include <map>
 
-#if defined(GLSLANG_WEB) && !DEBUG
-#define error(A, B, C, D)          addError()
-#define error5(A, B, C, D, E)      addError()
-#define error6(A, B, C, D, E, F)   addError()
-#else
 #define error5(A, B, C, D, E) error(A, B, C, D, E)
 #define error6(A, B, C, D, E, F) error(A, B, C, D, E, F)
-#endif
 
 namespace glslang {
 
@@ -125,6 +119,15 @@ public:
         const char* szExtraInfoFormat, ...) = 0;
     virtual void C_DECL ppWarn(const TSourceLoc&, const char* szReason, const char* szToken,
         const char* szExtraInfoFormat, ...) = 0;
+#else
+    virtual void C_DECL error(const TSourceLoc&, const char* szReason, const char* szToken,
+                              const char* szExtraInfoFormat, ...) { addError(); }
+    virtual void C_DECL  warn(const TSourceLoc&, const char* szReason, const char* szToken,
+                              const char* szExtraInfoFormat, ...) { }
+    virtual void C_DECL ppError(const TSourceLoc&, const char* szReason, const char* szToken,
+        const char* szExtraInfoFormat, ...) { addError(); }
+    virtual void C_DECL ppWarn(const TSourceLoc&, const char* szReason, const char* szToken,
+                               const char* szExtraInfoFormat, ...) {};
 #endif
 
     void addError() { ++numErrors; }
